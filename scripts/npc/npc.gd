@@ -2,9 +2,7 @@ extends StaticBody2D
 
 @export var npc_name: String = "Vecino"
 @export var dialog_lines: Array = ["¡Hola!"]
-@export var npc_color: Color = Color("#8bac0f")
-
-const GB_DARKEST := Color("#0f380f")
+@export var npc_color: Color = Color("#e03020")
 
 var facing := Vector2.DOWN
 
@@ -15,14 +13,14 @@ func _draw():
 	# Eyes based on facing
 	var eye_y := -1.0
 	if facing == Vector2.DOWN:
-		draw_rect(Rect2(-3, eye_y, 2, 2), GB_DARKEST)
-		draw_rect(Rect2(1, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(-3, eye_y, 2, 2), Pal.BLACK)
+		draw_rect(Rect2(1, eye_y, 2, 2), Pal.BLACK)
 	elif facing == Vector2.UP:
-		draw_rect(Rect2(-5, -7, 10, 6), GB_DARKEST)
+		draw_rect(Rect2(-5, -7, 10, 6), Pal.BLACK)
 	elif facing == Vector2.LEFT:
-		draw_rect(Rect2(-5, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(-5, eye_y, 2, 2), Pal.BLACK)
 	elif facing == Vector2.RIGHT:
-		draw_rect(Rect2(3, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(3, eye_y, 2, 2), Pal.BLACK)
 
 
 func interact(player_pos: Vector2):

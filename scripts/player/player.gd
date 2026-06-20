@@ -3,10 +3,7 @@ extends CharacterBody2D
 const TILE_SIZE := 16
 const MOVE_SPEED := 80.0
 
-const GB_LIGHTEST := Color("#9bbc0f")
-const GB_LIGHT := Color("#8bac0f")
-const GB_DARK := Color("#306230")
-const GB_DARKEST := Color("#0f380f")
+# Colores desde la paleta compartida (Pal)
 
 var is_moving := false
 var target_pos := Vector2.ZERO
@@ -22,23 +19,24 @@ func _ready():
 
 
 func _draw():
-	# Body
-	draw_rect(Rect2(-7, -7, 14, 14), GB_LIGHT)
-	# Shirt
-	draw_rect(Rect2(-6, 1, 12, 6), GB_DARK)
-	# Hair/cap
-	draw_rect(Rect2(-5, -7, 10, 4), GB_DARKEST)
-	# Eyes based on facing direction
-	var eye_y := -1.0
+	# Cara (piel)
+	draw_rect(Rect2(-6, -3, 12, 10), Pal.SKIN)
+	# Overol azul
+	draw_rect(Rect2(-6, 3, 12, 4), Pal.BLUE)
+	# Gorra roja
+	draw_rect(Rect2(-7, -7, 14, 4), Pal.RED)
+	draw_rect(Rect2(-2, -8, 8, 2), Pal.RED)
+	# Ojos según dirección
+	var eye_y := 0.0
 	if facing == Vector2.DOWN:
-		draw_rect(Rect2(-3, eye_y, 2, 2), GB_DARKEST)
-		draw_rect(Rect2(1, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(-3, eye_y, 2, 2), Pal.BLACK)
+		draw_rect(Rect2(1, eye_y, 2, 2), Pal.BLACK)
 	elif facing == Vector2.UP:
-		draw_rect(Rect2(-5, -7, 10, 6), GB_DARKEST)
+		draw_rect(Rect2(-5, -3, 10, 3), Pal.RED)
 	elif facing == Vector2.LEFT:
-		draw_rect(Rect2(-5, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(-5, eye_y, 2, 2), Pal.BLACK)
 	elif facing == Vector2.RIGHT:
-		draw_rect(Rect2(3, eye_y, 2, 2), GB_DARKEST)
+		draw_rect(Rect2(3, eye_y, 2, 2), Pal.BLACK)
 
 
 func _physics_process(delta):

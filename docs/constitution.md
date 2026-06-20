@@ -7,9 +7,10 @@ los contradice, primero se enmienda esta constitución (con un ADR que lo justif
 
 - **Género:** RPG top-down de exploración, costumbrista, ambientado en Monte Grande (Buenos Aires).
 - **Tono:** local, en español rioplatense. Los NPCs hablan como vecinos reales.
-- **Estética Game Boy original:** paleta de 4 colores fijos
-  (`#9bbc0f`, `#8bac0f`, `#306230`, `#0f380f`), resolución nativa **160×144** escalada por enteros,
-  filtro *nearest* (pixel art nítido, sin suavizado).
+- **Pixel art alegre estilo plataformero clásico (NES/Super Mario Bros):** paleta
+  **colorida** centralizada en `scripts/palette.gd` (`class_name Pal`). Resolución nativa
+  **160×144** escalada por enteros, filtro *nearest* (pixel art nítido, sin suavizado).
+  _(La paleta GB original de 4 colores fue reemplazada — ver [ADR-0002](adr/0002-paleta-colorida.md).)_
 
 ## 2. Restricciones técnicas
 

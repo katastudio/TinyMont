@@ -72,4 +72,4 @@ menu={
 textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
-environment/defaults/default_clear_color=Color(0.0588235, 0.219608, 0.0588235, 1)
+environment/defaults/default_clear_color=Color(0.360784, 0.580392, 0.988235, 1)

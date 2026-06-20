@@ -1,9 +1,5 @@
 extends CanvasLayer
 
-const GB_LIGHTEST := Color("#9bbc0f")
-const GB_LIGHT := Color("#8bac0f")
-const GB_DARK := Color("#306230")
-const GB_DARKEST := Color("#0f380f")
 
 const TYPE_SPEED := 0.03
 
@@ -45,8 +41,8 @@ func _build_ui():
 	panel.offset_bottom = -2.0
 
 	var style = StyleBoxFlat.new()
-	style.bg_color = GB_LIGHTEST
-	style.border_color = GB_DARKEST
+	style.bg_color = Pal.WALL_TAN
+	style.border_color = Pal.BLACK
 	style.set_border_width_all(2)
 	style.set_content_margin_all(4)
 	panel.add_theme_stylebox_override("panel", style)
@@ -54,14 +50,14 @@ func _build_ui():
 
 	name_label = Label.new()
 	name_label.position = Vector2(4, 2)
-	name_label.add_theme_color_override("font_color", GB_DARKEST)
+	name_label.add_theme_color_override("font_color", Pal.BLACK)
 	name_label.add_theme_font_size_override("font_size", 8)
 	panel.add_child(name_label)
 
 	text_label = Label.new()
 	text_label.position = Vector2(4, 13)
 	text_label.size = Vector2(148, 28)
-	text_label.add_theme_color_override("font_color", GB_DARK)
+	text_label.add_theme_color_override("font_color", Pal.BRICK_DK)
 	text_label.add_theme_font_size_override("font_size", 7)
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	panel.add_child(text_label)
@@ -69,7 +65,7 @@ func _build_ui():
 	indicator = Label.new()
 	indicator.position = Vector2(142, 30)
 	indicator.text = "▼"
-	indicator.add_theme_color_override("font_color", GB_DARKEST)
+	indicator.add_theme_color_override("font_color", Pal.BLACK)
 	indicator.add_theme_font_size_override("font_size", 7)
 	indicator.visible = false
 	panel.add_child(indicator)

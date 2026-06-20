@@ -22,6 +22,19 @@
 - Publicación: `export_presets.cfg` (Web) + workflow `deploy-web.yml` (CI → GitHub Pages).
   **Pendiente:** habilitar Pages (Settings > Pages > Source = GitHub Actions) y push a main.
 
+### Iteración pre-publicación (geografía + paleta)
+
+- **Geografía real corregida** (fuentes: Wikipedia Plaza Mitre + paradas OSM): plaza central
+  enmarcada por Boulevard Bs As / Av. Las Heras / Sofía Terrero / Dardo Rocha; Av. L.N. Alem
+  como eje comercial; Máximo Paz transversal; vías del Roca arriba. Estación a ~500m de la plaza.
+- **Paleta nueva (ADR-0002):** cambiada de Game Boy (4 verdes) a paleta colorida estilo
+  Super Mario Bros, centralizada en `scripts/palette.gd` (`class_name Pal`). Cielo celeste,
+  pasto verde, asfalto gris, edificios ladrillo/crema/techo, agua celeste, player tipo Mario.
+- Recoloreados: monte_grande, player, npc, dialog_box, clear_color de project.godot.
+- ⚠ **Pendiente:** `plaza.gd` sigue con paleta GB vieja (mapa secundario, hoy inalcanzable
+  sin B6). Recolorear cuando se trabaje la transición de mapas.
+- Validado headless con Godot 4.4.1: sin errores.
+
 ## Arquitectura en una frase
 
 Motor de juego mínimo en ~1.150 líneas de GDScript: el mapa es un `PackedInt32Array`,
