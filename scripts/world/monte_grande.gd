@@ -69,12 +69,15 @@ func _lay_streets():
 	for x in v_road_xs:
 		for y in MAP_H:
 			set_tile(x, y, Tile.ROAD)
-	labels.append({pos = Vector2(6, 2), text = "MAXIMO PAZ"})
-	labels.append({pos = Vector2(6, 11), text = "AV.DARDO ROCHA"})
-	labels.append({pos = Vector2(6, 20), text = "M.ACOSTA"})
-	labels.append({pos = Vector2(6, 29), text = "DR.KOTTA"})
-	labels.append({pos = Vector2(2, 5), text = "DORREGO"})
-	labels.append({pos = Vector2(34, 5), text = "RODRIGUEZ"})
+	# Avenidas paralelas a las vías del Roca (datos reales del centro)
+	labels.append({pos = Vector2(7, 2), text = "AV.LAS HERAS"})
+	labels.append({pos = Vector2(7, 11), text = "AV.L.N.ALEM"})
+	labels.append({pos = Vector2(7, 20), text = "AV.DARDO ROCHA"})
+	labels.append({pos = Vector2(7, 29), text = "M.ACOSTA"})
+	# Calles transversales (perpendiculares a las vías)
+	labels.append({pos = Vector2(11, 17), text = "MAXIMO PAZ"})
+	labels.append({pos = Vector2(28, 17), text = "V.LOPEZ"})
+	labels.append({pos = Vector2(36, 17), text = "DORREGO"})
 
 
 func _lay_sidewalks():
@@ -151,6 +154,12 @@ func _fill_blocks():
 	_bld(7, 38, 3, 4, "")
 	_bld(30, 38, 5, 4, "")
 	_bld(38, 38, 3, 5, "")
+
+	# === CIVIC: flanqueando la Plaza Mitre (datos reales) ===
+	# Parroquia Inmaculada Concepción (frente a la plaza, lado NO)
+	_bld_special(14, 32, 4, 2, "PARROQUIA", "church")
+	# Palacio Municipal de Esteban Echeverría (a 500m de la estación, junto a la plaza)
+	_bld_special(24, 32, 4, 2, "MUNICIPIO", "govt")
 
 
 func _build_plaza_mitre():
@@ -424,6 +433,15 @@ func _draw_special_buildings():
 			"studio":
 				# Kata Studio — screen glow effect
 				draw_rect(Rect2(bx+T+2, by+T+2, T*2-4, T-4), GB_LIGHT)
+			"church":
+				var ccx = bx + bw / 2.0
+				draw_rect(Rect2(ccx - 1, by - 7, 2, 9), GB_DARKEST)
+				draw_rect(Rect2(ccx - 3, by - 4, 6, 2), GB_DARKEST)
+				draw_rect(Rect2(ccx - 3, by + bh - 7, 6, 7), GB_LIGHTEST)
+			"govt":
+				draw_line(Vector2(bx, by), Vector2(bx + bw, by), GB_LIGHTEST, 2.0)
+				for ci in range(info.w):
+					draw_rect(Rect2(bx + ci * T + 6, by + 4, 2, bh - 6), GB_LIGHTEST)
 
 
 func _draw_labels():
@@ -537,6 +555,58 @@ func _spawn_npcs():
 		"Entran 1200 personas.\nHay tango, folklore\ny teatro.",
 		"Está en Dardo Rocha\n135. ¡No te lo pierdas!"
 	], GB_LIGHTEST)
+
+
+	# ===== Personajes tipicos del conurbano =====
+
+	# Beto - el quiosquero de la esquina (Av. L.N. Alem)
+	_create_npc(Vector2(11, 14), "Beto", [
+		"Quiosco abierto las\n24hs... menos cuando\nme voy a dormir.",
+		"Un alfajor Guaymallen\nsalia 50 pesos. Ahora\nni te cuento, pibe.",
+		"Llevate un Manaos\nbien frio. Hace un\ncalor barbaro."
+	], GB_LIGHTEST)
+
+	# Ruben - canillita, puesto de diarios frente al Teatro
+	_create_npc(Vector2(11, 6), "Ruben", [
+		"Diarios, revistas\ny figuritas del\nMundial, vecino.",
+		"40 anios atendiendo\neste puesto, eh.\nVi pasar de todo.",
+		"Antes la gente\nleia el diario.\nAhora el celular."
+	], GB_DARK)
+
+	# Walter - colectivero del 306, parada en Dardo Rocha
+	_create_npc(Vector2(11, 22), "Walter", [
+		"Manejo el 306 hace\n15 anios, del centro\na Constitucion.",
+		"Subite que arranco...\nMentira, espero que\nse llene primero.",
+		"SUBE adelante,\nBAJA atras. ¡Y no\nme rayes el piso!"
+	], GB_DARK)
+
+	# Dona Marta - almacenera de la cuadra
+	_create_npc(Vector2(27, 20), "Dona Marta", [
+		"¿Necesitas algo,\nnene? Tengo fiado\nsi sos del barrio.",
+		"Pan, fideos, una\nlatita... lo que\nte falte para hoy.",
+		"Saludame a tu mama.\nDecile que ya llego\nla yerba que pidio."
+	], GB_LIGHT)
+
+	# Tito - jubilado jugando a las bochas en la plaza
+	_create_npc(Vector2(24, 40), "Tito", [
+		"¿Jugas a las bochas,\npibe? Veni que armamos\nuna con los muchachos.",
+		"Todas las tardes\naca, con el mate\ny la radio.",
+		"Monte Grande no es\nlo que era... pero\nla plaza sigue igual."
+	], GB_DARK)
+
+	# El Chino - puesto de choripan a la salida de la plaza
+	_create_npc(Vector2(17, 33), "El Chino", [
+		"¡Choripan recien\nhecho! Con chimi\ncasero, jefe.",
+		"Pan, chori y una\nGrapa... el desayuno\nde los campeones.",
+		"¿Con o sin? Dale\nque se enfria la\nparrilla."
+	], GB_LIGHTEST)
+
+	# Padre Quique - parroco de la Inmaculada Concepcion
+	_create_npc(Vector2(16, 35), "Padre Quique", [
+		"Bienvenido a la\nParroquia Inmaculada\nConcepcion, hijo.",
+		"Los domingos hay\nmisa a las 10 y\na las 19.",
+		"La fe mueve montanias...\ny tambien a los\nmontegrandenses. Je."
+	], GB_LIGHT)
 
 
 func _create_npc(tile_pos: Vector2, npc_name: String, lines: Array, color: Color):

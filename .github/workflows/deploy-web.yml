@@ -1,0 +1,50 @@
+name: Deploy Web (GitHub Pages)
+
+# Exporta TinyMont a HTML5 y lo publica en GitHub Pages.
+# Camino reproducible: la imagen de CI ya trae Godot + export templates.
+# Requiere (una sola vez): Settings > Pages > Source = "GitHub Actions".
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un solo deploy a la vez
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  export-and-deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.4.1
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Exportar build Web
+        run: |
+          mkdir -p builds/web
+          godot --headless --verbose --export-release "Web" builds/web/index.html
+          test -f builds/web/index.html
+
+      - name: Configurar Pages
+        uses: actions/configure-pages@v5
+
+      - name: Subir artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: builds/web
+
+      - name: Deploy a GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

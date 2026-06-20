@@ -19,8 +19,8 @@ Objetivo: **primera versión jugable y publicada en web**.
 | # | Ítem | Tipo | Prioridad | Estado |
 |---|------|------|-----------|--------|
 | B1 | Higiene de repo: commitear contenido, arreglar `.gitignore` | infra | 🔴 alta | idea |
-| B2 | `export_presets.cfg` para Web (HTML5) | infra | 🔴 alta | idea |
-| B3 | Pipeline CI: export headless + publish a itch.io | infra | 🟠 media | idea |
+| B2 | `export_presets.cfg` para Web (HTML5) | infra | 🔴 alta | hecho |
+| B3 | Pipeline CI: export headless + publish (GitHub Pages) | infra | 🟠 media | en progreso (falta habilitar Pages + push) |
 | B4 | Pantalla de título / menú inicial | feature | 🟠 media | spec ([0004](../specs/0004-pantalla-titulo/spec.md)) |
 | B5 | Sistema de guardado (save/load de posición y progreso) | feature | 🟠 media | spec ([0005](../specs/0005-sistema-guardado/spec.md)) |
 | B6 | Transición entre mapas (plaza ↔ monte_grande) | feature | 🟠 media | spec ([0006](../specs/0006-transicion-mapas/spec.md)) |

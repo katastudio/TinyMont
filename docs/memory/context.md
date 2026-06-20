@@ -8,8 +8,19 @@
 ## Estado general
 
 - Milestone activo: `mvp-0.0.1` → próximo objetivo: `mvp-0.1.0` (publicable en web).
-- Motor: Godot **4.4** (último estable disponible: 4.7 — migración pendiente de evaluar).
+- Motor: Godot **4.4.1** (instalado local; último estable disponible: 4.7 — migración a evaluar).
 - El core loop (explorar + dialogar) funciona. Falta infra de publicación y features de juego.
+
+### Hecho en esta sesión (spec 0007 + B2/B3)
+
+- Mapa con **traza real** de Monte Grande: avenidas Las Heras / L.N. Alem / Dardo Rocha /
+  M. Acosta, transversales Máximo Paz / V. López / Dorrego, estación Roca, Plaza Mitre.
+- Landmarks nuevos: **Parroquia Inmaculada Concepción** y **Palacio Municipal** flanqueando la plaza.
+- **15 NPCs** (8 previos + 7 típicos del conurbano: Beto el quiosquero, Rubén el canillita,
+  Walter el colectivero, Doña Marta, Tito el de las bochas, El Chino del choripán, Padre Quique).
+- Validado headless con Godot 4.4.1: corre sin errores.
+- Publicación: `export_presets.cfg` (Web) + workflow `deploy-web.yml` (CI → GitHub Pages).
+  **Pendiente:** habilitar Pages (Settings > Pages > Source = GitHub Actions) y push a main.
 
 ## Arquitectura en una frase
 
