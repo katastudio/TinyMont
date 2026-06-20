@@ -16,3 +16,20 @@ export_credentials.cfg
 .mono/
 data_*/
 mono_crash.*.json
+
+# Custom
+WorkingMedia/
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Build / export outputs (no se versionan)
+builds/
+*.pck
+*.zip
+*.exe
+*.x86_64
+*.dmg
+*.apk
+*.wasm
