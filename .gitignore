@@ -33,3 +33,6 @@ builds/
 *.dmg
 *.apk
 *.wasm
+# Dev preview tools (capturas)
+tools/shot*.gd
+tools/shot*.tscn

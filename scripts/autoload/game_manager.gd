@@ -36,11 +36,11 @@ func _add_key_action(action_name: String, key: Key):
 	InputMap.action_add_event(action_name, event)
 
 
-func start_dialog(speaker_name: String, lines: Array):
+func start_dialog(speaker_name: String, lines: Array, color: Color = Color.WHITE):
 	is_dialog_active = true
 	dialog_started.emit()
 	if dialog_box:
-		dialog_box.show_dialog(speaker_name, lines)
+		dialog_box.show_dialog(speaker_name, lines, color)
 
 
 func end_dialog():

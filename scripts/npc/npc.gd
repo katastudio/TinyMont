@@ -32,4 +32,4 @@ func interact(player_pos: Vector2):
 		facing = Vector2.DOWN if dir.y > 0 else Vector2.UP
 	queue_redraw()
 
-	GameManager.start_dialog(npc_name, dialog_lines)
+	GameManager.start_dialog(npc_name, dialog_lines, npc_color)
