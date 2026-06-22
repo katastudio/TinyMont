@@ -22,8 +22,8 @@ var _redraw_timer := 0.0
 var building_info := {}
 
 # Anillo de la plaza: horizontales (superior/inferior) + verticales (Alem/este)
-var h_road_ys := [11, 25, 41]
-var v_road_xs := [13, 14, 30]
+var h_road_ys := []
+var v_road_xs := [13, 14]
 
 const PLAZA_CX := 22
 const PLAZA_CY := 33
@@ -63,32 +63,33 @@ func _build_border():
 
 
 func _lay_streets():
-	# Horizontales (incluye superior y=25 e inferior y=41 del anillo)
-	for y in h_road_ys:
+	# La trama real es DIAGONAL (rotada 45°): la plaza se enmarca con un anillo
+	# diagonal que sigue el rombo y 4 salidas en diagonal. Sin calles ortogonales.
+	for y in MAP_H:
 		for x in MAP_W:
-			set_tile(x, y, Tile.ROAD)
-	# Alem (oeste) baja desde la estación
-	for y in range(8, MAP_H):
+			var d = abs(x - PLAZA_CX) + abs(y - PLAZA_CY)
+			if d == 8 or d == 9:
+				set_tile(x, y, Tile.ROAD)
+	# 4 salidas diagonales (2 carriles) desde las esquinas del rombo
+	_diag_avenue(17, 28, -1, -1, 10)  # NO -> Alem
+	_diag_avenue(27, 28, 1, -1, 12)   # NE -> Bv. Bs. As.
+	_diag_avenue(17, 38, -1, 1, 12)   # SO -> Sta. Marina
+	_diag_avenue(27, 38, 1, 1, 12)    # SE -> Alem Doble
+	# Alem sube (tramo vertical) hasta la estación — se detallará después
+	for y in range(8, 25):
 		set_tile(13, y, Tile.ROAD)
 		set_tile(14, y, Tile.ROAD)
-	# Calle este
-	for y in range(8, MAP_H):
-		set_tile(30, y, Tile.ROAD)
-	# Salidas diagonales desde las 4 esquinas-cruce
-	var exits = [
-		Vector2i(12, 24), Vector2i(11, 23), Vector2i(10, 22), Vector2i(9, 21), Vector2i(8, 20),   # NO -> Alem
-		Vector2i(31, 24), Vector2i(32, 23), Vector2i(33, 22), Vector2i(34, 21), Vector2i(35, 20),  # NE -> Bv Bs As
-		Vector2i(13, 42), Vector2i(12, 43), Vector2i(11, 44), Vector2i(10, 45),                    # SO -> Sta Marina
-		Vector2i(31, 42), Vector2i(32, 43), Vector2i(33, 44), Vector2i(34, 45),                    # SE -> Alem Doble
-	]
-	for p in exits:
-		set_tile(p.x, p.y, Tile.ROAD)
-	# Carteles: Alem + las 4 salidas de las esquinas
-	labels.append({pos = Vector2(6, 12), text = "AV.L.N.ALEM"})
-	labels.append({pos = Vector2(3, 19), text = "ALEM"})
-	labels.append({pos = Vector2(35, 19), text = "BV.BS AS"})
-	labels.append({pos = Vector2(3, 45), text = "STA.MARINA"})
-	labels.append({pos = Vector2(33, 45), text = "ALEM DOBLE"})
+	# Carteles
+	labels.append({pos = Vector2(8, 14), text = "ALEM"})
+	labels.append({pos = Vector2(30, 22), text = "BV.BS AS"})
+	labels.append({pos = Vector2(7, 41), text = "STA.MARINA"})
+	labels.append({pos = Vector2(31, 41), text = "ALEM DOBLE"})
+
+
+func _diag_avenue(sx: int, sy: int, dx: int, dy: int, n: int):
+	for k in n:
+		set_tile(sx + dx * k, sy + dy * k, Tile.ROAD)
+		set_tile(sx + dx * k + dy, sy + dy * k + dx, Tile.ROAD)
 
 
 func _lay_sidewalks():
@@ -124,17 +125,11 @@ func _fill_blocks():
 	_bld_special(2, 13, 6, 3, "KATA", "studio")
 	_bld_special(36, 13, 5, 3, "CLUB ATL.", "club")
 
-	# === 4 edificios históricos enmarcando la plaza (cuarteto simétrico) ===
-	_bld_special(18, 21, 8, 3, "COMISARIA", "police")   # N
+	# === 4 edificios históricos en los lados del rombo ===
+	_bld_special(18, 20, 8, 3, "COMISARIA", "police")   # N
 	_bld_special(18, 43, 8, 3, "IGLESIA", "church")     # S
-	_bld_special(6, 29, 6, 6, "MUNICIPIO", "govt")      # O
-	_bld_special(32, 29, 6, 6, "ESC.N1", "school")      # E
-
-	# Relleno residencial en las 4 esquinas del mapa
-	_bld(2, 20, 6, 5, "")
-	_bld(36, 20, 6, 5, "")
-	_bld(2, 38, 6, 5, "")
-	_bld(36, 38, 6, 5, "")
+	_bld_special(5, 30, 6, 6, "MUNICIPIO", "govt")      # O
+	_bld_special(33, 30, 6, 6, "ESC.N1", "school")      # E
 
 
 func _build_plaza_mitre():
@@ -284,19 +279,15 @@ func _draw_building(x: int, y: int, r: Rect2):
 
 func _draw_road(x: int, y: int, r: Rect2):
 	draw_rect(r, Pal.ROAD)
-	var is_h = y in h_road_ys
-	var is_v = (x in v_road_xs)
-	if is_h and not is_v:
-		draw_line(Vector2(x*T, y*T+T-1), Vector2(x*T+T, y*T+T-1), Pal.ROAD_DK, 1.0)
-		if x % 3 != 0:
-			draw_line(Vector2(x*T+2, y*T+8), Vector2(x*T+T-2, y*T+8), Pal.ROAD_LINE, 1.0)
-	elif is_v and not is_h:
+	if x in v_road_xs:
+		# Alem (tramo vertical): línea de centro punteada
 		draw_line(Vector2(x*T+T-1, y*T), Vector2(x*T+T-1, y*T+T), Pal.ROAD_DK, 1.0)
 		if y % 3 != 0:
 			draw_line(Vector2(x*T+8, y*T+2), Vector2(x*T+8, y*T+T-2), Pal.ROAD_LINE, 1.0)
 	else:
-		draw_line(Vector2(x*T+T-1, y*T), Vector2(x*T+T-1, y*T+T), Pal.ROAD_DK, 1.0)
-		draw_line(Vector2(x*T, y*T+T-1), Vector2(x*T+T, y*T+T-1), Pal.ROAD_DK, 1.0)
+		# Calles diagonales: empedrado punteado
+		if (x + y) % 2 == 0:
+			draw_rect(Rect2(x*T+6, y*T+6, 4, 4), Pal.ROAD_LINE)
 
 
 func _draw_rail(x: int, y: int, r: Rect2):
