@@ -1,8 +1,11 @@
 extends Node2D
 ## Monte Grande - "Ciudad de los Árboles"
-## Centro real: estación Roca (vías NO-SE), Av. L.N. Alem (eje comercial),
-## Plaza Mitre central (cuadrada, en diagonal a las calles) enmarcada por
-## Boulevard Buenos Aires, Av. Las Heras, Sofía Terrero de Santamarina y Dardo Rocha.
+## Esqueleto real (grid enderezado para jugabilidad):
+##   - Av. LEANDRO N. ALEM = eje vertical, une la ESTACIÓN (arriba) con la PLAZA MITRE (abajo).
+##   - Avenidas horizontales N->S: Máximo Paz, Dardo Rocha, Mariano Acosta, Gral. Dorrego,
+##     Dr. Á. Rotta, Bv. Buenos Aires (esta última llega a la plaza).
+##   - Verticales secundarias: Vicente López, Gral. Rodríguez.
+##   - Referencias: Estación (N), Escuela N°37 (SO), Plaza Mitre + Escuela N°205 (SE).
 
 const T := 16
 const MAP_W := 44
@@ -18,14 +21,15 @@ var labels: Array = []
 var _redraw_timer := 0.0
 var building_info := {}
 
-# Calles reales. Horizontales = paralelas a las vías del Roca.
-var h_road_ys := [14, 25, 40]   # Av. L.N. Alem, Boulevard Bs As, Av. Las Heras
-var v_road_xs := [8, 15, 29, 36] # Máximo Paz, Sofía Terrero, Dardo Rocha, M. Acosta
+# Avenidas principales horizontales (paralelas, de norte a sur)
+var h_road_ys := [9, 15, 21, 27, 33, 37]
+# Verticales: Vicente López(14), ALEM(21,22 = eje), Gral. Rodríguez(28), borde O(8) y E(35)
+var v_road_xs := [8, 14, 21, 22, 28, 35]
 
-# Plaza Mitre (rombo central)
+# Plaza Mitre (rombo al pie de Alem)
 const PLAZA_CX := 22
-const PLAZA_CY := 32
-const PLAZA_R := 6
+const PLAZA_CY := 42
+const PLAZA_R := 4
 
 
 func _ready():
@@ -67,23 +71,25 @@ func _lay_streets():
 	for x in v_road_xs:
 		for y in MAP_H:
 			set_tile(x, y, Tile.ROAD)
-	# Avenidas paralelas a las vías
-	labels.append({pos = Vector2(17, 14), text = "AV.L.N.ALEM"})
-	labels.append({pos = Vector2(16, 25), text = "BLVD.BS AS"})
-	labels.append({pos = Vector2(17, 40), text = "AV.LAS HERAS"})
-	# Calles transversales
-	labels.append({pos = Vector2(8, 11), text = "MAXIMO PAZ"})
-	labels.append({pos = Vector2(11, 21), text = "S.TERRERO"})
-	labels.append({pos = Vector2(29, 21), text = "DARDO ROCHA"})
-	labels.append({pos = Vector2(36, 11), text = "M.ACOSTA"})
+	# Avenidas horizontales (N->S)
+	labels.append({pos = Vector2(2, 9), text = "MAXIMO PAZ"})
+	labels.append({pos = Vector2(2, 15), text = "DARDO ROCHA"})
+	labels.append({pos = Vector2(2, 21), text = "M.ACOSTA"})
+	labels.append({pos = Vector2(2, 27), text = "DORREGO"})
+	labels.append({pos = Vector2(2, 33), text = "DR.ROTTA"})
+	labels.append({pos = Vector2(2, 37), text = "BV.BS AS"})
+	# Verticales
+	labels.append({pos = Vector2(22, 11), text = "ALEM"})
+	labels.append({pos = Vector2(14, 24), text = "V.LOPEZ"})
+	labels.append({pos = Vector2(28, 24), text = "RODRIGUEZ"})
 
 
 func _lay_sidewalks():
-	for sy in [13, 16, 24, 26, 39, 41]:
+	for sy in [8, 10, 14, 16, 20, 26, 32, 36, 38]:
 		for x in MAP_W:
 			if get_tile(x, sy) == Tile.GRASS:
 				set_tile(x, sy, Tile.SIDEWALK)
-	for sx in [7, 9, 14, 16, 28, 30, 35, 37]:
+	for sx in [7, 9, 13, 15, 20, 23, 27, 29, 34, 36]:
 		for y in MAP_H:
 			if get_tile(sx, y) == Tile.GRASS:
 				set_tile(sx, y, Tile.SIDEWALK)
@@ -92,62 +98,57 @@ func _lay_sidewalks():
 func _lay_tracks():
 	for x in MAP_W:
 		if not (x in v_road_xs):
+			set_tile(x, 5, Tile.RAIL)
 			set_tile(x, 6, Tile.RAIL)
-			set_tile(x, 7, Tile.RAIL)
 
 
 func _build_station():
-	# Andén (caminable) bajo las vías
+	# Andén (caminable) entre las vías y Máximo Paz
 	for x in range(18, 25):
+		set_tile(x, 7, Tile.PLATFORM)
 		set_tile(x, 8, Tile.PLATFORM)
-		set_tile(x, 9, Tile.PLATFORM)
-	labels.append({pos = Vector2(18, 9), text = "ESTACION MG"})
+	labels.append({pos = Vector2(17, 8), text = "ESTACION MG"})
 	# Edificio de la estación sobre las vías
-	_bld_special(18, 3, 6, 3, "ESTACION", "station")
+	_bld_special(18, 2, 6, 3, "ESTACION", "station")
 
 
 func _fill_blocks():
-	# === Sobre las vías (y=2-5) ===
-	_bld_special(9, 2, 4, 4, "TEATRO", "teatro")
-	_bld(26, 2, 5, 4, "")
-	_bld(32, 2, 4, 4, "")
+	# === Cerca de la estación ===
+	_bld_special(9, 2, 4, 3, "TEATRO", "teatro")
+	_bld(26, 2, 5, 3, "")
 
-	# === Entre andén y Av. Alem (y=10-12): zona gastronómica ===
-	_bld_special(9, 10, 5, 3, "VENECIANA", "restaurant")
-	_bld(17, 10, 4, 3, "")
-	_bld_special(25, 10, 4, 3, "MOSTAZA", "fastfood")
-	_bld(31, 10, 5, 3, "")
+	# === Máximo Paz -> Dardo Rocha (zona gastronómica, sobre Alem) ===
+	_bld_special(10, 10, 4, 4, "VENECIANA", "restaurant")
+	_bld_special(24, 10, 4, 4, "MOSTAZA", "fastfood")
+	_bld(2, 10, 5, 4, "")
+	_bld(36, 10, 6, 4, "")
 
-	# === Entre Alem y Boulevard (y=17-24): centro comercial ===
-	_bld_special(9, 17, 5, 3, "KATA STUDIO", "studio")
-	_bld(17, 17, 4, 3, "")
-	_bld_special(24, 17, 5, 3, "CLUB ATL.", "club")
-	_bld(31, 17, 5, 3, "")
-	_bld(2, 17, 4, 7, "")
-	_bld(38, 17, 4, 7, "")
-	_bld(9, 21, 5, 3, "")
-	_bld(17, 21, 4, 3, "")
-	_bld(24, 21, 5, 3, "")
-	_bld(31, 21, 5, 3, "")
+	# === Dardo Rocha -> Mariano Acosta (centro comercial) ===
+	_bld_special(10, 16, 4, 4, "KATA STUDIO", "studio")
+	_bld_special(24, 16, 4, 4, "CLUB ATL.", "club")
+	_bld(2, 16, 5, 4, "")
+	_bld(36, 16, 6, 4, "")
 
-	# === Flanqueando la Plaza Mitre (datos reales) ===
-	_bld_special(9, 28, 5, 4, "PARROQUIA", "church")
-	_bld_special(31, 28, 5, 4, "MUNICIPIO", "govt")
-	_bld(2, 28, 4, 9, "")
-	_bld(38, 28, 4, 9, "")
+	# === Mariano Acosta -> Dorrego ===
+	_bld(2, 22, 5, 4, "")
+	_bld(10, 22, 4, 4, "")
+	_bld(24, 22, 4, 4, "")
+	_bld(36, 22, 6, 4, "")
 
-	# === Al sur de Las Heras (y=42+): residencial ===
-	_bld(2, 42, 5, 4, "")
-	_bld(9, 42, 6, 4, "")
-	_bld(18, 42, 8, 4, "")
-	_bld(29, 42, 6, 4, "")
-	_bld(37, 42, 5, 4, "")
+	# === Dorrego -> Dr. Rotta (flanquea acceso a la plaza) ===
+	_bld_special(10, 28, 4, 4, "PARROQUIA", "church")
+	_bld_special(24, 28, 4, 4, "MUNICIPIO", "govt")
+	_bld(2, 28, 5, 4, "")
+	_bld(36, 28, 6, 4, "")
+
+	# === Zona sur: referencias (escuelas) ===
+	_bld_special(2, 40, 5, 5, "ESC.N37", "school")   # Escuela N°37 (SO)
+	_bld_special(30, 40, 5, 5, "ESC.205", "school")  # Escuela N°205 (SE, junto a la plaza)
 
 
 func _build_plaza_mitre():
 	var cx := PLAZA_CX
 	var cy := PLAZA_CY
-	# Cuadrada pero en diagonal a las calles -> rombo
 	for dy in range(-PLAZA_R, PLAZA_R + 1):
 		var w = PLAZA_R - abs(dy)
 		for dx in range(-w, w + 1):
@@ -155,40 +156,38 @@ func _build_plaza_mitre():
 			var py = cy + dy
 			if px > 0 and px < MAP_W - 1 and py > 0 and py < MAP_H - 1:
 				set_tile(px, py, Tile.PLAZA)
-	# Caminos de mosaico blanco (cruz)
 	for i in range(-PLAZA_R + 1, PLAZA_R):
 		set_tile(cx + i, cy, Tile.SIDEWALK)
 		set_tile(cx, cy + i, Tile.SIDEWALK)
 	# Fuente octogonal central
-	for dx in range(-1, 2):
-		for dy in range(-1, 2):
-			set_tile(cx + dx, cy + dy, Tile.WATER)
-	# Monumentos en las 4 diagonales
-	set_tile(cx - 3, cy - 2, Tile.MONUMENT)
-	set_tile(cx + 3, cy - 2, Tile.MONUMENT)
-	set_tile(cx + 3, cy + 2, Tile.MONUMENT)
-	set_tile(cx - 3, cy + 2, Tile.MONUMENT)
-	# Ginkgo / ombú histórico
-	set_tile(cx + 2, cy - 3, Tile.OMBU)
-	set_tile(cx - 2, cy + 3, Tile.OMBU)
-	# Bancos alrededor de la fuente
-	set_tile(cx - 2, cy, Tile.BENCH)
-	set_tile(cx + 2, cy, Tile.BENCH)
-	set_tile(cx, cy - 2, Tile.BENCH)
-	set_tile(cx, cy + 2, Tile.BENCH)
+	set_tile(cx, cy, Tile.WATER)
+	set_tile(cx - 1, cy, Tile.WATER)
+	set_tile(cx + 1, cy, Tile.WATER)
+	set_tile(cx, cy - 1, Tile.WATER)
+	set_tile(cx, cy + 1, Tile.WATER)
+	# Monumentos en diagonal
+	set_tile(cx - 2, cy - 2, Tile.MONUMENT)
+	set_tile(cx + 2, cy - 2, Tile.MONUMENT)
+	set_tile(cx + 2, cy + 2, Tile.MONUMENT)
+	set_tile(cx - 2, cy + 2, Tile.MONUMENT)
+	# Ginkgo histórico
+	set_tile(cx - 3, cy, Tile.OMBU)
+	set_tile(cx + 3, cy, Tile.OMBU)
 	labels.append({pos = Vector2(cx - 3, cy - PLAZA_R), text = "PLAZA MITRE"})
 
 
 func _plant_trees():
 	# "Ciudad de los Árboles"
 	var positions = [
-		Vector2i(20, 27), Vector2i(24, 27), Vector2i(20, 37), Vector2i(24, 37),
-		Vector2i(17, 32), Vector2i(27, 32),
-		Vector2i(11, 16), Vector2i(19, 16), Vector2i(27, 16), Vector2i(34, 16),
-		Vector2i(11, 24), Vector2i(19, 24), Vector2i(27, 24), Vector2i(34, 24),
-		Vector2i(11, 39), Vector2i(19, 39), Vector2i(27, 39), Vector2i(34, 39),
-		Vector2i(6, 13), Vector2i(26, 13), Vector2i(34, 13),
-		Vector2i(6, 30), Vector2i(34, 30),
+		Vector2i(18, 41), Vector2i(26, 41), Vector2i(18, 43), Vector2i(26, 43),
+		Vector2i(11, 12), Vector2i(31, 12),
+		Vector2i(11, 18), Vector2i(31, 18),
+		Vector2i(11, 24), Vector2i(31, 24),
+		Vector2i(11, 30), Vector2i(31, 30),
+		Vector2i(16, 12), Vector2i(26, 12),
+		Vector2i(16, 18), Vector2i(26, 18),
+		Vector2i(6, 35), Vector2i(38, 35),
+		Vector2i(19, 11), Vector2i(24, 11),
 	]
 	for pos in positions:
 		if get_tile(pos.x, pos.y) in [Tile.GRASS, Tile.SIDEWALK]:
@@ -287,7 +286,6 @@ func _draw_tile(x: int, y: int):
 
 
 func _draw_building(x: int, y: int, r: Rect2):
-	# Variación de color de fachada para alegrar el centro
 	var pick = (x * 5 + y * 3) % 3
 	var body = Pal.BRICK
 	if pick == 1:
@@ -296,9 +294,7 @@ func _draw_building(x: int, y: int, r: Rect2):
 		body = Pal.ROOF
 	draw_rect(r, Pal.BRICK_DK)
 	draw_rect(Rect2(x*T+1, y*T+1, T-2, T-2), body)
-	# Techo
 	draw_rect(Rect2(x*T, y*T, T, 3), Pal.BRICK_DK)
-	# Ventanas / puerta
 	if (x + y) % 3 == 0:
 		draw_rect(Rect2(x*T+3, y*T+5, 4, 5), Pal.SKY)
 		draw_rect(Rect2(x*T+9, y*T+5, 4, 5), Pal.SKY)
@@ -385,6 +381,13 @@ func _draw_special_buildings():
 				draw_line(Vector2(bx, by), Vector2(bx + bw, by), Pal.WHITE, 2.0)
 				for ci in range(info.w):
 					draw_rect(Rect2(bx + ci * T + 6, by + 4, 2, bh - 6), Pal.WHITE)
+			"school":
+				# Bandera celeste-blanca-celeste sobre el techo
+				draw_rect(Rect2(bx, by, bw, 4), Pal.WHITE)
+				draw_rect(Rect2(bx + 4, by - 8, 1, 8), Pal.WOOD_DK)
+				draw_rect(Rect2(bx + 5, by - 8, 7, 2), Pal.SKY)
+				draw_rect(Rect2(bx + 5, by - 6, 7, 2), Pal.WHITE)
+				draw_rect(Rect2(bx + 5, by - 4, 7, 2), Pal.SKY)
 
 
 func _draw_labels():
@@ -432,7 +435,8 @@ func get_npc_at(world_pos: Vector2):
 
 func _spawn_player():
 	var player = preload("res://scenes/player/player.tscn").instantiate()
-	player.position = Vector2(21 * T + T / 2, 16 * T + T / 2)
+	# Arranca sobre Alem, a la salida de la estación
+	player.position = Vector2(22 * T + T / 2, 12 * T + T / 2)
 	add_child(player)
 	var cam: Camera2D = player.get_node("Camera2D")
 	cam.limit_left = 0
@@ -443,53 +447,53 @@ func _spawn_player():
 
 func _spawn_npcs():
 	# Don Carlos - viejo de la plaza
-	_create_npc(Vector2(20, 30), "Don Carlos", [
+	_create_npc(Vector2(20, 40), "Don Carlos", [
 		"¡Eh, pibe! Bienvenido\na la Plaza Mitre.",
-		"¿Ves ese busto?\nEs de Bartolomé Mitre.",
-		"La plaza es de 1904\ny esta puesta en\ndiagonal a las calles.",
+		"Bajaste por Alem\ndesde la estacion,\n¿no? Es el eje.",
+		"La plaza es de 1904\ny esta en diagonal\na las calles.",
 		"¡Monte Grande... la\nCiudad de los Árboles!"
 	], Pal.BLUE)
 
 	# La Sole - pizzera de La Veneciana (sobre Alem)
-	_create_npc(Vector2(10, 13), "La Sole", [
+	_create_npc(Vector2(13, 13), "La Sole", [
 		"¡Hola, vecino!",
 		"¿Venis a La Veneciana?\nLa mejor pizza del\nconurbano sur.",
-		"Estamos sobre Alem,\nel corazon comercial\nde Monte Grande."
+		"Estamos sobre Alem,\nentre Maximo Paz y\nDardo Rocha."
 	], Pal.RED)
 
 	# El Pipe - esperando el Roca en el anden
-	_create_npc(Vector2(21, 9), "El Pipe", [
+	_create_npc(Vector2(21, 8), "El Pipe", [
 		"Estoy esperando el\nRoca hace 40 minutos.",
 		"De aca a Constitucion\nson 28 km... cuando\nel tren aparece.",
 		"Para el otro lado va\na El Jaguel y Ezeiza."
 	], Pal.YELLOW)
 
 	# El Gordo - hincha del Club Atletico
-	_create_npc(Vector2(23, 18), "El Gordo", [
+	_create_npc(Vector2(26, 20), "El Gordo", [
 		"¡Vamo' el Club Atletico\nMonte Grande, papa!",
 		"Aca se juega al futbol\ndesde 1911.",
 		"¿Te venis al proximo\npartido? Hay asado\ndespues."
 	], Pal.GRASS_DK)
 
 	# Lucia - desarrolladora en Kata Studio
-	_create_npc(Vector2(14, 18), "Lucia", [
+	_create_npc(Vector2(12, 20), "Lucia", [
 		"¡Hola! Trabajo en\nKata Studio.",
 		"Estamos haciendo\nun juego sobre\nMonte Grande.",
 		"Se llama TinyMont.\nEs open source.\n¿Lo conoces? Je."
 	], Pal.PURPLE)
 
 	# Dona Rosa - busca su gato en la plaza
-	_create_npc(Vector2(24, 34), "Dona Rosa", [
+	_create_npc(Vector2(24, 44), "Dona Rosa", [
 		"¡Ay, nene! ¿No viste\na mi gato Mostaza?",
 		"Se me escapo por\nel monumento...",
 		"Es naranja con\nmanchas negras.\nAvisame si lo ves."
 	], Pal.PINK)
 
 	# Don Ramon - jubilado junto al ginkgo
-	_create_npc(Vector2(21, 35), "Don Ramon", [
+	_create_npc(Vector2(20, 42), "Don Ramon", [
 		"¿Sabias que ese\narbol es un Ginkgo\nbiloba?",
 		"Es de la especie\nmas antigua del\nmundo.",
-		"Aca todo es verde.\nPor algo le dicen\nla Ciudad de los\nArboles."
+		"Por algo le dicen\nla Ciudad de los\nArboles."
 	], Pal.WOOD)
 
 	# Mili - frente al Teatro
@@ -502,49 +506,49 @@ func _spawn_npcs():
 	# ===== Personajes tipicos del conurbano =====
 
 	# Beto - quiosquero sobre Alem
-	_create_npc(Vector2(16, 13), "Beto", [
+	_create_npc(Vector2(20, 12), "Beto", [
 		"Quiosco abierto las\n24hs... menos cuando\nme voy a dormir.",
 		"¿Un alfajor? ¿Un\nManaos bien frio?\nLo que precises.",
 		"Antes salia dos\nmangos. Ahora ni\nte cuento, pibe."
 	], Pal.YELLOW)
 
 	# Ruben - canillita en la estacion
-	_create_npc(Vector2(16, 9), "Ruben", [
+	_create_npc(Vector2(17, 8), "Ruben", [
 		"Diarios, revistas\ny figuritas, vecino.",
 		"40 anios atendiendo\neste puesto. Vi\npasar de todo.",
 		"Antes la gente leia\nel diario. Ahora el\ncelular."
 	], Pal.BRICK)
 
-	# Walter - colectivero, parada en Maximo Paz
-	_create_npc(Vector2(8, 20), "Walter", [
+	# Walter - colectivero, parada sobre la transversal oeste
+	_create_npc(Vector2(8, 18), "Walter", [
 		"Manejo el 306 hace\n15 anios, del centro\na Constitucion.",
 		"Subite que arranco...\nMentira, espero que\nse llene primero.",
 		"¡SUBE adelante, BAJA\natras! Y no me rayes\nel piso."
 	], Pal.BLUE)
 
-	# Dona Marta - almacenera cerca de Dardo Rocha
-	_create_npc(Vector2(30, 22), "Dona Marta", [
+	# Dona Marta - almacenera cerca de Rodriguez
+	_create_npc(Vector2(30, 24), "Dona Marta", [
 		"¿Necesitas algo,\nnene? Tengo fiado\nsi sos del barrio.",
 		"Pan, fideos, una\nlatita... lo que\nte falte para hoy.",
 		"Saludame a tu mama.\nLlego la yerba que\npidio."
 	], Pal.PINK)
 
-	# Tito - jubilado de las bochas
-	_create_npc(Vector2(24, 30), "Tito", [
+	# Tito - jubilado de las bochas en la plaza
+	_create_npc(Vector2(25, 42), "Tito", [
 		"¿Jugas a las bochas,\npibe? Veni que armamos\nuna con los muchachos.",
 		"Todas las tardes aca,\ncon el mate y la\nradio.",
 		"La plaza no cambia,\npor suerte."
 	], Pal.GRASS_DK)
 
-	# El Chino - puesto de choripan al sur de la plaza
-	_create_npc(Vector2(18, 39), "El Chino", [
+	# El Chino - puesto de choripan junto a la plaza
+	_create_npc(Vector2(27, 38), "El Chino", [
 		"¡Choripan recien\nhecho! Con chimi\ncasero, jefe.",
 		"Pan, chori y una\nGrapa... el desayuno\nde los campeones.",
 		"¿Con o sin? Dale\nque se enfria la\nparrilla."
 	], Pal.RED)
 
 	# Padre Quique - parroco de la Inmaculada Concepcion
-	_create_npc(Vector2(14, 30), "Padre Quique", [
+	_create_npc(Vector2(15, 30), "Padre Quique", [
 		"Bienvenido a la\nParroquia Inmaculada\nConcepcion, hijo.",
 		"Los domingos hay\nmisa a las 10 y\na las 19.",
 		"La fe mueve montanias...\ny tambien a los\nmontegrandenses. Je."
