@@ -1,172 +1,126 @@
 extends Node2D
-## Monte Grande - Plaza Mitre como corazón del centro.
-## La plaza (rombo) está inscripta en una manzana enmarcada por un ANILLO de 4 calles:
-##   - Av. L.N. Alem (oeste)  - Calle este
-##   - Calle superior (Bv. Bs. As.)  - Calle inferior (Sta. Marina)
-## Las 4 calles se CRUZAN en las 4 esquinas formando intersecciones (cruces).
-## En cada lado cardinal, un edificio histórico: Comisaría (N), Iglesia (S),
-## Municipalidad (O), Escuela N°1 (E). Alem baja desde la estación.
+## Monte Grande - mapa cargado desde un PLANO DE TEXTO editable a mano.
+##
+## El mapa vive en res://data/map.txt y se edita con cualquier editor de texto:
+## cada caracter es un tile. Ver la leyenda al principio de ese archivo.
+## Este script SOLO lee ese plano; no calcula geografía. Para cambiar la ciudad,
+## editá data/map.txt (no este código).
 
 const T := 16
-const MAP_W := 44
-const MAP_H := 48
+const MAP_PATH := "res://data/map.txt"
 
 enum Tile {
 	GRASS, BUILDING, ROAD, TREE, RAIL, PLAZA, WATER,
 	SIDEWALK, MONUMENT, BENCH, PLATFORM, OMBU
 }
 
+# caracter de terreno -> Tile. Las LETRAS de edificio se resuelven por la leyenda.
+const CHAR_TILE := {
+	".": Tile.GRASS, "#": Tile.ROAD, ":": Tile.SIDEWALK, "T": Tile.TREE,
+	"O": Tile.OMBU, "=": Tile.RAIL, "_": Tile.PLATFORM, "P": Tile.PLAZA,
+	"~": Tile.WATER, "M": Tile.MONUMENT, "b": Tile.BENCH, " ": Tile.GRASS,
+}
+
+var MAP_W := 44
+var MAP_H := 48
+
 var tiles := PackedInt32Array()
 var labels: Array = []
 var _redraw_timer := 0.0
 var building_info := {}
 
-# Anillo de la plaza: horizontales (superior/inferior) + verticales (Alem/este)
-var h_road_ys := []
-var v_road_xs := [13, 14]
-
-const PLAZA_CX := 22
-const PLAZA_CY := 33
-const PLAZA_R := 7
-
 
 func _ready():
-	_build_map()
+	_load_map()
 	_spawn_player()
 	_spawn_npcs()
 	_add_dialog_box()
 
 
-# ==================== MAP CONSTRUCTION ====================
+# ==================== CARGA DEL PLANO DE TEXTO ====================
 
-func _build_map():
+func _load_map():
+	var f := FileAccess.open(MAP_PATH, FileAccess.READ)
+	if f == null:
+		push_error("No se pudo abrir el plano: " + MAP_PATH)
+		return
+	var raw := f.get_as_text()
+	f.close()
+
+	var legend := {}   # letra -> {name, type}
+	var grid: Array = []
+	for line in raw.split("\n"):
+		if line.begins_with(";"):
+			_parse_legend_line(line, legend)
+		elif line.strip_edges() == "" and grid.is_empty():
+			continue  # líneas en blanco antes del grid
+		else:
+			grid.append(line)
+	# recortar líneas en blanco finales
+	while not grid.is_empty() and grid[grid.size() - 1].strip_edges() == "":
+		grid.pop_back()
+
+	MAP_H = grid.size()
+	MAP_W = 0
+	for row in grid:
+		MAP_W = max(MAP_W, row.length())
+
 	tiles.resize(MAP_W * MAP_H)
 	tiles.fill(Tile.GRASS)
-	_build_border()
-	_lay_streets()
-	_lay_sidewalks()
-	_lay_tracks()
-	_build_station()
-	_fill_blocks()
-	_build_plaza_mitre()
-	_plant_trees()
+
+	# bounding box por letra de edificio
+	var bld_cells := {}  # letra -> {min_x, min_y, max_x, max_y}
+	for y in MAP_H:
+		var row: String = grid[y]
+		for x in MAP_W:
+			var ch := " " if x >= row.length() else row[x]
+			if legend.has(ch):
+				set_tile(x, y, Tile.BUILDING)
+				if not bld_cells.has(ch):
+					bld_cells[ch] = {min_x = x, min_y = y, max_x = x, max_y = y}
+				else:
+					var b = bld_cells[ch]
+					b.min_x = min(b.min_x, x); b.min_y = min(b.min_y, y)
+					b.max_x = max(b.max_x, x); b.max_y = max(b.max_y, y)
+			elif CHAR_TILE.has(ch):
+				set_tile(x, y, CHAR_TILE[ch])
+			# cualquier otro caracter queda como GRASS (default)
+
+	# registrar edificios (anchor + tamaño) para render especial + cartel
+	for ch in bld_cells:
+		var b = bld_cells[ch]
+		var info = legend[ch]
+		var w = b.max_x - b.min_x + 1
+		var h = b.max_y - b.min_y + 1
+		building_info[Vector2i(b.min_x, b.min_y)] = {
+			name = info.name, type = info.type, w = w, h = h
+		}
+		labels.append({pos = Vector2(b.min_x, b.min_y), text = info.name})
+
 	queue_redraw()
 
 
-func _build_border():
-	for x in MAP_W:
-		set_tile(x, 0, Tile.TREE)
-		set_tile(x, MAP_H - 1, Tile.TREE)
-	for y in MAP_H:
-		set_tile(0, y, Tile.TREE)
-		set_tile(MAP_W - 1, y, Tile.TREE)
-
-
-func _lay_streets():
-	# La trama real es DIAGONAL (rotada 45°): la plaza se enmarca con un anillo
-	# diagonal que sigue el rombo y 4 salidas en diagonal. Sin calles ortogonales.
-	for y in MAP_H:
-		for x in MAP_W:
-			var d = abs(x - PLAZA_CX) + abs(y - PLAZA_CY)
-			if d == 8 or d == 9:
-				set_tile(x, y, Tile.ROAD)
-	# 4 salidas diagonales (2 carriles) desde las esquinas del rombo
-	_diag_avenue(17, 28, -1, -1, 10)  # NO -> Alem
-	_diag_avenue(27, 28, 1, -1, 12)   # NE -> Bv. Bs. As.
-	_diag_avenue(17, 38, -1, 1, 12)   # SO -> Sta. Marina
-	_diag_avenue(27, 38, 1, 1, 12)    # SE -> Alem Doble
-	# Alem sube (tramo vertical) hasta la estación — se detallará después
-	for y in range(8, 25):
-		set_tile(13, y, Tile.ROAD)
-		set_tile(14, y, Tile.ROAD)
-	# Carteles
-	labels.append({pos = Vector2(8, 14), text = "ALEM"})
-	labels.append({pos = Vector2(30, 22), text = "BV.BS AS"})
-	labels.append({pos = Vector2(7, 41), text = "STA.MARINA"})
-	labels.append({pos = Vector2(31, 41), text = "ALEM DOBLE"})
-
-
-func _diag_avenue(sx: int, sy: int, dx: int, dy: int, n: int):
-	for k in n:
-		set_tile(sx + dx * k, sy + dy * k, Tile.ROAD)
-		set_tile(sx + dx * k + dy, sy + dy * k + dx, Tile.ROAD)
-
-
-func _lay_sidewalks():
-	for sy in [10, 24, 26, 40, 42]:
-		for x in MAP_W:
-			if get_tile(x, sy) == Tile.GRASS:
-				set_tile(x, sy, Tile.SIDEWALK)
-	for sx in [12, 15, 29, 31]:
-		for y in MAP_H:
-			if get_tile(sx, y) == Tile.GRASS:
-				set_tile(sx, y, Tile.SIDEWALK)
-
-
-func _lay_tracks():
-	for x in MAP_W:
-		set_tile(x, 4, Tile.RAIL)
-		set_tile(x, 5, Tile.RAIL)
-
-
-func _build_station():
-	for x in range(18, 24):
-		set_tile(x, 6, Tile.PLATFORM)
-		set_tile(x, 7, Tile.PLATFORM)
-	labels.append({pos = Vector2(24, 7), text = "ESTACION MG"})
-	_bld_special(18, 1, 6, 3, "ESTACION", "station")
-
-
-func _fill_blocks():
-	# Comercios cerca de la estación (no compiten con la plaza)
-	_bld_special(6, 8, 4, 2, "TEATRO", "teatro")
-	_bld_special(16, 13, 5, 3, "VENECIANA", "restaurant")
-	_bld_special(24, 13, 5, 3, "MOSTAZA", "fastfood")
-	_bld_special(2, 13, 6, 3, "KATA", "studio")
-	_bld_special(36, 13, 5, 3, "CLUB ATL.", "club")
-
-	# === 4 edificios históricos en los lados del rombo ===
-	_bld_special(18, 20, 8, 3, "COMISARIA", "police")   # N
-	_bld_special(18, 43, 8, 3, "IGLESIA", "church")     # S
-	_bld_special(5, 30, 6, 6, "MUNICIPIO", "govt")      # O
-	_bld_special(33, 30, 6, 6, "ESC.N1", "school")      # E
-
-
-func _build_plaza_mitre():
-	var cx := PLAZA_CX
-	var cy := PLAZA_CY
-	# Rombo (cuadrada en diagonal a las calles)
-	for dy in range(-PLAZA_R, PLAZA_R + 1):
-		var w = PLAZA_R - abs(dy)
-		for dx in range(-w, w + 1):
-			set_tile(cx + dx, cy + dy, Tile.PLAZA)
-	# Cruz de mosaico
-	for i in range(-PLAZA_R + 1, PLAZA_R):
-		set_tile(cx + i, cy, Tile.SIDEWALK)
-		set_tile(cx, cy + i, Tile.SIDEWALK)
-	# Fuente octogonal central
-	for dx in range(-1, 2):
-		for dy in range(-1, 2):
-			set_tile(cx + dx, cy + dy, Tile.WATER)
-	# Monumentos en las 4 diagonales
-	for d in [Vector2i(-3, -3), Vector2i(3, -3), Vector2i(3, 3), Vector2i(-3, 3)]:
-		set_tile(cx + d.x, cy + d.y, Tile.MONUMENT)
-	# Ginkgo histórico (en los vértices N y S, hacia las calles)
-	set_tile(cx - 4, cy, Tile.OMBU)
-	set_tile(cx + 4, cy, Tile.OMBU)
-	labels.append({pos = Vector2(cx - 3, cy - PLAZA_R - 1), text = "PLAZA MITRE"})
-
-
-func _plant_trees():
-	var positions = [
-		Vector2i(19, 29), Vector2i(25, 29), Vector2i(19, 37), Vector2i(25, 37),
-		Vector2i(9, 13), Vector2i(15, 8), Vector2i(29, 8), Vector2i(40, 9),
-		Vector2i(9, 22), Vector2i(35, 22), Vector2i(9, 36), Vector2i(35, 36),
-		Vector2i(22, 27), Vector2i(22, 39),
-	]
-	for pos in positions:
-		if get_tile(pos.x, pos.y) in [Tile.GRASS, Tile.SIDEWALK]:
-			set_tile(pos.x, pos.y, Tile.TREE)
+func _parse_legend_line(line: String, legend: Dictionary):
+	# Leyenda de edificio:  ";   S = ESTACION = station"
+	var body := line.substr(1).strip_edges()
+	if "=" in body and not body.begins_with("@"):
+		var parts := body.split("=")
+		if parts.size() >= 3:
+			var letter := parts[0].strip_edges()
+			if letter.length() == 1:
+				legend[letter] = {
+					name = parts[1].strip_edges(),
+					type = parts[2].strip_edges(),
+				}
+				return
+	# Carteles de calle:  "@ ALEM@8,14   @ BV.BS AS@30,22 ..."
+	var re := RegEx.new()
+	re.compile("@\\s*([^@]+?)@(\\d+),(\\d+)")
+	for m in re.search_all(line):
+		var txt := m.get_string(1).strip_edges()
+		var lx := int(m.get_string(2))
+		var ly := int(m.get_string(3))
+		labels.append({pos = Vector2(lx, ly), text = txt})
 
 
 # ==================== HELPERS ====================
@@ -279,13 +233,22 @@ func _draw_building(x: int, y: int, r: Rect2):
 
 func _draw_road(x: int, y: int, r: Rect2):
 	draw_rect(r, Pal.ROAD)
-	if x in v_road_xs:
-		# Alem (tramo vertical): línea de centro punteada
+	var up := get_tile(x, y - 1) == Tile.ROAD
+	var dn := get_tile(x, y + 1) == Tile.ROAD
+	var lf := get_tile(x - 1, y) == Tile.ROAD
+	var rt := get_tile(x + 1, y) == Tile.ROAD
+	if (up or dn) and not lf and not rt:
+		# Corredor vertical (ej. Alem): línea de centro punteada
 		draw_line(Vector2(x*T+T-1, y*T), Vector2(x*T+T-1, y*T+T), Pal.ROAD_DK, 1.0)
 		if y % 3 != 0:
 			draw_line(Vector2(x*T+8, y*T+2), Vector2(x*T+8, y*T+T-2), Pal.ROAD_LINE, 1.0)
+	elif (lf or rt) and not up and not dn:
+		# Corredor horizontal: línea de centro punteada
+		draw_line(Vector2(x*T, y*T+T-1), Vector2(x*T+T, y*T+T-1), Pal.ROAD_DK, 1.0)
+		if x % 3 != 0:
+			draw_line(Vector2(x*T+2, y*T+8), Vector2(x*T+T-2, y*T+8), Pal.ROAD_LINE, 1.0)
 	else:
-		# Calles diagonales: empedrado punteado
+		# Diagonales / cruces: empedrado punteado
 		if (x + y) % 2 == 0:
 			draw_rect(Rect2(x*T+6, y*T+6, 4, 4), Pal.ROAD_LINE)
 

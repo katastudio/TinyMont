@@ -1,0 +1,69 @@
+; ===== TinyMont :: Plano de Monte Grande (44x48) =====
+; Edita este archivo a mano para cambiar la ciudad.
+; TERRENO:  . pasto   # calle   : vereda   T arbol   O ginkgo
+;           = via    _ anden   P plaza    ~ fuente   M monumento
+; EDIFICIOS: una letra por tile. La forma del edificio = bloque de esa letra.
+; LEYENDA de edificios (letra = nombre = tipo de render):
+;   S = ESTACION = station
+;   A = TEATRO = teatro
+;   V = VENECIANA = restaurant
+;   F = MOSTAZA = fastfood
+;   K = KATA = studio
+;   C = CLUB ATL. = club
+;   Q = COMISARIA = police
+;   I = IGLESIA = church
+;   G = MUNICIPIO = govt
+;   H = ESC.N1 = school
+; CARTELES de calle (nombre@x,y):
+;   @ ALEM@8,14  @ BV.BS AS@30,22  @ STA.MARINA@7,41  @ ALEM DOBLE@31,41
+;   @ ESTACION MG@24,7  @ PLAZA MITRE@19,25
+; Las lineas que empiezan con ; son comentarios. El mapa va abajo.
+
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+T...........:..:..SSSSSS.....:.:...........T
+T...........:..:..SSSSSS.....:.:...........T
+T...........:..:..SSSSSS.....:.:...........T
+============================================
+============================================
+T...........:..:..______.....:.:...........T
+T...........:..:..______.....:.:...........T
+T.....AAAA..:##T.............T.:...........T
+T.....AAAA..:##:.............:.:........T..T
+T::::::::::::##::::::::::::::::::::::::::::T
+T...........:##:.............:.:...........T
+T...........:##:.............:.:...........T
+T.KKKKKK.T..:##:VVVVV...FFFFF:.:....CCCCC..T
+T.KKKKKK....:##:VVVVV...FFFFF:.:....CCCCC..T
+T.KKKKKK....:##:VVVVV...FFFFF:.:....CCCCC..T
+T...........:##:.............:.:...........T
+T...........:##:.............:.:......#....T
+T......#....:##:.............:.:.....#.....T
+T.......#...:##:.............:.:....#......T
+T........#..:##:..QQQQQQQQ...:.:...#.......T
+T.........#.:##:..QQQQQQQQ...:.:..#........T
+T........T.#:##:..QQQQQQQQ...:.:.#.T.......T
+T...........###:.............:.:#..........T
+T::::::::::::##:::::::#::::::::#:::::::::::T
+T...........:.#:.....###.....:#:...........T
+T::::::::::::::#::::##P##::::#:::::::::::::T
+T...........:..:#..##PTP##..#:.:...........T
+T...........:..:.###PP:PP###.:.:...........T
+T...........:..:.##PPP:PPP##.:.:...........T
+T....GGGGGG.:..:##PMPP:PPMP##:.:.HHHHHH....T
+T....GGGGGG.:..##PPPPP:PPPPP##.:.HHHHHH....T
+T....GGGGGG.:.##PPPPP~~~PPPPP##:.HHHHHH....T
+T....GGGGGG.:##P::O::~~~::O::P##.HHHHHH....T
+T....GGGGGG.:.##PPPPP~~~PPPPP##:.HHHHHH....T
+T....GGGGGG.:..##PPPPP:PPPPP##.:.HHHHHH....T
+T........T..:..:##PMPP:PPMP##:.:...T.......T
+T...........:..:.##PPP:PPP##.:.:...........T
+T...........:..:.###PP:PP###.:.:...........T
+T...........:..:#..##PTP##..#:.:...........T
+T::::::::::::::#::::##P##::::#:::::::::::::T
+T...........:.#:.....###.....:#:...........T
+T::::::::::::#::::::::#::::::::#:::::::::::T
+T...........#..:..IIIIIIII...:.:#..........T
+T..........#:..:..IIIIIIII...:.:.#.........T
+T.........#.:..:..IIIIIIII...:.:..#........T
+T........#..:..:.............:.:...#.......T
+TTTTTTTT#TTTTTTTTTTTTTTTTTTTTTTTTTTT#TTTTTTT
