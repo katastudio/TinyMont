@@ -1,25 +1,59 @@
 extends Node2D
-## Monte Grande - mapa cargado desde un PLANO DE TEXTO editable a mano.
+## Monte Grande - mapa pintado en el EDITOR DE GODOT (TileMapLayer "MapaLayer").
 ##
-## El mapa vive en res://data/map.txt y se edita con cualquier editor de texto:
-## cada caracter es un tile. Ver la leyenda al principio de ese archivo.
-## Este script SOLO lee ese plano; no calcula geografía. Para cambiar la ciudad,
-## editá data/map.txt (no este código).
+## El mapa se edita visualmente: abrí scenes/main.tscn, seleccioná el nodo
+## "MapaLayer" y pintá con la paleta de tiles (panel TileSet abajo a la derecha).
+## Cada swatch de color es un tipo de tile (ver PALETTE). En el juego NO se ven
+## los swatches: este script lee la capa y dibuja el arte procedural real.
+##
+## La paleta (orden = posición en el atlas) y la capa se generan con
+## tools/build_tilemap.gd a partir de data/map.txt (semilla inicial).
 
 const T := 16
-const MAP_PATH := "res://data/map.txt"
+const MAP_LAYER := "MapaLayer"
+const COLS := 8  # columnas del atlas de swatches
 
 enum Tile {
 	GRASS, BUILDING, ROAD, TREE, RAIL, PLAZA, WATER,
 	SIDEWALK, MONUMENT, BENCH, PLATFORM, OMBU
 }
 
-# caracter de terreno -> Tile. Las LETRAS de edificio se resuelven por la leyenda.
-const CHAR_TILE := {
-	".": Tile.GRASS, "#": Tile.ROAD, ":": Tile.SIDEWALK, "T": Tile.TREE,
-	"O": Tile.OMBU, "=": Tile.RAIL, "_": Tile.PLATFORM, "P": Tile.PLAZA,
-	"~": Tile.WATER, "M": Tile.MONUMENT, "b": Tile.BENCH, " ": Tile.GRASS,
-}
+# Paleta editable: el índice = celda del atlas (col = i%COLS, fila = i/COLS).
+# Para edificios, btype define el render especial y bname el cartel.
+# color es solo el swatch que se ve en el editor (lo usa el generador).
+const PALETTE := [
+	{name = "pasto",     tile = Tile.GRASS,    btype = "",           bname = "",          color = Color("58d858")},
+	{name = "calle",     tile = Tile.ROAD,     btype = "",           bname = "",          color = Color("9c9c9c")},
+	{name = "vereda",    tile = Tile.SIDEWALK, btype = "",           bname = "",          color = Color("e8d8b0")},
+	{name = "arbol",     tile = Tile.TREE,     btype = "",           bname = "",          color = Color("1c9c1c")},
+	{name = "ginkgo",    tile = Tile.OMBU,     btype = "",           bname = "",          color = Color("b6d000")},
+	{name = "via",       tile = Tile.RAIL,     btype = "",           bname = "",          color = Color("5c5c5c")},
+	{name = "anden",     tile = Tile.PLATFORM, btype = "",           bname = "",          color = Color("b8a880")},
+	{name = "plaza",     tile = Tile.PLAZA,    btype = "",           bname = "",          color = Color("fce0a8")},
+	{name = "fuente",    tile = Tile.WATER,    btype = "",           bname = "",          color = Color("3cbcfc")},
+	{name = "monumento", tile = Tile.MONUMENT, btype = "",           bname = "",          color = Color("8888a0")},
+	{name = "banco",     tile = Tile.BENCH,    btype = "",           bname = "",          color = Color("a05000")},
+	{name = "estacion",  tile = Tile.BUILDING, btype = "station",    bname = "ESTACION",  color = Color("e03020")},
+	{name = "teatro",    tile = Tile.BUILDING, btype = "teatro",     bname = "TEATRO",    color = Color("fcd800")},
+	{name = "veneciana", tile = Tile.BUILDING, btype = "restaurant", bname = "VENECIANA", color = Color("d85820")},
+	{name = "mostaza",   tile = Tile.BUILDING, btype = "fastfood",   bname = "MOSTAZA",   color = Color("fc7460")},
+	{name = "kata",      tile = Tile.BUILDING, btype = "studio",     bname = "KATA",      color = Color("c040c0")},
+	{name = "club",      tile = Tile.BUILDING, btype = "club",       bname = "CLUB ATL.", color = Color("2038ec")},
+	{name = "comisaria", tile = Tile.BUILDING, btype = "police",     bname = "COMISARIA", color = Color("1830a0")},
+	{name = "iglesia",   tile = Tile.BUILDING, btype = "church",     bname = "IGLESIA",   color = Color("fcfcfc")},
+	{name = "municipio", tile = Tile.BUILDING, btype = "govt",       bname = "MUNICIPIO", color = Color("4060c0")},
+	{name = "escuela",   tile = Tile.BUILDING, btype = "school",     bname = "ESC.N1",    color = Color("fc74a0")},
+]
+
+# Carteles de calle (no son tiles): nombre + posición en tiles.
+const STREET_LABELS := [
+	{text = "ALEM",        pos = Vector2(8, 14)},
+	{text = "BV.BS AS",    pos = Vector2(30, 22)},
+	{text = "STA.MARINA",  pos = Vector2(7, 41)},
+	{text = "ALEM DOBLE",  pos = Vector2(31, 41)},
+	{text = "ESTACION MG", pos = Vector2(24, 7)},
+	{text = "PLAZA MITRE", pos = Vector2(19, 25)},
+]
 
 var MAP_W := 44
 var MAP_H := 48
@@ -37,90 +71,59 @@ func _ready():
 	_add_dialog_box()
 
 
-# ==================== CARGA DEL PLANO DE TEXTO ====================
+# ==================== CARGA DESDE EL TILEMAP ====================
+
+func _palette_at(ac: Vector2i):
+	var idx := ac.y * COLS + ac.x
+	if idx >= 0 and idx < PALETTE.size():
+		return PALETTE[idx]
+	return null
+
 
 func _load_map():
-	var f := FileAccess.open(MAP_PATH, FileAccess.READ)
-	if f == null:
-		push_error("No se pudo abrir el plano: " + MAP_PATH)
+	var layer: TileMapLayer = get_node_or_null(MAP_LAYER)
+	if layer == null:
+		push_error("Falta el nodo TileMapLayer '" + MAP_LAYER + "' en la escena.")
 		return
-	var raw := f.get_as_text()
-	f.close()
 
-	var legend := {}   # letra -> {name, type}
-	var grid: Array = []
-	for line in raw.split("\n"):
-		if line.begins_with(";"):
-			_parse_legend_line(line, legend)
-		elif line.strip_edges() == "" and grid.is_empty():
-			continue  # líneas en blanco antes del grid
-		else:
-			grid.append(line)
-	# recortar líneas en blanco finales
-	while not grid.is_empty() and grid[grid.size() - 1].strip_edges() == "":
-		grid.pop_back()
-
-	MAP_H = grid.size()
-	MAP_W = 0
-	for row in grid:
-		MAP_W = max(MAP_W, row.length())
-
+	var rect := layer.get_used_rect()
+	MAP_W = rect.position.x + rect.size.x
+	MAP_H = rect.position.y + rect.size.y
 	tiles.resize(MAP_W * MAP_H)
 	tiles.fill(Tile.GRASS)
 
-	# bounding box por letra de edificio
-	var bld_cells := {}  # letra -> {min_x, min_y, max_x, max_y}
-	for y in MAP_H:
-		var row: String = grid[y]
-		for x in MAP_W:
-			var ch := " " if x >= row.length() else row[x]
-			if legend.has(ch):
-				set_tile(x, y, Tile.BUILDING)
-				if not bld_cells.has(ch):
-					bld_cells[ch] = {min_x = x, min_y = y, max_x = x, max_y = y}
-				else:
-					var b = bld_cells[ch]
-					b.min_x = min(b.min_x, x); b.min_y = min(b.min_y, y)
-					b.max_x = max(b.max_x, x); b.max_y = max(b.max_y, y)
-			elif CHAR_TILE.has(ch):
-				set_tile(x, y, CHAR_TILE[ch])
-			# cualquier otro caracter queda como GRASS (default)
+	# bounding box por TIPO de edificio (cada tipo = una instancia en el centro)
+	var bld_cells := {}
+	for c in layer.get_used_cells():
+		var p = _palette_at(layer.get_cell_atlas_coords(c))
+		if p == null:
+			continue
+		set_tile(c.x, c.y, p.tile)
+		if p.btype != "":
+			if not bld_cells.has(p.btype):
+				bld_cells[p.btype] = {
+					min_x = c.x, min_y = c.y, max_x = c.x, max_y = c.y, bname = p.bname
+				}
+			else:
+				var b = bld_cells[p.btype]
+				b.min_x = min(b.min_x, c.x); b.min_y = min(b.min_y, c.y)
+				b.max_x = max(b.max_x, c.x); b.max_y = max(b.max_y, c.y)
 
-	# registrar edificios (anchor + tamaño) para render especial + cartel
-	for ch in bld_cells:
-		var b = bld_cells[ch]
-		var info = legend[ch]
+	for btype in bld_cells:
+		var b = bld_cells[btype]
 		var w = b.max_x - b.min_x + 1
 		var h = b.max_y - b.min_y + 1
 		building_info[Vector2i(b.min_x, b.min_y)] = {
-			name = info.name, type = info.type, w = w, h = h
+			name = b.bname, type = btype, w = w, h = h
 		}
-		labels.append({pos = Vector2(b.min_x, b.min_y), text = info.name})
+		labels.append({pos = Vector2(b.min_x, b.min_y), text = b.bname})
 
+	for l in STREET_LABELS:
+		labels.append({pos = l.pos, text = l.text})
+
+	# La capa de swatches es solo dato: en runtime se oculta y dibujamos el arte real.
+	layer.visible = false
 	queue_redraw()
-
-
-func _parse_legend_line(line: String, legend: Dictionary):
-	# Leyenda de edificio:  ";   S = ESTACION = station"
-	var body := line.substr(1).strip_edges()
-	if "=" in body and not body.begins_with("@"):
-		var parts := body.split("=")
-		if parts.size() >= 3:
-			var letter := parts[0].strip_edges()
-			if letter.length() == 1:
-				legend[letter] = {
-					name = parts[1].strip_edges(),
-					type = parts[2].strip_edges(),
-				}
-				return
-	# Carteles de calle:  "@ ALEM@8,14   @ BV.BS AS@30,22 ..."
-	var re := RegEx.new()
-	re.compile("@\\s*([^@]+?)@(\\d+),(\\d+)")
-	for m in re.search_all(line):
-		var txt := m.get_string(1).strip_edges()
-		var lx := int(m.get_string(2))
-		var ly := int(m.get_string(3))
-		labels.append({pos = Vector2(lx, ly), text = txt})
 
 
 # ==================== HELPERS ====================

@@ -1,0 +1,33 @@
+[gd_resource type="TileSet" load_steps=3 format=4]
+
+[sub_resource type="PortableCompressedTexture2D" id="PortableCompressedTexture2D_5ibji"]
+_data = PackedByteArray("AAADAAUAAAABAAAAgAAAADAAAACEAQAAUklGRnwBAABXRUJQVlA4THABAAAvf8ALEKfhNrZtpXq4O5GnhA49QAvaIEMDFOISMkSE8qUOtpFtK3m4uzslMESU8+skpgZacE+/jBvXtlXlfHd311IH4PNgsIQxEDpqOq08mf8AAF/yOwPtHqG74FxAOqH54WsbTgmwmKJhwFkOQI3NdABOMHpADrlehah/SnTRVSVanvSsHVq27CsDYhcfdkcrG1bkpDblnf8A7B3o50tknPVH+ld2k8Gsr2dJ/JlLDX8IhYNFZ243IMOXevLdqOG0RzkZGeVO5hnwwAIHkmybTvBtG7Gdv//tTexURfRfQFBohA8hGqIx8pGEIjRCExQeQDicg+F4BcZ+AHypC6SoD6LREowma/AH1P1/v0IDJCMNCUhHNmpQtQfVYAYGsgNkTQWaIAJBV4BuG8BujuAVywOa0AGC7gLd7gG72YAfwO7/+wXK0AIlyEKtiytSUGQ5yBZTsEhikFgmeMXagiIrQbZog0WyA4lVgx/M7v77LQ==")
+size_override = Vector2(128, 48)
+keep_compressed_buffer = true
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5ll6y"]
+texture = SubResource("PortableCompressedTexture2D_5ibji")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+4:0/0 = 0
+5:0/0 = 0
+6:0/0 = 0
+7:0/0 = 0
+0:1/0 = 0
+1:1/0 = 0
+2:1/0 = 0
+3:1/0 = 0
+4:1/0 = 0
+5:1/0 = 0
+6:1/0 = 0
+7:1/0 = 0
+0:2/0 = 0
+1:2/0 = 0
+2:2/0 = 0
+3:2/0 = 0
+4:2/0 = 0
+
+[resource]
+sources/0 = SubResource("TileSetAtlasSource_5ll6y")
