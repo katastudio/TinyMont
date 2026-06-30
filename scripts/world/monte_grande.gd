@@ -45,16 +45,6 @@ const PALETTE := [
 	{name = "escuela",   tile = Tile.BUILDING, btype = "school",     bname = "ESC.N1",    color = Color("fc74a0")},
 ]
 
-# Carteles de calle (no son tiles): nombre + posición en tiles.
-const STREET_LABELS := [
-	{text = "ALEM",        pos = Vector2(8, 14)},
-	{text = "BV.BS AS",    pos = Vector2(30, 22)},
-	{text = "STA.MARINA",  pos = Vector2(7, 41)},
-	{text = "ALEM DOBLE",  pos = Vector2(31, 41)},
-	{text = "ESTACION MG", pos = Vector2(24, 7)},
-	{text = "PLAZA MITRE", pos = Vector2(19, 25)},
-]
-
 var MAP_W := 44
 var MAP_H := 48
 
@@ -118,8 +108,8 @@ func _load_map():
 		}
 		labels.append({pos = Vector2(b.min_x, b.min_y), text = b.bname})
 
-	for l in STREET_LABELS:
-		labels.append({pos = l.pos, text = l.text})
+	# Los carteles de calle/lugar son nodos Cartel (scenes/world/cartel.tscn):
+	# se colocan y editan en el editor, y se dibujan solos.
 
 	# La capa de swatches es solo dato: en runtime se oculta y dibujamos el arte real.
 	layer.visible = false
