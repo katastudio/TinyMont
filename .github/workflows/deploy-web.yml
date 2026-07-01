@@ -38,7 +38,7 @@ jobs:
           VER=4.4.1-stable
           DEST="$HOME/.local/share/godot/export_templates/4.4.1.stable"
           mkdir -p "$DEST"
-          curl -sSL -o /tmp/templates.tpz \
+          wget -q -O /tmp/templates.tpz \
             "https://github.com/godotengine/godot/releases/download/${VER}/Godot_v${VER}_export_templates.tpz"
           unzip -o -q /tmp/templates.tpz "templates/web_nothreads_*" -d /tmp/tpz
           cp -f /tmp/tpz/templates/web_nothreads_*.zip "$DEST"/
