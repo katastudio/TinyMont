@@ -1,8 +1,9 @@
 name: Deploy Web (GitHub Pages)
 
 # Exporta TinyMont a HTML5 y lo publica en GitHub Pages.
-# Camino reproducible: la imagen de CI ya trae Godot + export templates.
-# Requiere (una sola vez): Settings > Pages > Source = "GitHub Actions".
+# La imagen de CI trae Godot + templates 'web' (con hilos), pero NO la variante
+# 'web_nothreads' que usamos (para andar en Pages sin headers COOP/COEP), asi que
+# la instalamos aparte. Requiere (una sola vez): Settings > Pages > Source = "GitHub Actions".
 
 on:
   push:
@@ -30,6 +31,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Instalar template web_nothreads (falta en la imagen de CI)
+        run: |
+          set -e
+          VER=4.4.1-stable
+          DEST="$HOME/.local/share/godot/export_templates/4.4.1.stable"
+          mkdir -p "$DEST"
+          curl -sSL -o /tmp/templates.tpz \
+            "https://github.com/godotengine/godot/releases/download/${VER}/Godot_v${VER}_export_templates.tpz"
+          unzip -o -q /tmp/templates.tpz "templates/web_nothreads_*" -d /tmp/tpz
+          cp -f /tmp/tpz/templates/web_nothreads_*.zip "$DEST"/
+          echo "Templates web instalados:"; ls -1 "$DEST" | grep web
 
       - name: Exportar build Web
         run: |
