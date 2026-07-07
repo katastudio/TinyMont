@@ -2,19 +2,28 @@
   <defs><clipPath id="r"><rect width="16" height="16" rx="2.4"/></clipPath></defs>
   <g clip-path="url(#r)">
     <rect width="16" height="16" fill="#5c94fc"/>
-    <rect y="14" width="16" height="2" fill="#58d858"/>
-    <rect y="14" width="16" height="0.4" fill="#1c9c1c"/>
-    <rect x="6" y="2" width="4" height="1" fill="#e03020"/>
-    <rect x="5" y="3" width="6" height="1" fill="#e03020"/>
-    <rect x="4" y="4" width="8" height="1" fill="#a02000"/>
-    <rect x="5" y="5" width="6" height="3" fill="#fcc0a0"/>
-    <rect x="6" y="6" width="1" height="1" fill="#181018"/>
-    <rect x="9" y="6" width="1" height="1" fill="#181018"/>
-    <rect x="4" y="8" width="1" height="2" fill="#fcc0a0"/>
-    <rect x="11" y="8" width="1" height="2" fill="#fcc0a0"/>
-    <rect x="5" y="8" width="6" height="3" fill="#2038ec"/>
-    <rect x="5" y="11" width="6" height="1" fill="#1020a0"/>
-    <rect x="5" y="12" width="2" height="2" fill="#1020a0"/>
-    <rect x="9" y="12" width="2" height="2" fill="#1020a0"/>
+    <rect y="15" width="16" height="1" fill="#58d858"/>
+    <rect x="5" y="1" width="6" height="1" fill="#2f56d8"/>
+    <rect x="4" y="2" width="8" height="1" fill="#2f56d8"/>
+    <rect x="4" y="3" width="8" height="1" fill="#2341a2"/>
+    <rect x="5" y="4" width="6" height="4" fill="#f4c29a"/>
+    <rect x="10" y="4" width="1" height="4" fill="#c89f7e"/>
+    <rect x="6" y="5" width="1" height="1" fill="#141018"/>
+    <rect x="9" y="5" width="1" height="1" fill="#141018"/>
+    <rect x="8" y="6" width="1" height="1" fill="#c89f7e"/>
+    <rect x="7" y="8" width="2" height="1" fill="#c89f7e"/>
+    <rect x="4" y="8" width="1" height="3" fill="#f4c29a"/>
+    <rect x="11" y="8" width="1" height="3" fill="#f4c29a"/>
+    <rect x="5" y="8" width="6" height="3" fill="#547ff3"/>
+    <rect x="5" y="10" width="6" height="1" fill="#3d5baf"/>
+    <rect x="6" y="8" width="1" height="3" fill="#fcfcfc"/>
+    <rect x="8" y="8" width="1" height="3" fill="#fcfcfc"/>
+    <rect x="10" y="8" width="1" height="3" fill="#fcfcfc"/>
+    <rect x="5" y="11" width="6" height="2" fill="#394a86"/>
+    <rect x="5" y="12" width="6" height="1" fill="#293560"/>
+    <rect x="5" y="13" width="2" height="2" fill="#394a86"/>
+    <rect x="9" y="13" width="2" height="2" fill="#394a86"/>
+    <rect x="5" y="15" width="2" height="1" fill="#5a3a20"/>
+    <rect x="9" y="15" width="2" height="1" fill="#5a3a20"/>
   </g>
 </svg>

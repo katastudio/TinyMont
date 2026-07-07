@@ -33,7 +33,7 @@ const PALETTE := [
 	{name = "fuente",    tile = Tile.WATER,    btype = "",           bname = "",          color = Color("3cbcfc")},
 	{name = "monumento", tile = Tile.MONUMENT, btype = "",           bname = "",          color = Color("8888a0")},
 	{name = "banco",     tile = Tile.BENCH,    btype = "",           bname = "",          color = Color("a05000")},
-	{name = "estacion",  tile = Tile.BUILDING, btype = "station",    bname = "ESTACION",  color = Color("e03020")},
+	{name = "estacion",  tile = Tile.BUILDING, btype = "station",    bname = "ESTACION DE MONTE GRANDE",  color = Color("e03020")},
 	{name = "teatro",    tile = Tile.BUILDING, btype = "teatro",     bname = "TEATRO",    color = Color("fcd800")},
 	{name = "veneciana", tile = Tile.BUILDING, btype = "restaurant", bname = "VENECIANA", color = Color("d85820")},
 	{name = "mostaza",   tile = Tile.BUILDING, btype = "fastfood",   bname = "MOSTAZA",   color = Color("fc7460")},
@@ -356,13 +356,28 @@ func get_npc_at(world_pos: Vector2):
 
 func _spawn_player():
 	var player = preload("res://scenes/player/player.tscn").instantiate()
-	player.position = Vector2(13 * T + T / 2, 10 * T + T / 2)
+	player.position = _station_exit_pos()
 	add_child(player)
 	var cam: Camera2D = player.get_node("Camera2D")
 	cam.limit_left = 0
 	cam.limit_top = 0
 	cam.limit_right = MAP_W * T
 	cam.limit_bottom = MAP_H * T
+
+
+# El jugador arranca "saliendo de la estación": busca el edificio de la estación
+# y baja hasta el primer tile caminable debajo de su centro.
+func _station_exit_pos() -> Vector2:
+	for anchor in building_info:
+		var b = building_info[anchor]
+		if b.type == "station":
+			var cx: int = anchor.x + int(b.w / 2.0)
+			for y in range(anchor.y + b.h, MAP_H):
+				var wp := Vector2(cx * T + T / 2.0, y * T + T / 2.0)
+				if is_walkable(wp):
+					return wp
+	# Fallback: centro del mapa arriba
+	return Vector2(int(MAP_W / 2.0) * T + T / 2.0, 8 * T + T / 2.0)
 
 
 func _add_dialog_box():

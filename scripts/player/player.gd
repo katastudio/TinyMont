@@ -17,6 +17,8 @@ const CharacterArt = preload("res://scripts/art/character_art.gd")
 @export var camiseta: Color = Color("2f56d8")
 @export var pantalon: Color = Color("394a86")
 @export_enum("none", "backpack") var accesorio: String = "backpack"
+@export_enum("none", "stripes", "badge") var marca: String = "none"
+@export var marca_color: Color = Color("fcfcfc")
 
 @export_group("Animación")
 @export var respira: bool = true
@@ -44,6 +46,7 @@ func _descriptor() -> Dictionary:
 		hat = gorra, hat_col = gorra_color,
 		facial = vello_facial, glasses = lentes,
 		shirt = camiseta, pants = pantalon, accessory = accesorio,
+		mark = marca, mark_col = marca_color,
 	}
 
 
