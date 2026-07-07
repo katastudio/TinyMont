@@ -57,8 +57,8 @@ var building_info := {}
 func _ready():
 	_load_map()
 	_spawn_player()
-	_spawn_npcs()
 	_add_dialog_box()
+	# Los NPC ahora son nodos en la escena (main.tscn), editables en el Inspector.
 
 
 # ==================== CARGA DESDE EL TILEMAP ====================
@@ -363,92 +363,6 @@ func _spawn_player():
 	cam.limit_top = 0
 	cam.limit_right = MAP_W * T
 	cam.limit_bottom = MAP_H * T
-
-
-func _spawn_npcs():
-	_create_npc(Vector2(20, 31), "Don Carlos", [
-		"¡Eh, pibe! Bienvenido\na la Plaza Mitre.",
-		"Bajaste por Alem\ndesde la estacion,\n¿no? Es el eje.",
-		"La plaza es de 1904\ny esta en diagonal\na las calles."
-	], Pal.BLUE)
-
-	_create_npc(Vector2(18, 16), "La Sole", [
-		"¡Hola, vecino!",
-		"¿Venis a La Veneciana?\nLa mejor pizza del\nconurbano sur."
-	], Pal.RED)
-
-	_create_npc(Vector2(20, 7), "El Pipe", [
-		"Estoy esperando el\nRoca hace 40 minutos.",
-		"Para alla va a El\nJaguel y Ezeiza."
-	], Pal.YELLOW)
-
-	_create_npc(Vector2(26, 18), "El Gordo", [
-		"¡Vamo' el Club Atletico\nMonte Grande, papa!",
-		"Aca se juega al futbol\ndesde 1911."
-	], Pal.GRASS_DK)
-
-	_create_npc(Vector2(18, 18), "Lucia", [
-		"¡Hola! Trabajo en\nKata Studio.",
-		"Estamos haciendo\nTinyMont, un juego\nsobre Monte Grande."
-	], Pal.PURPLE)
-
-	_create_npc(Vector2(24, 35), "Dona Rosa", [
-		"¡Ay, nene! ¿No viste\na mi gato Mostaza?",
-		"Es naranja con\nmanchas negras."
-	], Pal.PINK)
-
-	_create_npc(Vector2(21, 30), "Don Ramon", [
-		"¿Sabias que ese\narbol es un Ginkgo\nbiloba?",
-		"Por algo le dicen\nla Ciudad de los\nArboles."
-	], Pal.WOOD)
-
-	_create_npc(Vector2(8, 11), "Mili", [
-		"¡Hoy hay funcion en\nel Teatro!",
-		"Tango, folklore y\nteatro. No te lo\npierdas."
-	], Pal.WATER)
-
-	_create_npc(Vector2(13, 16), "Beto", [
-		"Quiosco abierto las\n24hs sobre Alem.",
-		"¿Un Manaos bien\nfrio, pibe?"
-	], Pal.YELLOW)
-
-	_create_npc(Vector2(17, 7), "Ruben", [
-		"Diarios, revistas\ny figuritas, vecino.",
-		"40 anios en este\npuesto de la estacion."
-	], Pal.BRICK)
-
-	_create_npc(Vector2(13, 20), "Walter", [
-		"Manejo el 306, del\ncentro a Constitucion.",
-		"¡SUBE adelante,\nBAJA atras!"
-	], Pal.BLUE)
-
-	_create_npc(Vector2(29, 20), "Dona Marta", [
-		"¿Necesitas algo,\nnene? Tengo fiado\nsi sos del barrio."
-	], Pal.PINK)
-
-	_create_npc(Vector2(24, 31), "Tito", [
-		"¿Jugas a las bochas,\npibe? Veni que armamos\nuna con los muchachos.",
-		"La plaza no cambia,\npor suerte."
-	], Pal.GRASS_DK)
-
-	_create_npc(Vector2(22, 38), "El Chino", [
-		"¡Choripan recien\nhecho! Con chimi\ncasero, jefe.",
-		"¿Con o sin? Dale\nque se enfria."
-	], Pal.RED)
-
-	_create_npc(Vector2(22, 42), "Padre Quique", [
-		"Bienvenido a la\nParroquia Inmaculada\nConcepcion, hijo.",
-		"Los domingos hay\nmisa a las 10 y 19."
-	], Pal.WHITE)
-
-
-func _create_npc(tile_pos: Vector2, npc_name: String, lines: Array, color: Color):
-	var npc = preload("res://scenes/npc/npc.tscn").instantiate()
-	npc.position = Vector2(tile_pos.x * T + T / 2, tile_pos.y * T + T / 2)
-	npc.npc_name = npc_name
-	npc.dialog_lines = lines
-	npc.npc_color = color
-	add_child(npc)
 
 
 func _add_dialog_box():

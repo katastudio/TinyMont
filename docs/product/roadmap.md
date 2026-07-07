@@ -12,20 +12,38 @@ Hecho:
 - [x] Mapa Monte Grande con NPCs
 - [x] Render procedural estilo GB
 
-## Próximo milestone: `mvp-0.1.0` (publicable)
+## Publicado ✅: `v0.1.0` (antes `mvp-0.1.0`)
 
-Objetivo: **primera versión jugable y publicada en web**.
+Objetivo cumplido: **primera versión jugable y publicada en web**.
+Live: https://katastudio.github.io/TinyMont/
 
-| # | Ítem | Tipo | Prioridad | Estado |
-|---|------|------|-----------|--------|
-| B1 | Higiene de repo: commitear contenido, arreglar `.gitignore` | infra | 🔴 alta | idea |
-| B2 | `export_presets.cfg` para Web (HTML5) | infra | 🔴 alta | hecho |
-| B3 | Pipeline CI: export headless + publish (GitHub Pages) | infra | 🟠 media | en progreso (falta habilitar Pages + push) |
-| B4 | Pantalla de título / menú inicial | feature | 🟠 media | spec ([0004](../specs/0004-pantalla-titulo/spec.md)) |
-| B5 | Sistema de guardado (save/load de posición y progreso) | feature | 🟠 media | spec ([0005](../specs/0005-sistema-guardado/spec.md)) |
-| B6 | Transición entre mapas (plaza ↔ monte_grande) | feature | 🟠 media | spec ([0006](../specs/0006-transicion-mapas/spec.md)) |
-| B7 | Música/SFX chiptune (revisar si rompe regla "sin assets") | feature | 🟢 baja | idea |
-| B8 | Más NPCs y mini-quests (ej: el gato de Doña Rosa) | contenido | 🟢 baja | idea |
+| # | Ítem | Tipo | Estado |
+|---|------|------|--------|
+| B2 | `export_presets.cfg` para Web (HTML5) | infra | hecho |
+| B3 | Pipeline CI: export headless + publish (GitHub Pages) | infra | hecho (deploy verde, live) |
+
+## Milestone actual: `v0.2.0-alpha` — Editabilidad + personajes con vida
+
+| # | Ítem | Estado |
+|---|------|--------|
+| C1 | Editor de mapa visual (TileMap nativo, swatches) | hecho |
+| C2 | Carteles como nodos editables en el Inspector | hecho |
+| C3 | NPCs migrados de código a nodos de escena | hecho |
+| C4 | Sistema de personajes data-driven (rasgos → sprite de mapa + retrato) | hecho |
+| C5 | Animación procedural (respiración, parpadeo, caminata) editable en Inspector | hecho |
+| C6 | Branding web (ícono, boot splash, fondo) | hecho |
+| C7 | Retratos en el cuadro de diálogo | pendiente |
+| C8 | Gestos puntuales (AnimationPlayer / tween: saltito, saludo) | idea |
+| C9 | Roster de figuras reconocibles (Monte Grande + íconos AR) | en progreso |
+
+### Pendientes que vienen de 0.1.0
+| # | Ítem | Estado |
+|---|------|--------|
+| B4 | Pantalla de título / menú inicial | spec ([0004](../specs/0004-pantalla-titulo/spec.md)) |
+| B5 | Sistema de guardado (save/load) | spec ([0005](../specs/0005-sistema-guardado/spec.md)) |
+| B6 | Transición entre mapas (plaza ↔ monte_grande) | spec ([0006](../specs/0006-transicion-mapas/spec.md)) |
+| B7 | Música/SFX chiptune (revisar regla "sin assets") | idea |
+| B8 | Más NPCs y mini-quests (ej: el gato de Doña Rosa) | idea |
 
 ## Backlog futuro (sin milestone)
 

@@ -1,16 +1,60 @@
+@tool
 extends CharacterBody2D
 
 const TILE_SIZE := 16
 const MOVE_SPEED := 80.0
+const CharacterArt = preload("res://scripts/art/character_art.gd")
 
-# Colores desde la paleta compartida (Pal)
+# Rasgos del protagonista (el recién llegado). Editables en player.tscn (Inspector).
+@export_group("Aspecto")
+@export var piel: Color = Color("f4c29a")
+@export_enum("short", "curly", "long", "slick", "bald") var pelo: String = "short"
+@export var pelo_color: Color = Color("4a3320")
+@export_enum("none", "cap", "fedora", "beanie", "headband") var gorra: String = "cap"
+@export var gorra_color: Color = Color("e03020")
+@export_enum("none", "mustache", "beard", "stubble") var vello_facial: String = "none"
+@export var lentes: bool = false
+@export var camiseta: Color = Color("2f56d8")
+@export var pantalon: Color = Color("394a86")
+@export_enum("none", "backpack") var accesorio: String = "backpack"
+
+@export_group("Animación")
+@export var respira: bool = true
+@export var respira_amplitud: float = 1.0
+@export var respira_velocidad: float = 2.0
+@export var parpadea: bool = true
+@export var parpadeo_cada: float = 4.0
 
 var is_moving := false
 var target_pos := Vector2.ZERO
 var facing := Vector2.DOWN
+var _t := 0.0
+
+
+func _anim_cfg() -> Dictionary:
+	return {
+		respira = respira, respira_amp = respira_amplitud, respira_vel = respira_velocidad,
+		parpadea = parpadea, parpadeo_cada = parpadeo_cada,
+	}
+
+
+func _descriptor() -> Dictionary:
+	return {
+		skin = piel, hair = pelo_color, hair_style = pelo,
+		hat = gorra, hat_col = gorra_color,
+		facial = vello_facial, glasses = lentes,
+		shirt = camiseta, pants = pantalon, accessory = accesorio,
+	}
+
+
+func _process(delta):
+	_t += delta
+	queue_redraw()
 
 
 func _ready():
+	if Engine.is_editor_hint():
+		return
 	# Snap to tile center (not corner)
 	var tx := int(position.x / TILE_SIZE)
 	var ty := int(position.y / TILE_SIZE)
@@ -19,27 +63,14 @@ func _ready():
 
 
 func _draw():
-	# Cara (piel)
-	draw_rect(Rect2(-6, -3, 12, 10), Pal.SKIN)
-	# Overol azul
-	draw_rect(Rect2(-6, 3, 12, 4), Pal.BLUE)
-	# Gorra roja
-	draw_rect(Rect2(-7, -7, 14, 4), Pal.RED)
-	draw_rect(Rect2(-2, -8, 8, 2), Pal.RED)
-	# Ojos según dirección
-	var eye_y := 0.0
-	if facing == Vector2.DOWN:
-		draw_rect(Rect2(-3, eye_y, 2, 2), Pal.BLACK)
-		draw_rect(Rect2(1, eye_y, 2, 2), Pal.BLACK)
-	elif facing == Vector2.UP:
-		draw_rect(Rect2(-5, -3, 10, 3), Pal.RED)
-	elif facing == Vector2.LEFT:
-		draw_rect(Rect2(-5, eye_y, 2, 2), Pal.BLACK)
-	elif facing == Vector2.RIGHT:
-		draw_rect(Rect2(3, eye_y, 2, 2), Pal.BLACK)
+	# El protagonista se dibuja desde sus rasgos, con animación (respira / camina).
+	var st = CharacterArt.anim_state(_t, _anim_cfg(), is_moving, 0.0)
+	CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob), 1.0)
 
 
 func _physics_process(delta):
+	if Engine.is_editor_hint():
+		return
 	if GameManager.is_dialog_active:
 		return
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=4 uid="uid://cvrkcsywl7fg4"]
+[gd_scene load_steps=5 format=4 uid="uid://cvrkcsywl7fg4"]
 
 [ext_resource type="Script" uid="uid://dfoju8g262rgk" path="res://scripts/world/monte_grande.gd" id="1_0wfyh"]
 [ext_resource type="TileSet" uid="uid://33cj3uymneex" path="res://tilesets/monte_tiles.tres" id="2_sugp2"]
 [ext_resource type="PackedScene" path="res://scenes/world/cartel.tscn" id="3_cartel"]
+[ext_resource type="PackedScene" path="res://scenes/npc/npc.tscn" id="npc_src"]
 
 [node name="MonteGrande" type="Node2D"]
 script = ExtResource("1_0wfyh")
@@ -31,3 +32,133 @@ texto = "ALEM DOBLE"
 [node name="CartelPlaza" parent="." instance=ExtResource("3_cartel")]
 position = Vector2(338, 475)
 texto = "PLAZA MITRE"
+
+[node name="Npc00DonCarlos" parent="." instance=ExtResource("npc_src")]
+position = Vector2(328, 504)
+npc_name = "Don Carlos"
+dialog_lines = ["¡Eh, pibe! Bienvenido
+a la Plaza Mitre.", "Bajaste por Alem
+desde la estacion,
+¿no? Es el eje.", "La plaza es de 1904
+y esta en diagonal
+a las calles."]
+camiseta = Color(0.12549, 0.219608, 0.92549, 1)
+
+[node name="Npc01LaSole" parent="." instance=ExtResource("npc_src")]
+position = Vector2(296, 264)
+npc_name = "La Sole"
+dialog_lines = ["¡Hola, vecino!", "¿Venis a La Veneciana?
+La mejor pizza del
+conurbano sur."]
+camiseta = Color(0.878431, 0.188235, 0.12549, 1)
+
+[node name="Npc02ElPipe" parent="." instance=ExtResource("npc_src")]
+position = Vector2(328, 120)
+npc_name = "El Pipe"
+dialog_lines = ["Estoy esperando el
+Roca hace 40 minutos.", "Para alla va a El
+Jaguel y Ezeiza."]
+camiseta = Color(0.988235, 0.847059, 0, 1)
+
+[node name="Npc03ElGordo" parent="." instance=ExtResource("npc_src")]
+position = Vector2(424, 296)
+npc_name = "El Gordo"
+dialog_lines = ["¡Vamo' el Club Atletico
+Monte Grande, papa!", "Aca se juega al futbol
+desde 1911."]
+camiseta = Color(0.109804, 0.611765, 0.109804, 1)
+
+[node name="Npc04Lucia" parent="." instance=ExtResource("npc_src")]
+position = Vector2(296, 296)
+npc_name = "Lucia"
+dialog_lines = ["¡Hola! Trabajo en
+Kata Studio.", "Estamos haciendo
+TinyMont, un juego
+sobre Monte Grande."]
+camiseta = Color(0.752941, 0.25098, 0.752941, 1)
+
+[node name="Npc05DonaRosa" parent="." instance=ExtResource("npc_src")]
+position = Vector2(392, 568)
+npc_name = "Dona Rosa"
+dialog_lines = ["¡Ay, nene! ¿No viste
+a mi gato Mostaza?", "Es naranja con
+manchas negras."]
+camiseta = Color(0.988235, 0.454902, 0.627451, 1)
+
+[node name="Npc06DonRamon" parent="." instance=ExtResource("npc_src")]
+position = Vector2(344, 488)
+npc_name = "Don Ramon"
+dialog_lines = ["¿Sabias que ese
+arbol es un Ginkgo
+biloba?", "Por algo le dicen
+la Ciudad de los
+Arboles."]
+camiseta = Color(0.627451, 0.313726, 0, 1)
+
+[node name="Npc07Mili" parent="." instance=ExtResource("npc_src")]
+position = Vector2(136, 184)
+npc_name = "Mili"
+dialog_lines = ["¡Hoy hay funcion en
+el Teatro!", "Tango, folklore y
+teatro. No te lo
+pierdas."]
+camiseta = Color(0.235294, 0.737255, 0.988235, 1)
+
+[node name="Npc08Beto" parent="." instance=ExtResource("npc_src")]
+position = Vector2(216, 264)
+npc_name = "Beto"
+dialog_lines = ["Quiosco abierto las
+24hs sobre Alem.", "¿Un Manaos bien
+frio, pibe?"]
+camiseta = Color(0.988235, 0.847059, 0, 1)
+
+[node name="Npc09Ruben" parent="." instance=ExtResource("npc_src")]
+position = Vector2(280, 120)
+npc_name = "Ruben"
+dialog_lines = ["Diarios, revistas
+y figuritas, vecino.", "40 anios en este
+puesto de la estacion."]
+camiseta = Color(0.847059, 0.345098, 0.12549, 1)
+
+[node name="Npc10Walter" parent="." instance=ExtResource("npc_src")]
+position = Vector2(216, 328)
+npc_name = "Walter"
+dialog_lines = ["Manejo el 306, del
+centro a Constitucion.", "¡SUBE adelante,
+BAJA atras!"]
+camiseta = Color(0.12549, 0.219608, 0.92549, 1)
+
+[node name="Npc11DonaMarta" parent="." instance=ExtResource("npc_src")]
+position = Vector2(472, 328)
+npc_name = "Dona Marta"
+dialog_lines = ["¿Necesitas algo,
+nene? Tengo fiado
+si sos del barrio."]
+camiseta = Color(0.988235, 0.454902, 0.627451, 1)
+
+[node name="Npc12Tito" parent="." instance=ExtResource("npc_src")]
+position = Vector2(392, 504)
+npc_name = "Tito"
+dialog_lines = ["¿Jugas a las bochas,
+pibe? Veni que armamos
+una con los muchachos.", "La plaza no cambia,
+por suerte."]
+camiseta = Color(0.109804, 0.611765, 0.109804, 1)
+
+[node name="Npc13ElChino" parent="." instance=ExtResource("npc_src")]
+position = Vector2(360, 616)
+npc_name = "El Chino"
+dialog_lines = ["¡Choripan recien
+hecho! Con chimi
+casero, jefe.", "¿Con o sin? Dale
+que se enfria."]
+camiseta = Color(0.878431, 0.188235, 0.12549, 1)
+
+[node name="Npc14PadreQuique" parent="." instance=ExtResource("npc_src")]
+position = Vector2(360, 680)
+npc_name = "Padre Quique"
+dialog_lines = ["Bienvenido a la
+Parroquia Inmaculada
+Concepcion, hijo.", "Los domingos hay
+misa a las 10 y 19."]
+camiseta = Color(0.988235, 0.988235, 0.988235, 1)
