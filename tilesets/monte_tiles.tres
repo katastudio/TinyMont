@@ -1,7 +1,7 @@
 [gd_resource type="TileSet" load_steps=3 format=4 uid="uid://33cj3uymneex"]
 
 [sub_resource type="PortableCompressedTexture2D" id="PortableCompressedTexture2D_5ibji"]
-_data = PackedByteArray("AAADAAUAAAABAAAAgAAAADAAAACEAQAAUklGRnwBAABXRUJQVlA4THABAAAvf8ALEKfhNrZtpXq4O5GnhA49QAvaIEMDFOISMkSE8qUOtpFtK3m4uzslMESU8+skpgZacE+/jBvXtlXlfHd311IH4PNgsIQxEDpqOq08mf8AAF/yOwPtHqG74FxAOqH54WsbTgmwmKJhwFkOQI3NdABOMHpADrlehah/SnTRVSVanvSsHVq27CsDYhcfdkcrG1bkpDblnf8A7B3o50tknPVH+ld2k8Gsr2dJ/JlLDX8IhYNFZ243IMOXevLdqOG0RzkZGeVO5hnwwAIHkmybTvBtG7Gdv//tTexURfRfQFBohA8hGqIx8pGEIjRCExQeQDicg+F4BcZ+AHypC6SoD6LREowma/AH1P1/v0IDJCMNCUhHNmpQtQfVYAYGsgNkTQWaIAJBV4BuG8BujuAVywOa0AGC7gLd7gG72YAfwO7/+wXK0AIlyEKtiytSUGQ5yBZTsEhikFgmeMXagiIrQbZog0WyA4lVgx/M7v77LQ==")
+_data = PackedByteArray("AAADAAUAAAABAAAAgAAAADAAAACcAQAAUklGRpQBAABXRUJQVlA4TIgBAAAvf8ALEL/hJgAAJTrcnclXNghBAToQhTo0YLaJAoxM7v5Sw1FtW0v2cHcfQQQiEIQ4pCIAERgxc5ff9S23tW2b1nm2bRbwynkF/j4c/vCPn9m2NeY/AIDP77sC3JWDZAVND6QFxBfwURU0UP7uFwO0F20AcmwgA9CF/RvKU/dOP9RWwi2NW22h9BUlMEhzzw4jmPJx94EfmlT7i+AomNPjxQXSfvL9E5amDO8RCBdePNJcBc1qvmZVgH9iPVE87tZCJAMv5a/IpM2JOrRu4il/ANSE6VPdVERZCxxIsm06wbftH9vO/lc3sVMV0X8BQaERPkxQjFI0QxIaowRlaLIHk7gEcdoC6WwKZlIdSOMIjJMmSLI2+APq/r+/QSGSkYsEpCEbBWhzAJuwAKHsANn1gCuIQNAUoNkGsAMfvGItgSvUgKDNgWbvgB0cwQ9g9//9DuqjBhohC+mocrZOD3T6A9Bv5KAxGoKRZQJLV8Er1Ap0+l3Qb1RBY7QGI2sLLH0BfiC7++9XAA==")
 size_override = Vector2(128, 48)
 keep_compressed_buffer = true
 
@@ -28,6 +28,7 @@ texture = SubResource("PortableCompressedTexture2D_5ibji")
 2:2/0 = 0
 3:2/0 = 0
 4:2/0 = 0
+5:2/0 = 0
 
 [resource]
 sources/0 = SubResource("TileSetAtlasSource_5ll6y")
