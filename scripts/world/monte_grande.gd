@@ -369,6 +369,8 @@ func is_walkable(world_pos: Vector2) -> bool:
 			var nty := int(child.position.y) / T
 			if ntx == tx and nty == ty:
 				return false
+		if child.has_method("bloquea") and child.bloquea(tx, ty):
+			return false
 	return true
 
 
