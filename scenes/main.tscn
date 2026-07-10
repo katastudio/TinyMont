@@ -202,7 +202,7 @@ ganaste.", "Ya sos del barrio,
 Monti. Bienvenido
 a Monte Grande."]
 requisito_item = "vasitos"
-recompensa_item = "cafecito"
+recompensa_item = "recuerdo"
 
 [node name="PuestoMarcos" parent="." instance=ExtResource("6_puesto")]
 position = Vector2(368, 48)

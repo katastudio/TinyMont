@@ -7,8 +7,8 @@ extends Control
 const CharacterArt = preload("res://scripts/art/character_art.gd")
 const ItemArt = preload("res://scripts/art/item_art.gd")
 const BAR_H := 24.0
-const SLOTS := 5          # espacios visibles en la mochila
-const SLOT := 15.0        # ancho de cada slot
+const SLOTS := 6          # espacios visibles en la mochila (uno por misión)
+const SLOT := 14.0        # ancho de cada slot
 
 
 func _ready() -> void:
@@ -29,7 +29,7 @@ func _draw() -> void:
 	CharacterArt.draw_on(self, CharacterArt.map_rects(CharacterArt.PROTAG), Vector2(3, 3), 1.1)
 
 	# Mochila: fila de slots
-	var mx := 28.0
+	var mx := 26.0
 	for i in range(SLOTS):
 		var r := Rect2(mx + i * SLOT, 4, SLOT - 2, 16)
 		draw_rect(r, Color(0, 0, 0, 0.20))                 # hueco del slot
@@ -37,9 +37,15 @@ func _draw() -> void:
 		if i < GameManager.inventario.size():
 			ItemArt.draw_on(self, GameManager.inventario[i], r)
 
-	# Progreso de misiones (derecha)
+	# Progreso de misiones (derecha). Al completar todas -> medalla + "¡Completo!".
 	var font := ThemeDB.fallback_font
 	if font:
-		var prog := "Misiones %d" % GameManager.misiones_completadas()
-		draw_string(font, Vector2(w - 52, 16), prog,
-				HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Pal.UI_TEXT)
+		var comp := GameManager.misiones_completadas()
+		var total := GameManager.TOTAL_MISIONES
+		if comp >= total:
+			ItemArt.draw_on(self, "medalla", Rect2(w - 60, 3, 14, 16))
+			draw_string(font, Vector2(w - 44, 15), "¡Completo!",
+					HORIZONTAL_ALIGNMENT_LEFT, -1, 6, Color("ffd23c"))
+		else:
+			draw_string(font, Vector2(w - 58, 16), "Misiones %d/%d" % [comp, total],
+					HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Pal.UI_TEXT)

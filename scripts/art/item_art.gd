@@ -25,6 +25,8 @@ static func draw_on(ci: CanvasItem, item: String, r: Rect2) -> void:
 			_celular(ci, r)
 		"parlante":
 			_parlante(ci, r)
+		"medalla":
+			_medalla(ci, r)
 		_:
 			_generico(ci, r)
 
@@ -111,6 +113,21 @@ static func _parlante(ci: CanvasItem, r: Rect2) -> void:
 	ci.draw_circle(Vector2(x + 7, y + 8), 2.6, Color("18181a"))    # cono
 	ci.draw_circle(Vector2(x + 7, y + 8), 1.0, Color("60606a"))
 	ci.draw_circle(Vector2(x + 4, y + 5), 1.0, Color("18181a"))    # tweeter
+
+
+# Medalla dorada (cierre: completaste todas las misiones) con cinta celeste/blanca.
+static func _medalla(ci: CanvasItem, r: Rect2) -> void:
+	var c := r.get_center()
+	ci.draw_rect(Rect2(c.x - 3, c.y - 6, 2, 5), Color("74acf0"))   # cinta celeste
+	ci.draw_rect(Rect2(c.x + 1, c.y - 6, 2, 5), Color("fcfcfc"))   # cinta blanca
+	var mc := c + Vector2(0, 2)
+	ci.draw_circle(mc, 4.2, Color("c99a10"))                       # borde
+	ci.draw_circle(mc, 3.4, Color("ffd23c"))                       # oro
+	ci.draw_colored_polygon(PackedVector2Array([
+		mc + Vector2(0, -2.4), mc + Vector2(0.7, -0.7), mc + Vector2(2.4, 0),
+		mc + Vector2(0.7, 0.7), mc + Vector2(0, 2.4), mc + Vector2(-0.7, 0.7),
+		mc + Vector2(-2.4, 0), mc + Vector2(-0.7, -0.7),
+	]), Color("c99a10"))                                          # estrellita
 
 
 # Fallback: caja con signo, para objetos aún sin ícono propio.

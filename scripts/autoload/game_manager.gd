@@ -103,9 +103,26 @@ func get_estado_mision(id: String) -> String:
 	return misiones.get(id, "no_iniciada")
 
 
+const TOTAL_MISIONES := 6   # total de misiones de la beta (para el contador y el cierre)
+var _victoria := false
+
+
 func set_estado_mision(id: String, estado: String) -> void:
 	misiones[id] = estado
 	mision_cambiada.emit()
+	# Cierre de la beta: al completar todas, festejo (una sola vez, tras cerrar
+	# el diálogo de la última entrega).
+	if not _victoria and misiones_completadas() >= TOTAL_MISIONES:
+		_victoria = true
+		dialog_ended.connect(_mostrar_victoria, CONNECT_ONE_SHOT)
+
+
+func _mostrar_victoria() -> void:
+	start_dialog("Monte Grande", [
+		"¡Felicitaciones, Monti!",
+		"Ayudaste a todo\nel barrio de\nMonte Grande.",
+		"Ya sos un\nMontegrandense\nde ley. ¡Bienvenido!",
+	], Color("ffd23c"))
 
 
 func misiones_completadas() -> int:
