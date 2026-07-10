@@ -16,8 +16,16 @@ var misiones: Dictionary = {}       # mision_id -> "no_iniciada" | "en_curso" | 
 
 func _ready():
 	_setup_input()
+	_adaptar_pantalla()
 	_add_hud()
 	_add_touch_controls()
+
+
+# En mobile/touch llenamos la pantalla (expand); en PC se mantiene "keep"
+# (handheld centrado, lo más grande posible sin distorsión).
+func _adaptar_pantalla() -> void:
+	if DisplayServer.is_touchscreen_available():
+		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 
 
 func _setup_input():
