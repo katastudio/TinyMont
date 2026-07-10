@@ -34,7 +34,18 @@ Live: https://katastudio.github.io/TinyMont/
 | C6 | Branding web (ícono, boot splash, fondo) | hecho |
 | C7 | Retratos en el cuadro de diálogo | pendiente |
 | C8 | Gestos puntuales (AnimationPlayer / tween: saltito, saludo) | idea |
-| C9 | Roster de figuras reconocibles (Monte Grande + íconos AR) | en progreso |
+| C9 | Roster de figuras reconocibles (Monte Grande + íconos AR) | spec ([0008](../specs/0008-historia-principal-misiones/spec.md)) |
+
+## Próximo milestone: `v0.3.0-beta` — Beta pública
+
+Objetivo: **versión beta liberada**, jugable en web mobile y publicada en Play Store.
+
+| # | Ítem | Estado |
+|---|------|--------|
+| D1 | Historia principal, personajes y diálogos definidos | spec ([0008](../specs/0008-historia-principal-misiones/spec.md)) |
+| D2 | Mejorar jugabilidad (autonomía de NPCs) | spec ([0009](../specs/0009-npc-autonomia/spec.md)) |
+| D3 | Vista web mobile (controles táctiles, canvas responsive) | idea |
+| D4 | Export Android + publicación en Play Store | idea |
 
 ### Pendientes que vienen de 0.1.0
 | # | Ítem | Estado |
