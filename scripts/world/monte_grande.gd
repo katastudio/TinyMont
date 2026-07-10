@@ -12,6 +12,7 @@ extends Node2D
 const T := 16
 const MAP_LAYER := "MapaLayer"
 const COLS := 8  # columnas del atlas de swatches
+const TanqueArt = preload("res://scripts/art/tanque_art.gd")
 
 enum Tile {
 	GRASS, BUILDING, ROAD, TREE, RAIL, PLAZA, WATER,
@@ -59,6 +60,7 @@ func _ready():
 	_load_map()
 	_spawn_player()
 	_add_dialog_box()
+	GameManager.mostrar_ui_juego(true)   # HUD + controles visibles en el juego
 	# Los NPC ahora son nodos en la escena (main.tscn), editables en el Inspector.
 
 
@@ -335,28 +337,7 @@ func _draw_special_buildings():
 # El Tanque: torre de agua tipo hongo (columna con mural + copa ancha).
 # cx = centro X, ground = Y del suelo (base). Se dibuja hacia arriba.
 func _draw_tanque(cx: float, ground: float):
-	var rects = [
-		[-12, -56, 24, 56, Color("d86a2c")],   # columna (mural)
-		[-12, -36, 10, 36, Color("c0281c")],
-		[-3, -46, 7, 46, Color("f5c518")],
-		[5, -32, 8, 32, Color("c0281c")],
-		[-1, -22, 5, 22, Color("201510")],
-		[-9, -54, 7, 12, Color("2a8c7a")],
-		[-12, -56, 24, 2, Color("8a5a2a")],
-		[-18, -62, 36, 6, Color("8a6238")],    # embudo (se ensancha)
-		[-26, -68, 52, 6, Color("9a7444")],
-		[-34, -74, 68, 6, Color("a8845a")],
-		[-40, -80, 80, 6, Color("b98f5a")],
-		[-40, -92, 80, 12, Color("c9a877")],   # copa (tanque)
-		[-40, -82, 80, 2, Color("7c5a34")],
-		[-35, -92, 70, 3, Color("d8bf95")],
-		[-30, -89, 3, 5, Color("6a4a28")],     # letra O
-		[28, -89, 3, 5, Color("6a4a28")],      # letra S
-		[-1, -98, 2, 6, Color("444444")],      # antena
-		[-13, -3, 26, 3, Color("2a1e14")],     # base
-	]
-	for a in rects:
-		draw_rect(Rect2(cx + a[0], ground + a[1], a[2], a[3]), a[4])
+	TanqueArt.draw_on(self, cx, ground)
 
 
 func _draw_labels():

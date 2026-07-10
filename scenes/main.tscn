@@ -71,7 +71,7 @@ desde 1911."]
 camiseta = Color(0.109804, 0.611765, 0.109804, 1)
 
 [node name="Npc04Lucia" parent="." instance=ExtResource("npc_src")]
-position = Vector2(296, 296)
+position = Vector2(249, 296)
 npc_name = "Lucia"
 dialog_lines = ["¡Hola! Trabajo en
 Kata Studio.", "Estamos haciendo
@@ -208,7 +208,7 @@ position = Vector2(368, 48)
 toldo = Color(0.803922, 0.2, 0.152941, 1)
 
 [node name="Sandra" parent="." instance=ExtResource("npc_src")]
-position = Vector2(361, 614)
+position = Vector2(361, 599)
 npc_name = "Sandra"
 dialog_lines = ["¿Un mate cocido?
 ¿Una factura?

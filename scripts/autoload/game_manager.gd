@@ -14,11 +14,24 @@ var inventario: Array = []          # ids de objetos que Monti lleva en la mochi
 var misiones: Dictionary = {}       # mision_id -> "no_iniciada" | "en_curso" | "completada"
 
 
+var _hud: CanvasLayer = null
+var _touch: CanvasLayer = null
+
+
 func _ready():
 	_setup_input()
 	_adaptar_pantalla()
 	_add_hud()
 	_add_touch_controls()
+	mostrar_ui_juego(false)   # el título arranca sin HUD ni controles
+
+
+# El HUD y los controles solo se ven durante el juego (no en el título).
+func mostrar_ui_juego(v: bool) -> void:
+	if _hud:
+		_hud.visible = v
+	if _touch:
+		_touch.visible = v
 
 
 # En mobile/touch llenamos la pantalla (expand); en PC se mantiene "keep"
@@ -106,8 +119,10 @@ func misiones_completadas() -> int:
 # ==================== HUD ====================
 
 func _add_hud() -> void:
-	add_child(preload("res://scenes/ui/hud.tscn").instantiate())
+	_hud = preload("res://scenes/ui/hud.tscn").instantiate()
+	add_child(_hud)
 
 
 func _add_touch_controls() -> void:
-	add_child(preload("res://scenes/ui/touch_controls.tscn").instantiate())
+	_touch = preload("res://scenes/ui/touch_controls.tscn").instantiate()
+	add_child(_touch)

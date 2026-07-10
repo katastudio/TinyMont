@@ -20,6 +20,7 @@ func _ready():
 	_spawn_player()
 	_spawn_npcs()
 	_add_dialog_box()
+	GameManager.mostrar_ui_juego(true)   # HUD + controles visibles en el juego
 
 
 func _build_map():
