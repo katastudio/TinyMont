@@ -36,3 +36,6 @@ builds/
 # Dev preview tools (capturas)
 tools/shot*.gd
 tools/shot*.tscn
+
+# Tooling / caché de skills (no se versiona)
+.atl/

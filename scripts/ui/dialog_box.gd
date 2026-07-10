@@ -41,7 +41,7 @@ func _build_ui():
 	frame.anchor_top = 1.0
 	frame.anchor_bottom = 1.0
 	frame.anchor_right = 1.0
-	frame.offset_top = -48.0
+	frame.offset_top = -52.0
 	frame.offset_left = 3.0
 	frame.offset_right = -3.0
 	frame.offset_bottom = -3.0
@@ -65,20 +65,30 @@ func _build_ui():
 	inner.add_theme_stylebox_override("panel", istyle)
 	frame.add_child(inner)
 
-	# Cuerpo de texto (tinta marrón sobre pergamino)
+	# Cuerpo de texto: tinta negra sobre pergamino (contraste alto = legible).
+	# Rellena TODO el interior y recorta (clip_text) para no salirse nunca del marco.
 	text_label = Label.new()
-	text_label.position = Vector2(5, 7)
-	text_label.size = Vector2(146, 34)
-	text_label.add_theme_color_override("font_color", Pal.BRICK_DK)
-	text_label.add_theme_font_size_override("font_size", 7)
+	text_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	text_label.offset_left = 4.0
+	text_label.offset_top = 3.0
+	text_label.offset_right = -4.0
+	text_label.offset_bottom = -3.0
+	text_label.add_theme_color_override("font_color", Pal.BLACK)
+	text_label.add_theme_font_size_override("font_size", 8)
+	text_label.add_theme_constant_override("line_spacing", 0)
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	text_label.clip_text = true
 	inner.add_child(text_label)
 
-	# Indicador de avance (parpadea)
+	# Indicador de avance (parpadea), anclado abajo a la derecha del interior
 	indicator = Label.new()
-	indicator.position = Vector2(140, 30)
+	indicator.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	indicator.offset_left = -12.0
+	indicator.offset_top = -13.0
+	indicator.offset_right = -1.0
+	indicator.offset_bottom = -1.0
 	indicator.text = "▼"
-	indicator.add_theme_color_override("font_color", Pal.BRICK_DK)
+	indicator.add_theme_color_override("font_color", Pal.BLACK)
 	indicator.add_theme_font_size_override("font_size", 7)
 	indicator.visible = false
 	inner.add_child(indicator)
@@ -87,8 +97,8 @@ func _build_ui():
 	name_plate = Panel.new()
 	name_plate.anchor_top = 1.0
 	name_plate.anchor_bottom = 1.0
-	name_plate.offset_top = -59.0
-	name_plate.offset_bottom = -47.0
+	name_plate.offset_top = -63.0
+	name_plate.offset_bottom = -51.0
 	name_plate.offset_left = 6.0
 	name_plate.offset_right = 60.0
 	root.add_child(name_plate)

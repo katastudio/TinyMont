@@ -25,11 +25,11 @@ GameManager="*res://scripts/autoload/game_manager.gd"
 
 [display]
 
-window/size/viewport_width=160
-window/size/viewport_height=144
+window/size/viewport_width=200
+window/size/viewport_height=180
 window/size/window_width_override=640
 window/size/window_height_override=576
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 
 [input]
 

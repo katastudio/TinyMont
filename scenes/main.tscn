@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=4 uid="uid://cvrkcsywl7fg4"]
+[gd_scene load_steps=7 format=4 uid="uid://cvrkcsywl7fg4"]
 
 [ext_resource type="Script" uid="uid://dfoju8g262rgk" path="res://scripts/world/monte_grande.gd" id="1_0wfyh"]
 [ext_resource type="TileSet" uid="uid://33cj3uymneex" path="res://tilesets/monte_tiles.tres" id="2_sugp2"]
 [ext_resource type="PackedScene" uid="uid://byjkst3tfrc72" path="res://scenes/world/cartel.tscn" id="3_cartel"]
 [ext_resource type="PackedScene" path="res://scenes/world/lugar.tscn" id="5_tbgi4"]
+[ext_resource type="PackedScene" path="res://scenes/world/puesto.tscn" id="6_puesto"]
 [ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc_src"]
 
 [node name="MonteGrande" type="Node2D"]
@@ -163,6 +164,33 @@ Parroquia Inmaculada
 Concepcion, hijo.", "Los domingos hay
 misa a las 10 y 19."]
 camiseta = Color(0.988235, 0.988235, 0.988235, 1)
+
+[node name="Marcos" parent="." instance=ExtResource("npc_src")]
+position = Vector2(360, 56)
+npc_name = "Marcos"
+dialog_lines = ["¡Bienvenido, pibe!
+¿Recien bajas
+del tren?", "Soy Marcos. Vendo
+cafe aca desde
+2001, llueva o sol.", "El cafe se toma
+todo el año, igual
+que el mate.", "Monte Grande es
+barrio de los de
+verdad, pibe.", "Aca no sos vecino
+hasta que el barrio
+te conoce.", "Date una vuelta y
+conoce a la gente.
+Luego te pido un favor."]
+piel = Color(0.780392, 0.560784, 0.4, 1)
+pelo_color = Color(0.227451, 0.164706, 0.101961, 1)
+gorra = "beanie"
+gorra_color = Color(0.301961, 0.372549, 0.462745, 1)
+vello_facial = "mustache"
+camiseta = Color(0.435294, 0.305882, 0.215686, 1)
+
+[node name="PuestoMarcos" parent="." instance=ExtResource("6_puesto")]
+position = Vector2(368, 48)
+toldo = Color(0.803922, 0.2, 0.152941, 1)
 
 [node name="McDonalds" parent="." instance=ExtResource("5_tbgi4")]
 position = Vector2(560, 479)

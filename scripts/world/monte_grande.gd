@@ -33,7 +33,7 @@ const PALETTE := [
 	{name = "fuente",    tile = Tile.WATER,    btype = "",           bname = "",          color = Color("3cbcfc")},
 	{name = "monumento", tile = Tile.MONUMENT, btype = "",           bname = "",          color = Color("8888a0")},
 	{name = "banco",     tile = Tile.BENCH,    btype = "",           bname = "",          color = Color("a05000")},
-	{name = "estacion",  tile = Tile.BUILDING, btype = "station",    bname = "ESTACION DE MONTE GRANDE",  color = Color("e03020")},
+	{name = "estacion",  tile = Tile.BUILDING, btype = "station",    bname = "Monte Grande",  color = Color("fcfcfc")},
 	{name = "teatro",    tile = Tile.BUILDING, btype = "teatro",     bname = "TEATRO",    color = Color("fcd800")},
 	{name = "veneciana", tile = Tile.BUILDING, btype = "restaurant", bname = "VENECIANA", color = Color("d85820")},
 	{name = "mostaza",   tile = Tile.BUILDING, btype = "fastfood",   bname = "MOSTAZA",   color = Color("fc7460")},
@@ -277,7 +277,23 @@ func _draw_special_buildings():
 		var bh = info.h * T
 		match info.type:
 			"station":
-				draw_rect(Rect2(bx, by, bw, 4), Pal.RED)
+				# Estacion: paredes blancas + techo verde oscuro (tapa el ladrillo generico)
+				var green := Pal.GRASS_DK.darkened(0.3)
+				draw_rect(Rect2(bx, by, bw, bh), Color("c6c8cc"))                    # paredes gris claro
+				draw_rect(Rect2(bx, by, bw, bh), Pal.BLACK, false, 1.0)              # contorno
+				draw_rect(Rect2(bx - 2, by, bw + 4, 8), green)                       # techo con alero
+				draw_rect(Rect2(bx - 2, by + 8, bw + 4, 1), green.darkened(0.25))    # sombra del alero
+				var dcx: float = bx + bw / 2.0
+				draw_rect(Rect2(dcx - 5, by + bh - 12, 10, 12), Pal.WOOD_DK)         # puerta
+				draw_rect(Rect2(dcx - 4, by + bh - 11, 8, 11), Pal.WOOD)
+				draw_rect(Rect2(dcx - 1, by + bh - 11, 1, 11), Pal.WOOD_DK)          # doble hoja
+				for i in range(info.w):                                             # ventanas
+					var wcx: float = bx + i * T + T / 2.0
+					if absf(wcx - dcx) < 14:
+						continue
+					draw_rect(Rect2(wcx - 3, by + 11, 6, 7), Pal.SKY)
+					draw_rect(Rect2(wcx - 3, by + 11, 6, 7), Pal.BLACK, false, 1.0)
+					draw_rect(Rect2(wcx, by + 11, 1, 7), Pal.WHITE)                  # cruceta
 			"teatro":
 				draw_rect(Rect2(bx, by, bw, 4), Pal.YELLOW)
 			"restaurant":
