@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=4 uid="uid://cvrkcsywl7fg4"]
+[gd_scene load_steps=8 format=4 uid="uid://cvrkcsywl7fg4"]
 
 [ext_resource type="Script" uid="uid://dfoju8g262rgk" path="res://scripts/world/monte_grande.gd" id="1_0wfyh"]
 [ext_resource type="TileSet" uid="uid://33cj3uymneex" path="res://tilesets/monte_tiles.tres" id="2_sugp2"]
 [ext_resource type="PackedScene" uid="uid://byjkst3tfrc72" path="res://scenes/world/cartel.tscn" id="3_cartel"]
 [ext_resource type="PackedScene" path="res://scenes/world/lugar.tscn" id="5_tbgi4"]
 [ext_resource type="PackedScene" path="res://scenes/world/puesto.tscn" id="6_puesto"]
+[ext_resource type="PackedScene" path="res://scenes/world/objeto.tscn" id="7_objeto"]
 [ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc_src"]
 
 [node name="MonteGrande" type="Node2D"]
@@ -233,6 +234,184 @@ otorga_item = "vasitos"
 [node name="PuestoSandra" parent="." instance=ExtResource("6_puesto")]
 position = Vector2(381, 616)
 toldo = Color(0.478431, 0.121569, 0.168627, 1)
+
+[node name="Gille" parent="." instance=ExtResource("npc_src")]
+position = Vector2(280, 277)
+npc_name = "Gille"
+dialog_lines = ["El barrio suena
+mejor con vos, pibe."]
+pelo_color = Color(0.541176, 0.541176, 0.541176, 1)
+gorra = "fedora"
+gorra_color = Color(0.101961, 0.101961, 0.101961, 1)
+vello_facial = "mustache"
+lentes = true
+camiseta = Color(0.815686, 0.156863, 0.094118, 1)
+mision_id = "gille_trompeta"
+dialog_encargo = ["¡Un caradura nuevo!
+Soy Gille, toco la
+trompeta.", "Despues del ensayo
+me deje la trompeta
+en la plaza.", "Buscala y traemela,
+que sin ella no hay
+zapada, che."]
+dialog_recordatorio = ["¿La trompeta?
+Anda a la plaza,
+tiene que estar ahi.", "Sin trompeta no
+sueno, pibe."]
+dialog_entrega = ["¡Mi trompeta!
+Gracias, grande.", "Tomate esto de
+recuerdo. Ya sos de
+la banda del barrio."]
+requisito_item = "trompeta"
+recompensa_item = "recuerdo"
+
+[node name="ElDiez" parent="." instance=ExtResource("npc_src")]
+position = Vector2(438, 135)
+npc_name = "Leo"
+dialog_lines = ["Aca cualquiera
+juega bien. Es
+el barrio."]
+pelo_color = Color(0.352941, 0.227451, 0.101961, 1)
+vello_facial = "beard"
+camiseta = Color(0.454902, 0.67451, 0.941176, 1)
+marca = "stripes"
+mision_id = "eldiez_pelota"
+dialog_encargo = ["¡Eh, hola! Soy Leo,
+de visita por
+el barrio.", "Pateamos un rato
+y la pelota se fue
+a los arboles.", "¿Me la buscas?
+No llego yo con
+tanta gente."]
+dialog_recordatorio = ["La pelota quedo
+entre los arboles,
+fijate.", "Sin pelota no hay
+picadito, che."]
+dialog_entrega = ["¡Esa! Gracias,
+crack.", "Tomate un recuerdo.
+Nos vemos, campeon."]
+requisito_item = "pelota"
+recompensa_item = "recuerdo"
+
+[node name="Trompeta" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(312, 583)
+item = "trompeta"
+nombre = "la trompeta"
+
+[node name="Pelota" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(472, 583)
+item = "pelota"
+nombre = "la pelota"
+
+[node name="Tiaguito" parent="." instance=ExtResource("npc_src")]
+position = Vector2(488, 104)
+npc_name = "Tiaguito"
+dialog_lines = ["De El Jaguel pal
+mundo, sin olvidarse
+del barrio."]
+piel = Color(0.780392, 0.560784, 0.4, 1)
+pelo = "curly"
+pelo_color = Color(0.101961, 0.101961, 0.101961, 1)
+gorra = "beanie"
+gorra_color = Color(0.12, 0.12, 0.13, 1)
+vello_facial = "stubble"
+camiseta = Color(0.129412, 0.129412, 0.145098, 1)
+mision_id = "tiaguito_microfono"
+dialog_encargo = ["Eh, ¿todo bien?
+Soy Tiaguito, tiro
+rimas por el barrio.", "Antes de la batalla
+se me perdio el
+microfono.", "Cerca de la estacion
+tiene que estar.
+¿Me lo buscas?"]
+dialog_recordatorio = ["¿El microfono?
+Fijate cerca de la
+estacion, dale.", "Sin micro no hay
+freestyle, hermano."]
+dialog_entrega = ["¡Ese microfono!
+Gracias, capo.", "Tomate un recuerdo.
+La proxima tiramos
+unas rimas juntos."]
+requisito_item = "microfono"
+recompensa_item = "recuerdo"
+
+[node name="LaCoqueta" parent="." instance=ExtResource("npc_src")]
+position = Vector2(88, 215)
+npc_name = "La Coqueta"
+dialog_lines = ["El conurbano tiene
+lo mejor, y hay
+que mostrarlo."]
+piel = Color(0.827451, 0.615686, 0.454902, 1)
+pelo = "long"
+pelo_color = Color(0.12, 0.1, 0.09, 1)
+gorra = "headband"
+gorra_color = Color(0.941176, 0.439216, 0.690196, 1)
+camiseta = Color(0.878431, 0.25098, 0.603922, 1)
+mision_id = "coqueta_celular"
+dialog_encargo = ["¡Hola, acompañenon!
+Soy La Coqueta,
+hago contenido.", "Grabando por el
+barrio se me cayo
+el celular.", "Sin celu no hay
+video. ¿Me lo
+buscas, amor?"]
+dialog_recordatorio = ["¿El celular?
+Debe estar por
+donde grababa.", "¡Sin celu no hay
+contenido!"]
+dialog_entrega = ["¡Mi celu! Sos
+un genio.", "Tomate un recuerdo
+y saluda a camara:
+¡acompañenon!"]
+requisito_item = "celular"
+recompensa_item = "recuerdo"
+
+[node name="Chuchu" parent="." instance=ExtResource("npc_src")]
+position = Vector2(112, 127)
+npc_name = "Chuchu"
+dialog_lines = ["En Las Colinas
+nadie se queda
+solo, che."]
+piel = Color(0.780392, 0.560784, 0.4, 1)
+pelo_color = Color(0.101961, 0.101961, 0.101961, 1)
+gorra = "cap"
+gorra_color = Color(0.2, 0.45, 0.75, 1)
+camiseta = Color(0.352941, 0.627451, 0.878431, 1)
+marca = "stripes"
+mision_id = "chuchu_parlante"
+dialog_encargo = ["¡Eeepa! Soy Chuchu,
+del barrio Las
+Colinas.", "Armo un baile
+solidario para
+el comedor.", "Pero perdi el
+parlante. ¿Me lo
+buscas?", "¡Sin musica no
+hay joda, vecino!"]
+dialog_recordatorio = ["¿El parlante?
+Buscalo, que sin
+musica no bailamos.", "El comedor te lo
+va a agradecer."]
+dialog_entrega = ["¡Ese parlante!
+Grande, vecino.", "Tomate un recuerdo.
+Aca ayudamos entre
+todos, siempre."]
+requisito_item = "parlante"
+recompensa_item = "recuerdo"
+
+[node name="Microfono" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(264, 664)
+item = "microfono"
+nombre = "el microfono"
+
+[node name="Celular" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(617, 473)
+item = "celular"
+nombre = "el celular"
+
+[node name="Parlante" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(473, 409)
+item = "parlante"
+nombre = "el parlante"
 
 [node name="McDonalds" parent="." instance=ExtResource("5_tbgi4")]
 position = Vector2(560, 479)
