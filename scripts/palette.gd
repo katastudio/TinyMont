@@ -42,3 +42,13 @@ const RED := Color("#e03020")
 const BLUE := Color("#2038ec")
 const PINK := Color("#fc74a0")
 const PURPLE := Color("#c040c0")
+
+# --- UI del juego (GRIS CLARO estilo Game Boy original). Barra de estado + controles. ---
+const UI_BG := Color("#c8c6bc")      # gris claro (cuerpo GB): fondo de las barras
+const UI_EDGE := Color("#2a2a28")    # gris casi negro: bordes / contornos
+const UI_ACCENT := Color("#4a4a44")  # gris oscuro: líneas de acento / marcos de slot
+const UI_TEXT := Color("#2a2a28")    # gris casi negro: texto sobre las barras claras
+const UI_LIGHT := Color("#ecece4")   # casi blanco: marcas sobre botones oscuros (flechas, A/B)
+const UI_DPAD := Color("#38363a")    # gris oscuro casi negro: cruceta (estilo GB)
+const UI_A := Color("#a02a5e")       # botón A: magenta (estilo GB)
+const UI_B := Color("#a02a5e")       # botón B: magenta (estilo GB)

@@ -410,9 +410,9 @@ func _spawn_player():
 	add_child(player)
 	var cam: Camera2D = player.get_node("Camera2D")
 	cam.limit_left = 0
-	cam.limit_top = 0
+	cam.limit_top = -24  # franja reservada arriba para el HUD (ver hud.gd BAR_H)
 	cam.limit_right = MAP_W * T
-	cam.limit_bottom = MAP_H * T
+	cam.limit_bottom = MAP_H * T + 48  # franja reservada abajo para los controles (touch_controls BOTTOM_BAR)
 
 
 # El jugador arranca "saliendo de la estación": busca el edificio de la estación
@@ -422,10 +422,18 @@ func _station_exit_pos() -> Vector2:
 		var b = building_info[anchor]
 		if b.type == "station":
 			var cx: int = anchor.x + int(b.w / 2.0)
-			for y in range(anchor.y + b.h, MAP_H):
-				var wp := Vector2(cx * T + T / 2.0, y * T + T / 2.0)
-				if is_walkable(wp):
-					return wp
+			var exit_y: int = anchor.y + b.h   # fila de la vereda, justo debajo de la estación
+			# Arrancar SOBRE la vereda, al lado de Marcos (no en la calle de abajo):
+			# probar tiles caminables en esa fila, cerca del centro.
+			for dx in [-1, 1, -2, 2, -3, 3, 0]:
+				var side := Vector2((cx + dx) * T + T / 2.0, exit_y * T + T / 2.0)
+				if is_walkable(side):
+					return side
+			# Fallback: bajar hasta el primer tile caminable
+			for y in range(exit_y, MAP_H):
+				var below := Vector2(cx * T + T / 2.0, y * T + T / 2.0)
+				if is_walkable(below):
+					return below
 	# Fallback: centro del mapa arriba
 	return Vector2(int(MAP_W / 2.0) * T + T / 2.0, 8 * T + T / 2.0)
 

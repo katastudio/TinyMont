@@ -198,6 +198,7 @@ static func draw_on(ci: CanvasItem, rects: Array, origin: Vector2, s: float) -> 
 # ---- Descriptores predefinidos ----
 # Protagonista: el recién llegado (mochila al hombro).
 const PROTAG := {
-	hat = "cap", hat_col = Color("e03020"), hair = Color("4a3320"),
-	shirt = Color("2f56d8"), pants = Color("394a86"), accessory = "backpack",
+	hair_style = "bald", hat = "cap", hat_col = Color("2f56d8"),
+	shirt = Color("547ff3"), pants = Color("394a86"),
+	mark = "stripes", accessory = "none",
 }

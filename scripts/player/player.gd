@@ -107,15 +107,24 @@ func _handle_input():
 			target_pos = next_pos
 			is_moving = true
 
-	if Input.is_action_just_pressed("interact"):
-		_interact()
-
 
 func _can_move_to(pos: Vector2) -> bool:
 	var world = get_parent()
 	if world.has_method("is_walkable"):
 		return world.is_walkable(pos)
 	return true
+
+
+# Interacción por evento (no polling): consume la tecla para que el diálogo
+# no la reciba en el mismo frame (evita saltear la primera línea al abrir).
+func _unhandled_input(event: InputEvent) -> void:
+	if Engine.is_editor_hint():
+		return
+	if GameManager.is_dialog_active:
+		return
+	if event.is_action_pressed("interact"):
+		_interact()
+		get_viewport().set_input_as_handled()
 
 
 func _interact():

@@ -218,9 +218,9 @@ func _spawn_player():
 	# Camera limits
 	var cam: Camera2D = player.get_node("Camera2D")
 	cam.limit_left = 0
-	cam.limit_top = 0
+	cam.limit_top = -24  # franja reservada arriba para el HUD (ver hud.gd BAR_H)
 	cam.limit_right = MAP_W * T
-	cam.limit_bottom = MAP_H * T
+	cam.limit_bottom = MAP_H * T + 48  # franja reservada abajo para los controles (touch_controls BOTTOM_BAR)
 
 
 func _spawn_npcs():

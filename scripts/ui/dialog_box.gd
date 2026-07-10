@@ -5,6 +5,7 @@ extends CanvasLayer
 ## - jerarquía nombre/cuerpo + indicador de avance que parpadea
 
 const TYPE_SPEED := 0.03
+const CTRL_H := 48.0   # alto de la franja de controles abajo: el diálogo se apoya encima
 
 var current_lines: Array = []
 var line_index: int = 0
@@ -41,10 +42,10 @@ func _build_ui():
 	frame.anchor_top = 1.0
 	frame.anchor_bottom = 1.0
 	frame.anchor_right = 1.0
-	frame.offset_top = -52.0
+	frame.offset_top = -52.0 - CTRL_H
 	frame.offset_left = 3.0
 	frame.offset_right = -3.0
-	frame.offset_bottom = -3.0
+	frame.offset_bottom = -3.0 - CTRL_H
 	var fstyle = StyleBoxFlat.new()
 	fstyle.bg_color = Pal.BLACK
 	fstyle.set_corner_radius_all(4)
@@ -97,8 +98,8 @@ func _build_ui():
 	name_plate = Panel.new()
 	name_plate.anchor_top = 1.0
 	name_plate.anchor_bottom = 1.0
-	name_plate.offset_top = -63.0
-	name_plate.offset_bottom = -51.0
+	name_plate.offset_top = -63.0 - CTRL_H
+	name_plate.offset_bottom = -51.0 - CTRL_H
 	name_plate.offset_left = 6.0
 	name_plate.offset_right = 60.0
 	root.add_child(name_plate)
@@ -169,7 +170,13 @@ func _process(delta):
 		_blink += delta
 		indicator.visible = fmod(_blink, 0.7) < 0.45
 
-	if Input.is_action_just_pressed("interact"):
+
+# El input de avance se maneja por evento (no polling) y se marca como consumido,
+# para que la MISMA tecla que cierra el diálogo no la lea también el player.
+func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
+	if event.is_action_pressed("interact"):
 		if is_typing:
 			shown_text = full_text
 			text_label.text = shown_text
@@ -177,6 +184,7 @@ func _process(delta):
 		else:
 			line_index += 1
 			_show_line()
+		get_viewport().set_input_as_handled()
 
 
 func _close():
