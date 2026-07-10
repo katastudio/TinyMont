@@ -21,7 +21,7 @@ var inner: Panel
 var name_plate: Panel
 var name_label: Label
 var text_label: Label
-var indicator: Label
+var indicator: Control
 
 
 func _ready():
@@ -82,15 +82,15 @@ func _build_ui():
 	inner.add_child(text_label)
 
 	# Indicador de avance (parpadea), anclado abajo a la derecha del interior
-	indicator = Label.new()
+	# Flechita ▼ dibujada por código (no depende de la fuente; en web el glyph
+	# "▼" no existía y se veía como un cuadrado con basura).
+	indicator = Control.new()
+	indicator.set_script(preload("res://scripts/ui/arrow_indicator.gd"))
 	indicator.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
-	indicator.offset_left = -12.0
-	indicator.offset_top = -13.0
-	indicator.offset_right = -1.0
-	indicator.offset_bottom = -1.0
-	indicator.text = "▼"
-	indicator.add_theme_color_override("font_color", Pal.BLACK)
-	indicator.add_theme_font_size_override("font_size", 7)
+	indicator.offset_left = -9.0
+	indicator.offset_top = -8.0
+	indicator.offset_right = -2.0
+	indicator.offset_bottom = -2.0
 	indicator.visible = false
 	inner.add_child(indicator)
 

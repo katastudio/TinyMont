@@ -7,9 +7,10 @@ extends Control
 
 const BOTTOM_BAR := 48.0
 const JOY_CX := 40.0        # centro X de la palanca (izquierda de la franja)
-const JOY_RADIUS := 20.0    # radio de la base
-const KNOB_RADIUS := 11.0   # radio de la perilla
-const DEADZONE := 0.34      # fracción del radio antes de registrar dirección
+const JOY_RADIUS := 22.0    # radio de la base
+const KNOB_RADIUS := 10.0   # radio de la perilla
+const MAX_OFFSET := 12.0    # JOY_RADIUS - KNOB_RADIUS: la perilla NO se sale del aro
+const DEADZONE := 0.34      # fracción del recorrido antes de registrar dirección
 
 var _joy_index := -999      # dedo/puntero que controla la palanca (-999 = ninguno)
 var _joy_offset := Vector2.ZERO   # desplazamiento de la perilla (para dibujar)
@@ -118,12 +119,12 @@ func _release(index: int) -> void:
 # --- Palanca: actualizar posición de la perilla y la dirección ---
 func _joy_update(pos: Vector2) -> void:
 	var delta := pos - _joy_center()
-	if delta.length() > JOY_RADIUS:
-		delta = delta.normalized() * JOY_RADIUS
+	if delta.length() > MAX_OFFSET:
+		delta = delta.normalized() * MAX_OFFSET
 	_joy_offset = delta
 
 	var new_dir := ""
-	if delta.length() >= JOY_RADIUS * DEADZONE:
+	if delta.length() >= MAX_OFFSET * DEADZONE:
 		if absf(delta.x) > absf(delta.y):
 			new_dir = "move_right" if delta.x > 0 else "move_left"
 		else:
