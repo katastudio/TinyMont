@@ -7,8 +7,7 @@ extends Control
 const CharacterArt = preload("res://scripts/art/character_art.gd")
 const ItemArt = preload("res://scripts/art/item_art.gd")
 const BAR_H := 24.0
-const SLOTS := 6          # espacios visibles en la mochila (uno por misión)
-const SLOT := 14.0        # ancho de cada slot
+const SLOT := 12.0        # ancho de cada slot (los slots = una por misión, GameManager.TOTAL_MISIONES)
 
 
 func _ready() -> void:
@@ -28,9 +27,9 @@ func _draw() -> void:
 	# Avatar del player (icono del juego) a la izquierda
 	CharacterArt.draw_on(self, CharacterArt.map_rects(CharacterArt.PROTAG), Vector2(3, 3), 1.1)
 
-	# Mochila: fila de slots
-	var mx := 26.0
-	for i in range(SLOTS):
+	# Mochila: fila de slots (uno por misión total)
+	var mx := 24.0
+	for i in range(GameManager.TOTAL_MISIONES):
 		var r := Rect2(mx + i * SLOT, 4, SLOT - 2, 16)
 		draw_rect(r, Color(0, 0, 0, 0.20))                 # hueco del slot
 		draw_rect(r, Pal.UI_ACCENT, false, 1.0)            # marco verde

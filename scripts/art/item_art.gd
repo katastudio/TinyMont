@@ -27,6 +27,10 @@ static func draw_on(ci: CanvasItem, item: String, r: Rect2) -> void:
 			_parlante(ci, r)
 		"medalla":
 			_medalla(ci, r)
+		"gato":
+			_gato(ci, r)
+		"lente":
+			_lente(ci, r)
 		_:
 			_generico(ci, r)
 
@@ -128,6 +132,33 @@ static func _medalla(ci: CanvasItem, r: Rect2) -> void:
 		mc + Vector2(0.7, 0.7), mc + Vector2(0, 2.4), mc + Vector2(-0.7, 0.7),
 		mc + Vector2(-2.4, 0), mc + Vector2(-0.7, -0.7),
 	]), Color("c99a10"))                                          # estrellita
+
+
+# Gato Mostaza (misión de Doña Rosa): naranja con manchas negras.
+static func _gato(ci: CanvasItem, r: Rect2) -> void:
+	var x := r.position.x
+	var y := r.position.y
+	var org := Color("e0882c")
+	var dk := Color("2a2018")
+	ci.draw_rect(Rect2(x + 4, y + 2, 2, 1), org)         # orejas
+	ci.draw_rect(Rect2(x + 8, y + 2, 2, 1), org)
+	ci.draw_rect(Rect2(x + 4, y + 3, 6, 5), org)         # cabeza
+	ci.draw_rect(Rect2(x + 5, y + 5, 1, 1), dk)          # ojos
+	ci.draw_rect(Rect2(x + 8, y + 5, 1, 1), dk)
+	ci.draw_rect(Rect2(x + 6, y + 6, 2, 1), Color("d05858"))  # nariz
+	ci.draw_rect(Rect2(x + 4, y + 8, 6, 4), org)         # cuerpo
+	ci.draw_rect(Rect2(x + 7, y + 9, 2, 2), dk)          # mancha
+	ci.draw_rect(Rect2(x + 10, y + 7, 1, 4), org)        # cola
+	ci.draw_rect(Rect2(x + 4, y + 12, 2, 1), org)        # patas
+	ci.draw_rect(Rect2(x + 8, y + 12, 2, 1), org)
+
+
+# Lente de telescopio (misión del astrónomo): marco metálico + vidrio.
+static func _lente(ci: CanvasItem, r: Rect2) -> void:
+	var c := r.get_center()
+	ci.draw_circle(c, 5.2, Color("707880"))              # marco
+	ci.draw_circle(c, 4.2, Color("7aa8cc"))              # vidrio
+	ci.draw_circle(c + Vector2(-1, -1), 1.6, Color(1, 1, 1, 0.55))  # brillo
 
 
 # Fallback: caja con signo, para objetos aún sin ícono propio.

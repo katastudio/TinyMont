@@ -103,7 +103,7 @@ func get_estado_mision(id: String) -> String:
 	return misiones.get(id, "no_iniciada")
 
 
-const TOTAL_MISIONES := 6   # total de misiones de la beta (para el contador y el cierre)
+const TOTAL_MISIONES := 8   # total de misiones de la beta (para el contador y el cierre)
 var _victoria := false
 
 
