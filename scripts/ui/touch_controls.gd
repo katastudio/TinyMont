@@ -31,7 +31,7 @@ func _ab_defs() -> Array:
 	var w := size.x
 	var cy := size.y - BOTTOM_BAR / 2.0
 	return [
-		{action = "menu", rect = Rect2(w - 54, cy - 4, 20, 20), kind = "B"},
+		{action = "toggle_bici", rect = Rect2(w - 54, cy - 4, 20, 20), kind = "B"},
 		{action = "interact", rect = Rect2(w - 30, cy - 16, 20, 20), kind = "A"},
 	]
 

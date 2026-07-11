@@ -3,7 +3,9 @@ extends CharacterBody2D
 
 const TILE_SIZE := 16
 const MOVE_SPEED := 80.0
+const BICI_FACTOR := 1.7    # en bici va más rápido
 const CharacterArt = preload("res://scripts/art/character_art.gd")
+const BiciArt = preload("res://scripts/art/bici_art.gd")
 
 # Rasgos del protagonista (el recién llegado). Editables en player.tscn (Inspector).
 @export_group("Aspecto")
@@ -31,6 +33,7 @@ var is_moving := false
 var target_pos := Vector2.ZERO
 var facing := Vector2.DOWN
 var _t := 0.0
+var _bici_ref: Node2D = null    # la bici que Monti tomó (oculta mientras la usa)
 
 
 func _anim_cfg() -> Dictionary:
@@ -68,7 +71,15 @@ func _ready():
 func _draw():
 	# El protagonista se dibuja desde sus rasgos, con animación (respira / camina).
 	var st = CharacterArt.anim_state(_t, _anim_cfg(), is_moving, 0.0)
-	CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob), 1.0)
+	if not Engine.is_editor_hint() and GameManager.en_bici:
+		# Montado: la bici debajo (ruedas girando: rápido al andar) y Monti sentado más arriba.
+		var phase := _t * (10.0 if is_moving else 2.0)
+		# lateral: bici al ras del piso; vertical: centrada en el cuerpo (asoma arriba y abajo)
+		var base := Vector2(0, -2) if facing.y != 0 else Vector2(0, 7)
+		BiciArt.draw_on(self, base, phase, GameManager.bici_color, facing)
+		CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -13 - st.bob), 1.0)
+	else:
+		CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob), 1.0)
 
 
 func _physics_process(delta):
@@ -78,7 +89,8 @@ func _physics_process(delta):
 		return
 
 	if is_moving:
-		position = position.move_toward(target_pos, MOVE_SPEED * delta)
+		var spd := MOVE_SPEED * (BICI_FACTOR if GameManager.en_bici else 1.0)
+		position = position.move_toward(target_pos, spd * delta)
 		if position.distance_to(target_pos) < 0.5:
 			position = target_pos
 			is_moving = false
@@ -122,6 +134,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if GameManager.is_dialog_active:
 		return
+	if event.is_action_pressed("toggle_bici"):
+		_toggle_bici()
+		get_viewport().set_input_as_handled()
+		return
 	if event.is_action_pressed("interact"):
 		_interact()
 		get_viewport().set_input_as_handled()
@@ -134,3 +150,50 @@ func _interact():
 		var npc = world.get_npc_at(face_pos)
 		if npc and npc.has_method("interact"):
 			npc.interact(global_position)
+
+
+# ==================== BICI (botón B) ====================
+
+func _toggle_bici() -> void:
+	if GameManager.en_bici:
+		_bajar_bici()
+	else:
+		_subir_bici()
+
+
+# Buscar una bici en la celda actual o adyacente (radio 1 tile).
+func _bici_cercana() -> Node2D:
+	var world = get_parent()
+	var ptx := int(position.x / TILE_SIZE)
+	var pty := int(position.y / TILE_SIZE)
+	for child in world.get_children():
+		if child.has_method("es_bici") and child.visible:
+			var t: Vector2i = child.tile()
+			if absi(t.x - ptx) <= 1 and absi(t.y - pty) <= 1:
+				return child
+	return null
+
+
+func _subir_bici() -> void:
+	var bici := _bici_cercana()
+	if bici == null:
+		return   # no hay bici cerca: no pasa nada
+	GameManager.en_bici = true
+	GameManager.bici_color = bici.color
+	bici.visible = false
+	bici.set_process(false)      # pausa su animación mientras está "guardada"
+	_bici_ref = bici
+	queue_redraw()
+
+
+func _bajar_bici() -> void:
+	GameManager.en_bici = false
+	if _bici_ref:
+		# dejar la bici estacionada en la celda actual
+		var tx := int(position.x / TILE_SIZE)
+		var ty := int(position.y / TILE_SIZE)
+		_bici_ref.position = Vector2(tx * TILE_SIZE + TILE_SIZE / 2.0, ty * TILE_SIZE + TILE_SIZE / 2.0)
+		_bici_ref.visible = true
+		_bici_ref.set_process(true)
+	_bici_ref = null
+	queue_redraw()

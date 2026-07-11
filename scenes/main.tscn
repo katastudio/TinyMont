@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=4 uid="uid://cvrkcsywl7fg4"]
+[gd_scene load_steps=11 format=4 uid="uid://cvrkcsywl7fg4"]
 
 [ext_resource type="Script" uid="uid://dfoju8g262rgk" path="res://scripts/world/monte_grande.gd" id="1_0wfyh"]
 [ext_resource type="TileSet" uid="uid://33cj3uymneex" path="res://tilesets/monte_tiles.tres" id="2_sugp2"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/objeto.tscn" id="7_objeto"]
 [ext_resource type="PackedScene" path="res://scenes/world/telescopio.tscn" id="8_telescopio"]
 [ext_resource type="PackedScene" path="res://scenes/world/tren.tscn" id="9_tren"]
+[ext_resource type="PackedScene" path="res://scenes/world/bicicleta.tscn" id="10_bici"]
 [ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc_src"]
 
 [node name="MonteGrande" type="Node2D"]
@@ -480,6 +481,9 @@ intervalo = 10.0
 vagones = 5
 color = Color(0, 0.662745, 0.878431, 1)
 color_techo = Color(1, 1, 1, 1)
+
+[node name="Bicicleta" parent="." instance=ExtResource("10_bici")]
+position = Vector2(269, 51)
 
 [node name="McDonalds" parent="." instance=ExtResource("5_tbgi4")]
 position = Vector2(560, 479)

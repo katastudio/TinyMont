@@ -13,6 +13,9 @@ var jugador_nombre: String = "Monti"
 var inventario: Array = []          # ids de objetos que Monti lleva en la mochila
 var misiones: Dictionary = {}       # mision_id -> "no_iniciada" | "en_curso" | "completada"
 
+var en_bici: bool = false           # Monti va montado en la bici (velocidad x1.7)
+var bici_color: Color = Color("d83030")  # color de la bici que tomó (para dibujarla montado)
+
 
 var _hud: CanvasLayer = null
 var _touch: CanvasLayer = null
