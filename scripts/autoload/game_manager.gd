@@ -40,8 +40,36 @@ func mostrar_ui_juego(v: bool) -> void:
 # En mobile/touch llenamos la pantalla (expand); en PC se mantiene "keep"
 # (handheld centrado, lo más grande posible sin distorsión).
 func _adaptar_pantalla() -> void:
-	if DisplayServer.is_touchscreen_available():
+	# Mobile llena la pantalla (más mapa visible). En desktop NATIVO (corrida local)
+	# también expandimos, así probás con forma de celu; la web desktop queda igual.
+	if DisplayServer.is_touchscreen_available() or not OS.has_feature("web"):
 		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+
+
+# Safe area (notch/cámara arriba, home-indicator abajo) como FRACCIÓN de la pantalla.
+# Cada consumidor la multiplica por su propio alto lógico. En desktop = 0.
+func safe_top_frac() -> float:
+	if not DisplayServer.is_touchscreen_available():
+		return 0.0
+	var wh := DisplayServer.window_get_size().y
+	return (DisplayServer.get_display_safe_area().position.y / float(wh)) if wh > 0 else 0.0
+
+
+func safe_bottom_frac() -> float:
+	if not DisplayServer.is_touchscreen_available():
+		return 0.0
+	var wh := DisplayServer.window_get_size().y
+	if wh <= 0:
+		return 0.0
+	var safe := DisplayServer.get_display_safe_area()
+	return maxf(0.0, wh - (safe.position.y + safe.size.y)) / float(wh)
+
+
+# Alto (px lógicos) que ocupan los controles flotantes desde el borde inferior,
+# para que el diálogo se apoye encima sin taparlos. `view_h` = alto lógico actual.
+const CONTROLS_H := 104.0
+func bottom_reserve(view_h: float) -> float:
+	return CONTROLS_H + safe_bottom_frac() * view_h
 
 
 func _setup_input():

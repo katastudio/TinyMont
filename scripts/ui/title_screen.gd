@@ -145,6 +145,8 @@ func _draw_button(font: Font) -> void:
 	# Cuerpo (se hunde al apretar)
 	var body := Rect2(r.position.x, r.position.y + down, r.size.x, r.size.y)
 	draw_rect(body, BTN.darkened(0.12) if _pressed else BTN)
+	# Brillo superior (glossy, mismo lenguaje que los domos de los controles)
+	draw_rect(Rect2(body.position.x + 2, body.position.y + 2, body.size.x - 4, body.size.y * 0.42), Color(1, 1, 1, 0.16))
 	draw_rect(body, INK, false, 2.0)
 	# Triángulo de play + etiqueta (nudge óptico +1)
 	var cy := body.get_center().y

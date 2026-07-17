@@ -5,7 +5,7 @@ extends CanvasLayer
 ## - jerarquía nombre/cuerpo + indicador de avance que parpadea
 
 const TYPE_SPEED := 0.03
-const CTRL_H := 48.0   # alto de la franja de controles abajo: el diálogo se apoya encima
+const CTRL_H := 104.0   # reserva por defecto; _layout() la ajusta por safe area del celu
 
 var current_lines: Array = []
 var line_index: int = 0
@@ -17,6 +17,7 @@ var type_timer: float = 0.0
 var speaker_color: Color = Pal.WHITE
 var _blink: float = 0.0
 
+var frame: Panel
 var inner: Panel
 var name_plate: Panel
 var name_label: Label
@@ -38,7 +39,7 @@ func _build_ui():
 	add_child(root)
 
 	# Marco exterior (frame oscuro)
-	var frame = Panel.new()
+	frame = Panel.new()
 	frame.anchor_top = 1.0
 	frame.anchor_bottom = 1.0
 	frame.anchor_right = 1.0
@@ -47,8 +48,11 @@ func _build_ui():
 	frame.offset_right = -3.0
 	frame.offset_bottom = -3.0 - CTRL_H
 	var fstyle = StyleBoxFlat.new()
-	fstyle.bg_color = Pal.BLACK
-	fstyle.set_corner_radius_all(4)
+	fstyle.bg_color = Color("14141a")          # borde oscuro (estilo pulido)
+	fstyle.set_corner_radius_all(6)
+	fstyle.shadow_color = Color(0, 0, 0, 0.35)  # sombra real bajo el panel
+	fstyle.shadow_size = 5
+	fstyle.shadow_offset = Vector2(0, 3)
 	frame.add_theme_stylebox_override("panel", fstyle)
 	root.add_child(frame)
 
@@ -60,8 +64,10 @@ func _build_ui():
 	inner.offset_right = -2.0
 	inner.offset_bottom = -2.0
 	var istyle = StyleBoxFlat.new()
-	istyle.bg_color = Pal.WALL_TAN
-	istyle.set_corner_radius_all(3)
+	istyle.bg_color = Color("34343e")          # cuerpo charcoal
+	istyle.set_corner_radius_all(5)
+	istyle.border_width_top = 1                 # bisel superior claro
+	istyle.border_color = Color(1, 1, 1, 0.10)
 	istyle.set_content_margin_all(4)
 	inner.add_theme_stylebox_override("panel", istyle)
 	frame.add_child(inner)
@@ -74,7 +80,7 @@ func _build_ui():
 	text_label.offset_top = 3.0
 	text_label.offset_right = -4.0
 	text_label.offset_bottom = -3.0
-	text_label.add_theme_color_override("font_color", Pal.BLACK)
+	text_label.add_theme_color_override("font_color", Color("ecece4"))  # texto claro sobre charcoal
 	text_label.add_theme_font_size_override("font_size", 8)
 	text_label.add_theme_constant_override("line_spacing", 0)
 	text_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -86,6 +92,7 @@ func _build_ui():
 	# "▼" no existía y se veía como un cuadrado con basura).
 	indicator = Control.new()
 	indicator.set_script(preload("res://scripts/ui/arrow_indicator.gd"))
+	indicator.color = Color("ecece4")   # flecha clara sobre charcoal
 	indicator.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
 	indicator.offset_left = -9.0
 	indicator.offset_top = -8.0
@@ -116,20 +123,34 @@ func _ink_for(c: Color) -> Color:
 	return Pal.BLACK if l > 0.55 else Pal.WHITE
 
 
+# Reposiciona el cuadro arriba de los controles flotantes (contempla lift + safe area).
+func _layout() -> void:
+	var vh: float = get_viewport().get_visible_rect().size.y
+	var reserve: float = GameManager.bottom_reserve(vh)
+	frame.offset_top = -52.0 - reserve
+	frame.offset_bottom = -3.0 - reserve
+	name_plate.offset_top = -63.0 - reserve
+	name_plate.offset_bottom = -51.0 - reserve
+
+
 func show_dialog(speaker: String, lines: Array, color: Color = Pal.WHITE):
 	current_lines = lines
 	speaker_color = color
 	line_index = 0
 	visible = true
+	_layout()
 
 	# Nameplate teñido + ancho según el nombre
 	var ink = _ink_for(color)
 	var plate_style = StyleBoxFlat.new()
 	plate_style.bg_color = color
-	plate_style.border_color = Pal.BLACK
+	plate_style.border_color = Color("14141a")
 	plate_style.set_border_width_all(2)
-	plate_style.set_corner_radius_all(2)
+	plate_style.set_corner_radius_all(3)
 	plate_style.set_content_margin_all(2)
+	plate_style.shadow_color = Color(0, 0, 0, 0.3)
+	plate_style.shadow_size = 3
+	plate_style.shadow_offset = Vector2(0, 2)
 	name_plate.add_theme_stylebox_override("panel", plate_style)
 	name_plate.offset_right = 6.0 + speaker.length() * 5.0 + 10.0
 	name_label.text = speaker

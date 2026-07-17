@@ -27,8 +27,8 @@ GameManager="*res://scripts/autoload/game_manager.gd"
 
 window/size/viewport_width=200
 window/size/viewport_height=252
-window/size/window_width_override=700
-window/size/window_height_override=882
+window/size/window_width_override=440
+window/size/window_height_override=950
 window/stretch/mode="canvas_items"
 window/handheld/orientation=1
 
