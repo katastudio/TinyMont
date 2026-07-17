@@ -26,6 +26,8 @@ Thumbs.db
 
 # Build / export outputs (no se versionan)
 builds/
+# Android Gradle build template (generado con --install-android-build-template)
+/android/
 *.pck
 *.zip
 *.exe
