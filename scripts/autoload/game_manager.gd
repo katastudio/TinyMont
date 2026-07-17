@@ -37,13 +37,10 @@ func mostrar_ui_juego(v: bool) -> void:
 		_touch.visible = v
 
 
-# En mobile/touch llenamos la pantalla (expand); en PC se mantiene "keep"
-# (handheld centrado, lo más grande posible sin distorsión).
 func _adaptar_pantalla() -> void:
-	# Mobile llena la pantalla (más mapa visible). En desktop NATIVO (corrida local)
-	# también expandimos, así probás con forma de celu; la web desktop queda igual.
-	if DisplayServer.is_touchscreen_available() or not OS.has_feature("web"):
-		get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
+	# Llenar la pantalla en todos lados (más mapa visible, personajes al mismo tamaño):
+	# mobile/web-mobile a lo alto, web-desktop a lo ancho. Sin barras negras.
+	get_window().content_scale_aspect = Window.CONTENT_SCALE_ASPECT_EXPAND
 
 
 # Safe area (notch/cámara arriba, home-indicator abajo) como FRACCIÓN de la pantalla.

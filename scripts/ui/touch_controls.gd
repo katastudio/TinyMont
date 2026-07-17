@@ -22,6 +22,11 @@ func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	modulate = Color(1, 1, 1, ALPHA)
+	# Solo en dispositivos táctiles (celu / web mobile). En desktop y web-desktop se
+	# juega con teclado (flechas/WASD + Z/Espacio + B) y no tapamos el mapa.
+	if not DisplayServer.is_touchscreen_available():
+		hide()
+		set_process_input(false)
 
 
 # cuánto subimos los controles del borde inferior (+ home-indicator del celu)
