@@ -1,27 +1,40 @@
 extends Control
-## Control DEFINITIVO: PALANCA FIJA pulida (base hundida con relieve + perilla con
-## domo y brillo + sombra) y botones A/B con volumen. Sobre el mapa, abajo-izquierda.
-## La base NO se mueve; la perilla sigue al dedo (feel analógico), y el movimiento
-## sigue por grilla según el eje dominante (sintetiza move_* del InputMap).
-## Procedural, multitouch; en desktop responde al mouse.
+## Overlay táctil estilo emulador de GBA: d-pad de 4 flechas sueltas en rombo
+## (abajo-izquierda) + botones A/B redondos (abajo-derecha), todo gris monocromo
+## translúcido flotando sobre el juego. Una sola dirección activa a la vez;
+## deslizar el dedo entre flechas cambia la dirección (sintetiza move_* del
+## InputMap). Procedural, multitouch; en desktop responde al mouse.
 
-const ALPHA := 0.92
-const JOY_R := 28.0        # radio de la base
-const KNOB_R := 13.0       # radio de la perilla
-const MAX_OFFSET := 15.0   # JOY_R - KNOB_R: la perilla no se sale del aro
-const DEADZONE := 0.34     # fracción del recorrido antes de registrar dirección
-const KNOB_COL := Color("4f7bf0")
+const ALPHA := 0.62
+const KEY := 24.0    # lado de cada tecla del d-pad
+const GAP := 2.0     # separación entre tecla y centro del rombo
+const AB_R := 17.0   # radio de los botones A/B
+
+# grises del overlay (monocromo, independiente de Pal)
+const COL_BODY := Color(0.78, 0.78, 0.80)      # cuerpo gris claro
+const COL_BODY_ON := Color(0.52, 0.52, 0.56)   # cuerpo presionado (hundido)
+const COL_EDGE := Color(0.32, 0.32, 0.36)      # borde gris oscuro
+const COL_MARK := Color(0.30, 0.30, 0.34)      # chevrons y letras grabadas
+const COL_SHADOW := Color(0, 0, 0, 0.25)
+
+# chevron apuntando hacia arriba, relativo al centro de la tecla (se rota por dirección)
+const CHEV: PackedVector2Array = [Vector2(-4.5, 2), Vector2(0, -2.5), Vector2(4.5, 2)]
 
 var _index := -999
 var _dir := ""
 var _touch_action := {}
-var _knob_offset := Vector2.ZERO
+var _sb_body: StyleBoxFlat
+var _sb_body_on: StyleBoxFlat
+var _sb_shadow: StyleBoxFlat
 
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	modulate = Color(1, 1, 1, ALPHA)
+	_sb_body = _make_sb(COL_BODY, true)
+	_sb_body_on = _make_sb(COL_BODY_ON, true)
+	_sb_shadow = _make_sb(COL_SHADOW, false)
 	# Solo en dispositivos táctiles (celu / web mobile). En desktop y web-desktop se
 	# juega con teclado (flechas/WASD + Z/Espacio + B) y no tapamos el mapa.
 	if not DisplayServer.is_touchscreen_available():
@@ -29,74 +42,109 @@ func _ready() -> void:
 		set_process_input(false)
 
 
+func _make_sb(col: Color, bordered: bool) -> StyleBoxFlat:
+	var sb := StyleBoxFlat.new()
+	sb.bg_color = col
+	sb.set_corner_radius_all(5)
+	if bordered:
+		sb.border_color = COL_EDGE
+		sb.set_border_width_all(1)
+	return sb
+
+
 # cuánto subimos los controles del borde inferior (+ home-indicator del celu)
 func _lift() -> float:
 	return 28.0 + GameManager.safe_bottom_frac() * size.y
 
 
-func _default_center() -> Vector2:
-	return Vector2(JOY_R + 14.0, size.y - JOY_R - 16.0 - _lift())
+func _dpad_center() -> Vector2:
+	var half := KEY * 1.5 + GAP   # medio rombo (tecla y media + gap)
+	return Vector2(half + 14.0, size.y - half - 16.0 - _lift())
 
 
-func _center() -> Vector2:
-	return _default_center()   # FIJA: la base no se mueve
+func _dpad_keys() -> Array:
+	var c := _dpad_center()
+	var off := KEY + GAP   # del centro del rombo al centro de cada tecla
+	var half := KEY / 2.0
+	return [
+		{action = "move_up", rect = Rect2(c + Vector2(-half, -off - half), Vector2(KEY, KEY)), ang = 0.0},
+		{action = "move_down", rect = Rect2(c + Vector2(-half, off - half), Vector2(KEY, KEY)), ang = PI},
+		{action = "move_left", rect = Rect2(c + Vector2(-off - half, -half), Vector2(KEY, KEY)), ang = -PI / 2},
+		{action = "move_right", rect = Rect2(c + Vector2(off - half, -half), Vector2(KEY, KEY)), ang = PI / 2},
+	]
 
 
 func _ab_defs() -> Array:
 	var w := size.x
 	var cy := size.y - 40.0 - _lift()
 	return [
-		{action = "toggle_bici", rect = Rect2(w - 66, cy + 12, 26, 26), kind = "B"},
-		{action = "interact", rect = Rect2(w - 34, cy - 14, 26, 26), kind = "A"},
+		{action = "toggle_bici", rect = Rect2(w - 72.0, cy - 3.0, AB_R * 2, AB_R * 2), kind = "B"},
+		{action = "interact", rect = Rect2(w - 40.0, cy - 23.0, AB_R * 2, AB_R * 2), kind = "A"},
 	]
 
 
 # ==================== DIBUJO ====================
 
 func _draw() -> void:
-	_draw_joystick()
+	for k in _dpad_keys():
+		_draw_key(k)
 	_draw_ab()
 
 
-func _draw_joystick() -> void:
-	var c := _center()
-	draw_circle(c + Vector2(0, 3), JOY_R, Color(0, 0, 0, 0.25))       # sombra
-	draw_circle(c, JOY_R, Color("20202a"))                           # aro exterior oscuro
-	draw_circle(c, JOY_R - 2, Color("3a3a48"))                       # base
-	draw_circle(c, JOY_R - 6, Color("2c2c38"))                       # dish hundido
-	draw_arc(c, JOY_R - 3, 0, TAU, 32, Color(1, 1, 1, 0.10), 1.0)    # highlight del borde
-	for a in [0.0, 90.0, 180.0, 270.0]:                             # guías de dirección
-		var v := Vector2.from_angle(deg_to_rad(a)) * (JOY_R - 9)
-		draw_circle(c + v, 1.4, Color(1, 1, 1, 0.18))
-	_dome(c + _knob_offset, KNOB_R, KNOB_COL, _dir != "")            # perilla
-
-
-func _dome(bc: Vector2, rad: float, base: Color, pressed: bool) -> void:
-	draw_circle(bc + Vector2(0, 2.5), rad, Color(0, 0, 0, 0.28))          # sombra
-	draw_circle(bc, rad, Color("14141a"))                                # borde
-	draw_circle(bc, rad - 1.5, base.darkened(0.22))
-	draw_circle(bc + Vector2(0, -1.5), rad - 3, base.lightened(0.18) if pressed else base)
-	draw_circle(bc + Vector2(0, -rad * 0.35), rad * 0.5, base.lightened(0.22))  # gradiente
-	draw_circle(bc + Vector2(-rad * 0.3, -rad * 0.4), rad * 0.34, Color(1, 1, 1, 0.38))  # brillo
+func _draw_key(k: Dictionary) -> void:
+	var r: Rect2 = k.rect
+	var ang: float = k.ang
+	var pressed: bool = _dir == k.action
+	draw_style_box(_sb_shadow, Rect2(r.position + Vector2(0, 2), r.size))
+	draw_style_box(_sb_body_on if pressed else _sb_body, r)
+	if not pressed:
+		draw_line(r.position + Vector2(5, 2.5), Vector2(r.end.x - 5, r.position.y + 2.5), Color(1, 1, 1, 0.35), 1.0)
+	var kc := r.get_center() + (Vector2(0, 1) if pressed else Vector2.ZERO)
+	var pts := PackedVector2Array()
+	for p in CHEV:
+		pts.append(kc + p.rotated(ang))
+	draw_polyline(pts, COL_MARK, 3.0)
 
 
 func _draw_ab() -> void:
 	var font := ThemeDB.fallback_font
 	for d in _ab_defs():
-		var r: Rect2 = d.rect
-		var bc := r.get_center()
+		var bc := (d.rect as Rect2).get_center()
 		var on: bool = Input.is_action_pressed(d.action)
-		var col: Color = Pal.UI_A if d.kind == "A" else Pal.UI_B
-		_dome(bc, r.size.x / 2.0, col, on)
+		draw_circle(bc + Vector2(0, 2), AB_R, COL_SHADOW)
+		draw_circle(bc, AB_R, COL_EDGE)
+		draw_circle(bc, AB_R - 1.5, COL_BODY_ON if on else COL_BODY)
+		if not on:
+			draw_arc(bc, AB_R - 3.5, deg_to_rad(200), deg_to_rad(340), 16, Color(1, 1, 1, 0.35), 1.5)
 		if font:
-			draw_string(font, bc + Vector2(-3, 3), d.kind, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, Pal.UI_LIGHT)
+			var lp := bc + Vector2(-8, 4)
+			draw_string(font, lp + Vector2(0, 1), d.kind, HORIZONTAL_ALIGNMENT_CENTER, 16, 11, Color(1, 1, 1, 0.30))
+			draw_string(font, lp, d.kind, HORIZONTAL_ALIGNMENT_CENTER, 16, 11, COL_MARK)
 
 
 # ==================== INPUT ====================
 
-func _in_zone(pos: Vector2) -> bool:
-	# área FIJA alrededor de la palanca (con tolerancia para el pulgar)
-	return pos.distance_to(_default_center()) <= JOY_R + 26.0
+func _dpad_hit(pos: Vector2) -> bool:
+	for k in _dpad_keys():
+		if (k.rect as Rect2).grow(4.0).has_point(pos):
+			return true
+	return false
+
+
+func _dir_at(pos: Vector2) -> String:
+	var hits: Array = []
+	for k in _dpad_keys():
+		if (k.rect as Rect2).grow(4.0).has_point(pos):
+			hits.append(k.action)
+	if hits.is_empty():
+		return ""
+	if hits.size() == 1:
+		return hits[0]
+	# zona ambigua entre dos flechas: gana el eje dominante
+	var delta := pos - _dpad_center()
+	if absf(delta.x) > absf(delta.y):
+		return "move_right" if delta.x > 0 else "move_left"
+	return "move_down" if delta.y > 0 else "move_up"
 
 
 func _input(event: InputEvent) -> void:
@@ -113,18 +161,24 @@ func _input(event: InputEvent) -> void:
 
 
 func _press(index: int, pos: Vector2) -> void:
-	if _in_zone(pos):
+	if _dpad_hit(pos):
 		_index = index
 		_update(pos)
 		get_viewport().set_input_as_handled()
 		return
+	# los margenes de tolerancia de A y B se solapan: gana el centro mas cercano
+	var best: Dictionary = {}
+	var best_d := AB_R + 4.0
 	for d in _ab_defs():
-		if (d.rect as Rect2).has_point(pos):
-			_touch_action[index] = d.action
-			_send(d.action, true)
-			get_viewport().set_input_as_handled()
-			queue_redraw()
-			return
+		var dist := (d.rect as Rect2).get_center().distance_to(pos)
+		if dist <= best_d:
+			best = d
+			best_d = dist
+	if not best.is_empty():
+		_touch_action[index] = best.action
+		_send(best.action, true)
+		get_viewport().set_input_as_handled()
+		queue_redraw()
 
 
 func _drag(index: int, pos: Vector2) -> void:
@@ -143,30 +197,20 @@ func _release(index: int) -> void:
 
 
 func _update(pos: Vector2) -> void:
-	var delta := pos - _center()
-	if delta.length() > MAX_OFFSET:
-		delta = delta.normalized() * MAX_OFFSET
-	_knob_offset = delta
-	var nd := ""
-	if delta.length() >= MAX_OFFSET * DEADZONE:
-		if absf(delta.x) > absf(delta.y):
-			nd = "move_right" if delta.x > 0 else "move_left"
-		else:
-			nd = "move_down" if delta.y > 0 else "move_up"
+	var nd := _dir_at(pos)
 	if nd != _dir:
 		if _dir != "":
 			_send(_dir, false)
 		if nd != "":
 			_send(nd, true)
 		_dir = nd
-	queue_redraw()
+		queue_redraw()
 
 
 func _release_move() -> void:
 	if _dir != "":
 		_send(_dir, false)
 	_dir = ""
-	_knob_offset = Vector2.ZERO
 	_index = -999
 	queue_redraw()
 
