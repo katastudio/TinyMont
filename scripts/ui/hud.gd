@@ -6,8 +6,11 @@ extends Control
 
 const CharacterArt = preload("res://scripts/art/character_art.gd")
 const ItemArt = preload("res://scripts/art/item_art.gd")
+const MuteButton = preload("res://scripts/ui/mute_button.gd")
 const BAR_H := 24.0
 const SLOT := 12.0        # ancho de cada slot (los slots = una por misión, GameManager.TOTAL_MISIONES)
+
+var _mute: Control
 
 
 func _ready() -> void:
@@ -15,6 +18,16 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	GameManager.inventario_cambiado.connect(queue_redraw)
 	GameManager.mision_cambiada.connect(queue_redraw)
+	_mute = MuteButton.new()
+	add_child(_mute)
+	resized.connect(_ubicar_mute)
+	_ubicar_mute()
+
+
+# Botón de mute dentro de la barra, a la izquierda del contador de misiones.
+func _ubicar_mute() -> void:
+	var top := GameManager.safe_top_frac() * size.y
+	_mute.position = Vector2(size.x - 78, 4 + top)
 
 
 func _draw() -> void:

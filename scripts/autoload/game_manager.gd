@@ -64,8 +64,11 @@ func safe_bottom_frac() -> float:
 
 # Alto (px lógicos) que ocupan los controles flotantes desde el borde inferior,
 # para que el diálogo se apoye encima sin taparlos. `view_h` = alto lógico actual.
-const CONTROLS_H := 104.0
+# Sin pantalla táctil (desktop / web-desktop) no hay controles: margen mínimo.
+const CONTROLS_H := 124.0
 func bottom_reserve(view_h: float) -> float:
+	if not DisplayServer.is_touchscreen_available():
+		return 6.0
 	return CONTROLS_H + safe_bottom_frac() * view_h
 
 
@@ -111,6 +114,7 @@ func end_dialog():
 func agregar_item(item: String) -> void:
 	inventario.append(item)
 	inventario_cambiado.emit()
+	MusicManager.play_sfx("campanita_objeto")
 
 
 func quitar_item(item: String) -> bool:
@@ -136,8 +140,11 @@ var _victoria := false
 
 
 func set_estado_mision(id: String, estado: String) -> void:
+	var antes := get_estado_mision(id)
 	misiones[id] = estado
 	mision_cambiada.emit()
+	if estado == "completada" and antes != "completada":
+		MusicManager.play_sfx("jingle_mision")
 	# Cierre de la beta: al completar todas, festejo (una sola vez, tras cerrar
 	# el diálogo de la última entrega).
 	if not _victoria and misiones_completadas() >= TOTAL_MISIONES:
@@ -146,6 +153,7 @@ func set_estado_mision(id: String, estado: String) -> void:
 
 
 func _mostrar_victoria() -> void:
+	MusicManager.play_sfx("fanfarria_victoria")
 	start_dialog("Monte Grande", [
 		"¡Felicitaciones, Monti!",
 		"Ayudaste a todo\nel barrio de\nMonte Grande.",

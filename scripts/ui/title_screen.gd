@@ -5,6 +5,7 @@ extends Control
 
 const CharacterArt = preload("res://scripts/art/character_art.gd")
 const TanqueArt = preload("res://scripts/art/tanque_art.gd")
+const MuteButton = preload("res://scripts/ui/mute_button.gd")
 
 const INK := Color("241008")        # tinta oscura (texto del botón, contornos)
 const BTN := Color("e8802a")        # acento único: naranja (como El Tanque)
@@ -24,10 +25,26 @@ const GLYPHS := {
 
 var _t := 0.0
 var _pressed := false
+var _hint_sonido := false   # web: falta el primer gesto para activar el audio
 
 
 func _ready() -> void:
 	set_anchors_preset(Control.PRESET_FULL_RECT)
+	MusicManager.play_music("tema_titulo")
+	# En web el AudioContext arranca suspendido hasta el primer gesto:
+	# se muestra un hint y al primer input se reinicia el tema del título.
+	_hint_sonido = OS.has_feature("web")
+	# Botón de mute abajo a la derecha (mismo widget que el HUD).
+	var mute := MuteButton.new()
+	add_child(mute)
+	mute.anchor_left = 1.0
+	mute.anchor_top = 1.0
+	mute.anchor_right = 1.0
+	mute.anchor_bottom = 1.0
+	mute.offset_left = -22.0
+	mute.offset_top = -22.0
+	mute.offset_right = -6.0
+	mute.offset_bottom = -6.0
 
 
 func _process(delta: float) -> void:
@@ -93,6 +110,12 @@ func _draw() -> void:
 
 	# --- Botón Iniciar (foco de acción) ---
 	_draw_button(font)
+
+	# --- Hint de sonido (solo web, hasta el primer gesto) ---
+	if _hint_sonido and font:
+		draw_string(font, Vector2(0, _button_rect().position.y - 8),
+			"Toca para activar el sonido", HORIZONTAL_ALIGNMENT_CENTER, w, 7,
+			Color(Color("f2ead1"), 0.6))
 
 
 # Título 8-bit: dibuja "TINYMONT" con la fuente de píxeles propia (sombra + relleno).
@@ -161,6 +184,8 @@ func _draw_button(font: Font) -> void:
 # ==================== INPUT ====================
 
 func _input(event: InputEvent) -> void:
+	if _hint_sonido:
+		_primer_gesto_web(event)
 	if event is InputEventScreenTouch or event is InputEventMouseButton:
 		var is_press: bool = event.pressed
 		if event is InputEventMouseButton and event.button_index != MOUSE_BUTTON_LEFT:
@@ -176,6 +201,21 @@ func _input(event: InputEvent) -> void:
 	elif event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE, KEY_Z]:
 			_start()
+
+
+# Primer gesto en web: el AudioContext ya se reanuda solo, pero el tema venía
+# sonando "mudo" — se reinicia desde el principio, siempre. Si el gesto además
+# dispara INICIAR, el fade a tema_pueblo lo pisa enseguida (inofensivo).
+func _primer_gesto_web(event: InputEvent) -> void:
+	if not (event is InputEventScreenTouch or event is InputEventMouseButton or event is InputEventKey):
+		return
+	if not event.pressed:
+		return
+	if event is InputEventKey and event.echo:
+		return
+	_hint_sonido = false
+	queue_redraw()
+	MusicManager.restart_music("tema_titulo")
 
 
 func _start() -> void:

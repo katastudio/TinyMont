@@ -22,6 +22,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 GameManager="*res://scripts/autoload/game_manager.gd"
+MusicManager="*res://scripts/autoload/music_manager.gd"
 
 [display]
 

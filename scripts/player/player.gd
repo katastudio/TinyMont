@@ -180,6 +180,7 @@ func _subir_bici() -> void:
 		return   # no hay bici cerca: no pasa nada
 	GameManager.en_bici = true
 	GameManager.bici_color = bici.color
+	MusicManager.play_sfx("timbre_bici")
 	bici.visible = false
 	bici.set_process(false)      # pausa su animación mientras está "guardada"
 	_bici_ref = bici

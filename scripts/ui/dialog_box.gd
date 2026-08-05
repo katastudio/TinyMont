@@ -5,7 +5,7 @@ extends CanvasLayer
 ## - jerarquía nombre/cuerpo + indicador de avance que parpadea
 
 const TYPE_SPEED := 0.03
-const CTRL_H := 104.0   # reserva por defecto; _layout() la ajusta por safe area del celu
+const CTRL_H := 124.0   # reserva por defecto; _layout() la ajusta por plataforma y safe area
 
 var current_lines: Array = []
 var line_index: int = 0
@@ -179,9 +179,13 @@ func _process(delta):
 	if is_typing:
 		type_timer += delta
 		while type_timer >= TYPE_SPEED and char_index < full_text.length():
-			shown_text += full_text[char_index]
+			var c := full_text[char_index]
+			shown_text += c
 			char_index += 1
 			type_timer -= TYPE_SPEED
+			# blip cada 3 caracteres (y nunca en espacios) para no saturar
+			if c != " " and c != "\n" and char_index % 3 == 0:
+				MusicManager.play_sfx("blip_dialogo")
 		text_label.text = shown_text
 		if char_index >= full_text.length():
 			is_typing = false
