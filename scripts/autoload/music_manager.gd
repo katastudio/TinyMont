@@ -42,12 +42,12 @@ func _ready() -> void:
 		add_child(p)
 		_sfx.append(p)
 	_add_key_action("toggle_musica", KEY_M)
-	# SFX y jingle cortos sync (unos pocos ms); los 3 temas largos van por
-	# chunks en _process, el título primero porque es lo primero que suena.
+	# SFX y jingle cortos sync (unos pocos ms); los temas largos van por
+	# chunks en _process, en orden de primer uso (título -> pueblo -> encuentro).
 	for id in ["blip_dialogo", "campanita_objeto", "bocina_tren", "timbre_bici",
-			"jingle_mision"]:
+			"jingle_mision", "menu_move", "encuentro_inicio"]:
 		_ensure(id)
-	_cola = ["tema_titulo", "tema_pueblo", "fanfarria_victoria"]
+	_cola = ["tema_titulo", "tema_pueblo", "tema_encuentro", "fanfarria_victoria"]
 
 
 # Render incremental: reparte la síntesis entre frames con presupuesto de
@@ -182,6 +182,7 @@ func is_enabled() -> bool:
 const CHORDS := {
 	"C": [48, 52, 55], "Am": [45, 48, 52], "F": [45, 48, 53],
 	"G": [43, 47, 50], "D": [50, 54, 57],
+	"Dm": [50, 53, 57], "E": [52, 56, 59],
 }
 
 # Pueblo relajado pero juguetón: forma A-A-B-A (4+4+8+4 compases de 4/4).
@@ -222,6 +223,31 @@ const MELODIA_TITULO: Array = [
 	["G4", 0.5], ["A4", 0.5], ["B4", 1], ["D5", 1], ["r", 1],
 ]
 
+# Encuentro estilo subsuelo: Do menor, 12 compases de 4/4 (48 beats).
+# Riff staccato con salto de octava y silencios marcados, conectores
+# cromáticos entre frases y un compás de solo percusión. Melodía y bajos
+# tocan las MISMAS notas a distinta octava (unísono punchy).
+const MELODIA_ENCUENTRO: Array = [
+	# A: riff punchy + respiro (F#->G cromático cierra la frase)
+	["C4", 0.5], ["C5", 0.5], ["r", 0.5], ["G4", 0.5], ["r", 0.5], ["D#4", 0.5], ["r", 0.5], ["F4", 0.5],
+	["F#4", 0.5], ["G4", 0.5], ["r", 3],
+	# A': mismo riff, bajada cromática como conector
+	["C4", 0.5], ["C5", 0.5], ["r", 0.5], ["G4", 0.5], ["r", 0.5], ["D#4", 0.5], ["r", 0.5], ["F4", 0.5],
+	["F4", 0.5], ["E4", 0.5], ["D#4", 0.5], ["D4", 0.5], ["r", 2],
+	# B: respuesta una cuarta arriba (B->C cromático)
+	["F4", 0.5], ["F5", 0.5], ["r", 0.5], ["C5", 0.5], ["r", 0.5], ["G#4", 0.5], ["r", 0.5], ["A#4", 0.5],
+	["B4", 0.5], ["C5", 0.5], ["r", 3],
+	# subida cromática completa + compás de solo percusión
+	["C4", 0.5], ["C#4", 0.5], ["D4", 0.5], ["D#4", 0.5], ["E4", 0.5], ["F4", 0.5], ["F#4", 0.5], ["G4", 0.5],
+	["r", 4],
+	# A otra vez
+	["C4", 0.5], ["C5", 0.5], ["r", 0.5], ["G4", 0.5], ["r", 0.5], ["D#4", 0.5], ["r", 0.5], ["F4", 0.5],
+	["F#4", 0.5], ["G4", 0.5], ["r", 3],
+	# variante alta + caída cromática que empuja al Do del loop
+	["C4", 0.5], ["C5", 0.5], ["r", 0.5], ["A#4", 0.5], ["r", 0.5], ["G#4", 0.5], ["r", 0.5], ["G4", 0.5],
+	["D#4", 0.5], ["D4", 0.5], ["C#4", 0.5], ["r", 2.5],
+]
+
 
 func _song(id: String) -> Dictionary:
 	match id:
@@ -245,6 +271,18 @@ func _song(id: String) -> Dictionary:
 				{wave = "square", duty = 0.25, vol = 0.09, decay = 0.5, gate = 0.85,
 					notes = _arp(PROG_TITULO)},
 				{wave = "tri", vol = 0.26, decay = 0.7, gate = 0.85, notes = _bajo(PROG_TITULO)},
+			]}
+		"tema_encuentro":
+			# Subsuelo: 160 bpm, Do menor, riff en octavas con gate corto (~18.0 s).
+			# Textura rala: sin acompañamiento continuo, el silencio es parte del groove.
+			return {bpm = 160, loop = true, channels = [
+				{wave = "square", duty = 0.5, vol = 0.20, decay = 0.3, gate = 0.5,
+					notes = MELODIA_ENCUENTRO},
+				{wave = "square", duty = 0.25, vol = 0.09, decay = 0.3, gate = 0.5,
+					notes = _transp(MELODIA_ENCUENTRO, -12)},
+				{wave = "tri", vol = 0.26, decay = 0.35, gate = 0.55,
+					notes = _transp(MELODIA_ENCUENTRO, -24)},
+				{wave = "noise", vol = 0.08, notes = _perc_subsuelo()},
 			]}
 		"jingle_mision":
 			# Arpegio ascendente de Do mayor (~1.5 s).
@@ -297,6 +335,19 @@ func _song(id: String) -> Dictionary:
 				{wave = "square", duty = 0.125, vol = 0.30, decay = 0.10,
 					notes = [["E6", 0.12], ["r", 0.06], ["E6", 0.5]]},
 			]}
+		"menu_move":
+			# Blip grave cortito (~40 ms) al mover el cursor del menú del encuentro.
+			return {bpm = 150, channels = [
+				{wave = "square", duty = 0.5, vol = 0.24, attack = 0.002, decay = 0.03,
+					notes = [["A4", 0.1]]},
+			]}
+		"encuentro_inicio":
+			# Barrido ascendente rápido (~0.4 s) al abrir la pantalla de encuentro.
+			return {bpm = 600, channels = [
+				{wave = "square", duty = 0.25, vol = 0.22, attack = 0.002, decay = 0.12,
+					notes = [["C4", 0.5], ["E4", 0.5], ["G4", 0.5], ["C5", 0.5],
+						["E5", 0.5], ["G5", 0.5], ["C6", 1.0]]},
+			]}
 	push_error("MusicManager: id desconocido '" + id + "'")
 	return {bpm = 120, channels = []}
 
@@ -317,6 +368,33 @@ func _bajo(prog: Array) -> Array:
 	for c in prog:
 		var r: int = CHORDS[c][0] - 12
 		out += [[r, 1.0], [r + 7, 1.0], [r + 9, 1.0], [r + 7, 1.0]]
+	return out
+
+
+# Transpone una partitura en semitonos (silencios quedan igual; conserva
+# el gate por nota si lo hay). Mismas duraciones -> mismo total de beats.
+func _transp(notes: Array, semis: int) -> Array:
+	var out := []
+	for ev in notes:
+		if ev[0] is String and ev[0] == "r":
+			out.append(ev)
+		else:
+			var nuevo: Array = ev.duplicate()
+			nuevo[0] = _midi(ev[0]) + semis
+			out.append(nuevo)
+	return out
+
+
+# Percusión subsuelo: hat en corcheas con kick marcando el riff (1 y 3);
+# fill de kicks en los compases de respiro (8 y 12).
+func _perc_subsuelo() -> Array:
+	var base := [["kick", 0.5], ["hat", 0.5], ["hat", 0.5], ["hat", 0.5],
+		["kick", 0.5], ["hat", 0.5], ["hat", 0.5], ["hat", 0.5]]
+	var fill := [["kick", 0.5], ["kick", 0.5], ["hat", 0.5], ["kick", 0.5],
+		["hat", 0.5], ["hat", 0.5], ["kick", 0.5], ["hat", 0.5]]
+	var out := []
+	for b in 12:
+		out += fill if (b == 7 or b == 11) else base
 	return out
 
 

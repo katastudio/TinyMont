@@ -76,11 +76,15 @@ func _draw():
 
 func interact(player_pos: Vector2):
 	_mirar(player_pos)
+	GameManager.start_encounter(self)
 
+
+# Máquina de misión: aplica los efectos (items/estados) y devuelve las líneas
+# a decir. La usa la pantalla de encuentro (opción HABLAR).
+func dialogo_lines() -> Array:
 	# NPC ambiental (sin misión): diálogo simple.
 	if mision_id == "":
-		_decir(dialog_lines)
-		return
+		return dialog_lines
 
 	var estado := GameManager.get_estado_mision(mision_id)
 
@@ -88,29 +92,25 @@ func interact(player_pos: Vector2):
 	if otorga_item != "":
 		if estado == "en_curso" and not GameManager.tiene_item(otorga_item):
 			GameManager.agregar_item(otorga_item)
-			_decir(dialog_entrega)
+			return _lineas(dialog_entrega)
 		elif estado == "en_curso":
-			_decir(dialog_recordatorio)      # ya lo tenés, llevalo
-		else:
-			_decir(dialog_lines)             # ambiental (antes/después de la misión)
-		return
+			return _lineas(dialog_recordatorio)   # ya lo tenés, llevalo
+		return dialog_lines                       # ambiental (antes/después de la misión)
 
 	# GIVER: encarga, recuerda y completa la misión (ej: Marcos).
 	match estado:
 		"no_iniciada":
 			GameManager.set_estado_mision(mision_id, "en_curso")
-			_decir(dialog_encargo)
+			return _lineas(dialog_encargo)
 		"en_curso":
 			if requisito_item != "" and GameManager.tiene_item(requisito_item):
 				GameManager.quitar_item(requisito_item)
 				GameManager.set_estado_mision(mision_id, "completada")
 				if recompensa_item != "":
 					GameManager.agregar_item(recompensa_item)
-				_decir(dialog_entrega)
-			else:
-				_decir(dialog_recordatorio)
-		_:
-			_decir(dialog_lines)             # misión completada: charla post-misión
+				return _lineas(dialog_entrega)
+			return _lineas(dialog_recordatorio)
+	return dialog_lines                           # misión completada: charla post-misión
 
 
 func _mirar(player_pos: Vector2) -> void:
@@ -121,6 +121,5 @@ func _mirar(player_pos: Vector2) -> void:
 		facing = Vector2.DOWN if dir.y > 0 else Vector2.UP
 
 
-func _decir(lines: Array) -> void:
-	var l: Array = lines if not lines.is_empty() else dialog_lines
-	GameManager.start_dialog(npc_name, l, camiseta)
+func _lineas(l: Array) -> Array:
+	return l if not l.is_empty() else dialog_lines

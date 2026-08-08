@@ -17,6 +17,8 @@ const BLACK := Color("141018")
 const WHITE := Color("fcfcfc")
 const CHEEK := Color("f0a0a0")
 const STRAP := Color("e8c038")
+const MOUTH := Color("a83020")
+const PACK := Color("8a5a2a")
 
 
 static func _norm(desc: Dictionary) -> Dictionary:
@@ -170,8 +172,115 @@ static func portrait_rects(desc: Dictionary) -> Array:
 		"stubble":
 			r.append([6, 18, 12, 2, (d.facial_col as Color).lightened(0.1)])
 	if d.facial != "beard":
-		r.append([9, 17, 6, 1, Color("a83020")])
+		r.append([9, 17, 6, 1, MOUTH])
 	return r
+
+
+# ---- Cuerpo completo (grilla 24x40, de frente, proporción chibi) ----
+# Cabeza ≈ 45% de la altura. Sin fondo: el encuentro pone el suyo.
+const FULL_W := 24
+const FULL_H := 40
+
+
+static func full_rects(desc: Dictionary) -> Array:
+	var d := _norm(desc)
+	var r := []
+	var covered: bool = d.hat in ["cap", "fedora", "beanie"]
+
+	# --- cabeza (y 0-17) ---
+	if d.hair_style != "bald":
+		r.append([5, 5, 1, 3, d.hair]); r.append([18, 5, 1, 3, d.hair])
+		if not covered:
+			r.append([5, 2, 14, 3, d.hair])
+			if d.hair_style == "curly":
+				r.append([4, 3, 1, 3, d.hair]); r.append([19, 3, 1, 3, d.hair])
+				r.append([6, 1, 12, 1, d.hair])
+			elif d.hair_style == "long":
+				r.append([4, 5, 2, 11, d.hair]); r.append([18, 5, 2, 11, d.hair])
+			elif d.hair_style == "slick":
+				r.append([5, 2, 14, 1, (d.hair as Color).darkened(0.2)])
+
+	r.append([6, 4, 12, 11, d.skin]); r.append([16, 4, 2, 11, d.skin_sh])
+	r.append([7, 15, 10, 1, d.skin]); r.append([15, 15, 2, 1, d.skin_sh])
+	r.append([5, 8, 1, 3, d.skin]); r.append([18, 8, 1, 3, d.skin_sh])
+
+	match d.hat:
+		"cap":
+			r.append([6, 0, 12, 1, d.hat_col]); r.append([5, 1, 14, 2, d.hat_col])
+			r.append([4, 3, 16, 1, (d.hat_col as Color).darkened(0.25)])
+		"fedora":
+			r.append([6, 0, 12, 2, d.hat_col])
+			r.append([5, 2, 14, 1, (d.hat_col as Color).darkened(0.35)])
+			r.append([3, 3, 18, 1, (d.hat_col as Color).darkened(0.25)])
+		"beanie":
+			r.append([5, 0, 14, 4, d.hat_col])
+			r.append([5, 3, 14, 1, (d.hat_col as Color).darkened(0.15)])
+		"headband":
+			r.append([5, 4, 14, 1, d.hat_col])
+
+	# cejas + ojos con pupilas hacia el centro
+	r.append([8, 7, 3, 1, d.hair]); r.append([13, 7, 3, 1, d.hair])
+	r.append([8, 8, 2, 2, WHITE]); r.append([14, 8, 2, 2, WHITE])
+	r.append([9, 8, 1, 2, BLACK]); r.append([14, 8, 1, 2, BLACK])
+	if d.glasses:
+		r.append([7, 7, 4, 1, BLACK]); r.append([13, 7, 4, 1, BLACK])
+		r.append([7, 8, 1, 2, BLACK]); r.append([10, 8, 1, 2, BLACK])
+		r.append([13, 8, 1, 2, BLACK]); r.append([16, 8, 1, 2, BLACK])
+		r.append([11, 8, 2, 1, BLACK])
+	r.append([11, 10, 2, 2, d.skin_sh])
+	r.append([7, 11, 1, 1, CHEEK]); r.append([16, 11, 1, 1, CHEEK])
+
+	match d.facial:
+		"mustache":
+			r.append([9, 12, 6, 1, d.facial_col])
+		"beard":
+			r.append([6, 12, 12, 4, d.facial_col])
+		"stubble":
+			r.append([8, 13, 8, 2, (d.facial_col as Color).lightened(0.1)])
+	if d.facial != "beard":
+		r.append([10, 13, 4, 1, MOUTH])
+
+	# cuello
+	r.append([10, 16, 4, 2, d.skin]); r.append([12, 16, 2, 2, d.skin_sh])
+
+	# --- torso (y 18-24) ---
+	if d.accessory == "backpack":
+		r.append([2, 19, 1, 6, PACK]); r.append([21, 19, 1, 6, PACK])
+	r.append([5, 18, 14, 7, d.shirt])
+	r.append([17, 18, 2, 7, d.shirt_sh]); r.append([5, 24, 14, 1, d.shirt_sh])
+
+	match d.mark:
+		"stripes":
+			r.append([5, 20, 14, 1, d.mark_col]); r.append([5, 22, 14, 1, d.mark_col])
+		"badge":
+			r.append([10, 20, 4, 3, d.mark_col])
+	if d.accessory == "backpack":
+		r.append([7, 18, 2, 7, STRAP]); r.append([15, 18, 2, 7, STRAP])
+
+	# brazos con puños de piel
+	r.append([3, 19, 2, 4, d.shirt]); r.append([19, 19, 2, 4, d.shirt_sh])
+	r.append([3, 23, 2, 1, d.shirt_sh]); r.append([19, 23, 2, 1, d.shirt_sh])
+	r.append([3, 24, 2, 2, d.skin]); r.append([19, 24, 2, 2, d.skin_sh])
+
+	# --- pantalón (y 25-35) ---
+	r.append([5, 25, 14, 1, d.pants_sh])
+	r.append([5, 26, 14, 2, d.pants])
+	r.append([6, 28, 5, 8, d.pants]); r.append([13, 28, 5, 8, d.pants])
+	r.append([9, 28, 2, 8, d.pants_sh]); r.append([16, 28, 2, 8, d.pants_sh])
+
+	# --- zapatos (y 36-39) ---
+	r.append([5, 36, 6, 4, d.shoes]); r.append([13, 36, 6, 4, d.shoes])
+	r.append([5, 39, 6, 1, (d.shoes as Color).darkened(0.3)])
+	r.append([13, 39, 6, 1, (d.shoes as Color).darkened(0.3)])
+	return r
+
+
+# Espeja una lista de rects sobre el eje X (ancho de la grilla en celdas).
+static func flip_x(rects: Array, ancho: int) -> Array:
+	var out := []
+	for a in rects:
+		out.append([ancho - a[0] - a[2], a[1], a[2], a[3], a[4]])
+	return out
 
 
 # ---- Estado de animación (procedural, desde el tiempo) ----

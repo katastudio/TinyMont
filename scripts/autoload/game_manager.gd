@@ -8,6 +8,9 @@ signal mision_cambiada
 var is_dialog_active: bool = false
 var dialog_box = null
 
+var is_encounter_active: bool = false   # pantalla de encuentro abierta (frena al player)
+var _encounter: CanvasLayer = null
+
 # --- Estado del jugador / progreso ---
 var jugador_nombre: String = "Monti"
 var inventario: Array = []          # ids de objetos que Monti lleva en la mochila
@@ -107,6 +110,23 @@ func start_dialog(speaker_name: String, lines: Array, color: Color = Color.WHITE
 func end_dialog():
 	is_dialog_active = false
 	dialog_ended.emit()
+
+
+# ==================== ENCUENTRO (pantalla estilo Pokémon) ====================
+# Al interactuar con un NPC se abre la pantalla de encuentro (una sola
+# instancia, hija del autoload como el HUD). El resto de los interactuables
+# sigue con diálogo directo.
+
+func start_encounter(npc) -> void:
+	if _encounter == null:
+		_encounter = preload("res://scenes/ui/encounter_screen.tscn").instantiate()
+		add_child(_encounter)
+	is_encounter_active = true
+	_encounter.open(npc)
+
+
+func end_encounter() -> void:
+	is_encounter_active = false
 
 
 # ==================== INVENTARIO (mochila) ====================

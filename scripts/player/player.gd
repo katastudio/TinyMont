@@ -85,7 +85,7 @@ func _draw():
 func _physics_process(delta):
 	if Engine.is_editor_hint():
 		return
-	if GameManager.is_dialog_active:
+	if GameManager.is_dialog_active or GameManager.is_encounter_active:
 		return
 
 	if is_moving:
@@ -132,7 +132,7 @@ func _can_move_to(pos: Vector2) -> bool:
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint():
 		return
-	if GameManager.is_dialog_active:
+	if GameManager.is_dialog_active or GameManager.is_encounter_active:
 		return
 	if event.is_action_pressed("toggle_bici"):
 		_toggle_bici()
