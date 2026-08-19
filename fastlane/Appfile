@@ -1,0 +1,3 @@
+# Credenciales de la service account de Google Play (fuera del repo).
+json_key_file(ENV["TINYMONT_PLAY_KEY"] || File.expand_path("~/.android/tinymont-play-sa.json"))
+package_name("com.katastudio.tinymont")

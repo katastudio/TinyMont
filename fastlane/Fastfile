@@ -1,0 +1,27 @@
+default_platform(:android)
+
+platform :android do
+  desc "Sube el AAB ya exportado al track de prueba interna"
+  lane :internal do
+    upload_to_play_store(
+      track: "internal",
+      aab: "builds/android/TinyMont.aab",
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true,
+      release_status: ENV["TINYMONT_RELEASE_STATUS"] || "completed"
+    )
+  end
+
+  desc "Promociona la ultima version de prueba interna a produccion"
+  lane :promote do
+    upload_to_play_store(
+      track: "internal",
+      track_promote_to: "production",
+      skip_upload_aab: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+  end
+end

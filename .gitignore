@@ -41,3 +41,7 @@ tools/shot*.tscn
 
 # Tooling / caché de skills (no se versiona)
 .atl/
+
+# fastlane (artefactos de corrida)
+fastlane/report.xml
+fastlane/README.md
