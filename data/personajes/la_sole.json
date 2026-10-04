@@ -1,0 +1,74 @@
+{
+  "id": "la_sole",
+  "nombre": "La Sole",
+  "descripcion": "Moza de La Veneciana, conoce a todos los que piden pizza en el barrio.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.6,
+      "social": 0.8,
+      "ocio": 0.5,
+      "deber": 0.8
+    },
+    "fuerza_rutina": 0.8
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "energia": 70,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 11,
+      "hasta": 15,
+      "poi": "la_veneciana"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 19,
+      "hasta": 22,
+      "poi": "la_veneciana"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "En La Veneciana la fugazzeta sale más que la muzza.",
+    "Los viernes la pizzería se llena después del partido."
+  ],
+  "dialogos_por_humor": {}
+}

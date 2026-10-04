@@ -67,6 +67,12 @@ func _ready():
 	position = Vector2(tx * TILE_SIZE + TILE_SIZE / 2.0, ty * TILE_SIZE + TILE_SIZE / 2.0)
 	target_pos = position
 
+	# Reservar celda inicial en la grilla de ocupación
+	var mundo = get_parent()
+	if mundo and "ocupacion" in mundo:
+		var celda = Vector2i(tx, ty)
+		mundo.ocupacion.reservar(celda, self)
+
 
 func _draw():
 	# El protagonista se dibuja desde sus rasgos, con animación (respira / camina).
@@ -82,6 +88,17 @@ func _draw():
 		CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob), 1.0)
 
 
+# Celda que el player sigue ocupando hasta completar el paso en curso.
+var _celda_origen = null
+
+
+func _liberar_origen() -> void:
+	var mundo = get_parent()
+	if _celda_origen != null and mundo and "ocupacion" in mundo:
+		mundo.ocupacion.liberar(_celda_origen, self)
+	_celda_origen = null
+
+
 func _physics_process(delta):
 	if Engine.is_editor_hint():
 		return
@@ -94,6 +111,7 @@ func _physics_process(delta):
 		if position.distance_to(target_pos) < 0.5:
 			position = target_pos
 			is_moving = false
+			_liberar_origen()
 	else:
 		_handle_input()
 
@@ -116,8 +134,18 @@ func _handle_input():
 
 		var next_pos = position + dir * TILE_SIZE
 		if _can_move_to(next_pos):
-			target_pos = next_pos
-			is_moving = true
+			# Mover en la grilla de ocupación
+			var mundo = get_parent()
+			if mundo and "ocupacion" in mundo:
+				var celda_actual = Vector2i(int(position.x / TILE_SIZE), int(position.y / TILE_SIZE))
+				var celda_siguiente = Vector2i(int(next_pos.x / TILE_SIZE), int(next_pos.y / TILE_SIZE))
+				if mundo.ocupacion.reservar(celda_siguiente, self):
+					_celda_origen = celda_actual
+					target_pos = next_pos
+					is_moving = true
+			else:
+				target_pos = next_pos
+				is_moving = true
 
 
 func _can_move_to(pos: Vector2) -> bool:
@@ -198,3 +226,17 @@ func _bajar_bici() -> void:
 		_bici_ref.set_process(true)
 	_bici_ref = null
 	queue_redraw()
+
+
+## Ubica al jugador en una celda (carga de partida) y actualiza la grilla de ocupación.
+func colocar_en(celda: Vector2i) -> void:
+	var mundo = get_parent()
+	if mundo and "ocupacion" in mundo:
+		for c in mundo.ocupacion.celdas_de(self):
+			mundo.ocupacion.liberar(c, self)
+	position = Vector2(celda.x * TILE_SIZE + TILE_SIZE / 2.0, celda.y * TILE_SIZE + TILE_SIZE / 2.0)
+	target_pos = position
+	is_moving = false
+	_celda_origen = null
+	if mundo and "ocupacion" in mundo:
+		mundo.ocupacion.reservar(celda, self)

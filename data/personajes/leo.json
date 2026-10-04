@@ -1,0 +1,65 @@
+{
+  "id": "leo",
+  "nombre": "Leo",
+  "descripcion": "Pibe del potrero, crack con la pelota; dice que en el barrio cualquiera juega bien.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.6,
+      "energia": 0.5,
+      "social": 0.7,
+      "ocio": 0.95,
+      "deber": 0.3
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 20,
+      "ocio": 50,
+      "deber": 10
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 7,
+      "hasta": 21,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "Leo hace jueguitos con cualquier cosa que ruede.",
+    "Dicen que Leo aprendió a patear en el potrero de la vía."
+  ],
+  "dialogos_por_humor": {}
+}

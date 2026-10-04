@@ -1,0 +1,9 @@
+[gd_scene load_steps=2 format=4 uid="uid://bvpwl8u8jt5m"]
+
+[ext_resource type="PackedScene" path="res://scenes/main.tscn" id="main"]
+[ext_resource type="Script" path="res://tests/test_npc_movimiento.gd" id="test"]
+
+[node name="TestNpcMovimiento" type="Control"]
+script = ExtResource("test")
+
+[node name="MonteGrande" parent="." instance=ExtResource("main")]

@@ -1,0 +1,85 @@
+{
+  "id": "dona_marta",
+  "nombre": "Doña Marta",
+  "descripcion": "Almacenera de barrio; fía a los vecinos y conoce a todas las familias.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.6,
+      "energia": 0.5,
+      "social": 0.8,
+      "ocio": 0.3,
+      "deber": 0.9
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 30,
+      "social": 20,
+      "ocio": 0,
+      "deber": 80
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 8,
+      "hasta": 13,
+      "poi": "propio"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 17,
+      "hasta": 21,
+      "poi": "propio"
+    },
+    {
+      "dias": [
+        6
+      ],
+      "desde": 10,
+      "hasta": 11,
+      "poi": "iglesia"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "En el almacén de Marta todavía se fía con libreta.",
+    "Marta sabe qué cocina cada familia los domingos."
+  ],
+  "dialogos_por_humor": {}
+}

@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=4 uid="uid://gk1exwd1ngp9"]
+
+[ext_resource type="Script" path="res://tests/test_cerebro_npc_unit.gd" id="test"]
+
+[node name="TestCerebroNpcUnit" type="Control"]
+script = ExtResource("test")

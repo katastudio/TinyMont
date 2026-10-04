@@ -9,8 +9,14 @@ GODOT="${GODOT_BIN:-godot}"
 AAB="builds/android/TinyMont.aab"
 
 if [[ "${1:-}" != "--solo-subir" ]]; then
+  echo "==> Rebuild class cache"
+  perl -e 'alarm 120; exec @ARGV' "$GODOT" --headless --editor --quit --path . > /dev/null 2>&1
+
   echo "==> Tests"
-  "$GODOT" --headless --path . res://tests/test_misiones.tscn > /dev/null
+  for t in tests/test_*.tscn; do
+    echo "    $t"
+    perl -e 'alarm 400; exec @ARGV' "$GODOT" --headless --path . "res://$t" > /dev/null
+  done
 
   echo "==> Export AAB (release firmado)"
   "$GODOT" --headless --export-release "Android" "$AAB" --quit > /tmp/tinymont_aab.log 2>&1

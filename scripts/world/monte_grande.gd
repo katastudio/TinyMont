@@ -13,11 +13,15 @@ const T := 16
 const MAP_LAYER := "MapaLayer"
 const COLS := 8  # columnas del atlas de swatches
 const TanqueArt = preload("res://scripts/art/tanque_art.gd")
+const GrillaOcupacionScript = preload("res://scripts/world/grilla_ocupacion.gd")
 
 enum Tile {
 	GRASS, BUILDING, ROAD, TREE, RAIL, PLAZA, WATER,
 	SIDEWALK, MONUMENT, BENCH, PLATFORM, OMBU
 }
+
+# Semilla para determinismo (NPCs usan semilla + índice para RNG independiente)
+@export var semilla: int = 20261002
 
 # Paleta editable: el índice = celda del atlas (col = i%COLS, fila = i/COLS).
 # Para edificios, btype define el render especial y bname el cartel.
@@ -55,11 +59,26 @@ var labels: Array = []
 var _redraw_timer := 0.0
 var building_info := {}
 
+var ocupacion := GrillaOcupacionScript.new()  # Grilla de ocupación: Vector2i -> Object
+var astar := AStarGrid2D.new()                # A* para pathfinding
+var pois: Array[PuntoInteres] = []            # Puntos de interés del mundo
+var poi_por_id: Dictionary = {}               # Lookup rápido: poi_id -> PuntoInteres
+
+# Vida social (spec 0010, F3)
+const MINUTOS_CHARLA := 10                    # duración de una charla entre vecinos
+const ESPERA_ENTRE_CHARLAS := 60              # minutos antes de que la misma pareja vuelva a charlar
+var charlas_totales: int = 0
+var _vecinos: Array = []                      # NPCs con cerebro, en orden de escena (determinístico)
+var _ultima_charla: Dictionary = {}           # "a|b" -> minuto de juego de su última charla
+
 
 func _ready():
 	_load_map()
 	_spawn_player()
 	_add_dialog_box()
+	_create_pois()  # Recolecta los POIs de la escena
+	_iniciar_vida_social()
+	_iniciar_guardado()
 	GameManager.mostrar_ui_juego(true)   # HUD + controles visibles en el juego
 	MusicManager.play_music("tema_pueblo")
 	# Los NPC ahora son nodos en la escena (main.tscn), editables en el Inspector.
@@ -117,7 +136,219 @@ func _load_map():
 
 	# La capa de swatches es solo dato: en runtime se oculta y dibujamos el arte real.
 	layer.visible = false
+
+	# Construir la grilla A* con bloqueadores estáticos (tiles no caminables + Lugar/Puesto)
+	_build_astar()
+
+	# Registrar interactuables estáticos (objetos, etc.) en la grilla de ocupación
+	_register_static_interactables()
+
 	queue_redraw()
+
+
+# ==================== A* Y OCUPACIÓN ====================
+
+func _build_astar() -> void:
+	"""Construye la grilla A* con región = mapa, marca bloqueadores estáticos."""
+	var region = Rect2i(0, 0, MAP_W, MAP_H)
+	astar.region = region
+	astar.cell_size = Vector2(T, T)
+	astar.diagonal_mode = AStarGrid2D.DIAGONAL_MODE_NEVER
+	astar.default_compute_heuristic = AStarGrid2D.HEURISTIC_MANHATTAN
+	astar.update()  # Inicializa la grilla
+
+	# Marcar como sólidas (no walkable) todas las celdas que no son transitables estáticas
+	for y in MAP_H:
+		for x in MAP_W:
+			if not _es_transitable_estatica_sin_astar(Vector2i(x, y)):
+				astar.set_point_solid(Vector2i(x, y), true)
+
+
+func _es_transitable_estatica_sin_astar(celda: Vector2i) -> bool:
+	"""Verifica si una celda es transitableestatica (sin considerar ocupación dinámica)."""
+	var tile = get_tile(celda.x, celda.y)
+	# Tiles caminables: GRASS, ROAD, PLAZA, SIDEWALK, PLATFORM
+	if tile not in [Tile.GRASS, Tile.ROAD, Tile.PLAZA, Tile.SIDEWALK, Tile.PLATFORM]:
+		return false
+
+	# Verificar si Lugar o Puesto la bloquea
+	for child in get_children():
+		if child.has_method("bloquea") and child.bloquea(celda.x, celda.y):
+			return false
+
+	return true
+
+
+func _register_static_interactables() -> void:
+	"""Registra objetos estáticos con interact() en la grilla de ocupación."""
+	for child in get_children():
+		if child.has_method("interact") and not child is CharacterBody2D:
+			# Es un interactuable estático (no el player)
+			var celda = celda_de(child.position)
+			ocupacion.reservar(celda, child)
+
+
+func celda_de(world_pos: Vector2) -> Vector2i:
+	"""Convierte posición mundial a celda de grilla."""
+	return Vector2i(int(world_pos.x) / T, int(world_pos.y) / T)
+
+
+func pos_de(celda: Vector2i) -> Vector2:
+	"""Convierte celda de grilla a centro de tile en posición mundial."""
+	return Vector2(celda.x * T + T / 2.0, celda.y * T + T / 2.0)
+
+
+func es_transitable_estatica(celda: Vector2i) -> bool:
+	"""Verifica si una celda es transitables táticamente (sin ocupantes dinámicos)."""
+	return _es_transitable_estatica_sin_astar(celda)
+
+
+func camino(desde: Vector2i, hasta: Vector2i) -> Array[Vector2i]:
+	"""Calcula el camino óptimo usando A*. Devuelve lista de celdas (sin incluir origen)."""
+	var path = astar.get_id_path(desde, hasta)
+	var result: Array[Vector2i] = []
+	for i in range(1, path.size()):  # Saltar el primer punto (origen)
+		result.append(path[i])
+	return result
+
+
+# ==================== POIs ====================
+
+func _create_pois():
+	"""Recolecta los PuntoInteres colocados como hijos en la escena (spec 0010)."""
+	pois.clear()
+	poi_por_id.clear()
+	for child in get_children():
+		if child is PuntoInteres:
+			pois.append(child)
+			poi_por_id[child.poi_id] = child
+
+
+func _iniciar_vida_social() -> void:
+	_vecinos.clear()
+	for child in get_children():
+		if child.has_method("disponible_para_charlar"):
+			_vecinos.append(child)
+	if not WorldClock.tick.is_connected(_on_tick_social):
+		WorldClock.tick.connect(_on_tick_social)
+
+
+## Junta a vecinos adyacentes cuando al menos uno tiene ganas de charlar y el otro está
+## disponible: intercambian novedades y suman relación.
+func _on_tick_social(_minutos: int) -> void:
+	var ahora: int = WorldClock.minutos
+	var libres: Array = _vecinos.filter(func(n): return is_instance_valid(n) and n.disponible_para_charlar())
+	for i in libres.size():
+		var a = libres[i]
+		if a.charlando():
+			continue
+		for j in range(i + 1, libres.size()):
+			var b = libres[j]
+			if b.charlando():
+				continue
+			if not (a.quiere_charlar() or b.quiere_charlar()):
+				continue
+			var d: Vector2i = a.celda_logica() - b.celda_logica()
+			if maxi(absi(d.x), absi(d.y)) != 1:  # adyacentes, incluso en diagonal
+				continue
+			var clave := "%s|%s" % [a.npc_name, b.npc_name]
+			if ahora - int(_ultima_charla.get(clave, -ESPERA_ENTRE_CHARLAS)) < ESPERA_ENTRE_CHARLAS:
+				continue
+			MemoriaNPC.charlar(a.memoria, a.npc_name, b.memoria, b.npc_name, ahora)
+			a.iniciar_charla(b, MINUTOS_CHARLA)
+			b.iniciar_charla(a, MINUTOS_CHARLA)
+			_ultima_charla[clave] = ahora
+			charlas_totales += 1
+			break
+
+
+# ==================== GUARDADO (spec 0010 F4 + spec 0005) ====================
+
+func _iniciar_guardado() -> void:
+	GameManager.mundo_activo = self
+	if GameManager.cargar_al_iniciar:
+		GameManager.cargar_al_iniciar = false
+		var datos := GameManager.leer_partida()
+		if not datos.is_empty():
+			restaurar(datos.get("mundo", {}))
+	if not WorldClock.hora_cambiada.is_connected(_on_hora_autoguardado):
+		WorldClock.hora_cambiada.connect(_on_hora_autoguardado)
+	if not GameManager.mision_cambiada.is_connected(_on_mision_autoguardado):
+		GameManager.mision_cambiada.connect(_on_mision_autoguardado)
+
+
+func _exit_tree() -> void:
+	if GameManager.mundo_activo == self:
+		GameManager.mundo_activo = null
+
+
+func _on_hora_autoguardado(_hora: int) -> void:
+	GameManager.autoguardar()
+
+
+func _on_mision_autoguardado(_a = null, _b = null) -> void:
+	GameManager.autoguardar()
+
+
+## Foto completa del mundo vivo: reloj, jugador, NPCs, objetos tomados y vida social.
+func snapshot() -> Dictionary:
+	var npcs := {}
+	for n in _vecinos:
+		if is_instance_valid(n):
+			npcs[String(n.name)] = n.a_dict()
+	var player = get_node_or_null("Player")
+	var celda_player: Vector2i = celda_de(player.position) if player else Vector2i.ZERO
+	return {
+		"reloj": WorldClock.a_dict(),
+		"jugador": {"celda": [celda_player.x, celda_player.y],
+			"facing": [player.facing.x, player.facing.y] if player else [0, 1]},
+		"npcs": npcs,
+		"charlas_totales": charlas_totales,
+		"ultima_charla": _ultima_charla.duplicate(),
+	}
+
+
+func restaurar(d: Dictionary) -> void:
+	if d.is_empty():
+		return
+	WorldClock.desde_dict(d.get("reloj", {}))
+	# Objetos que el jugador ya levantó: no reaparecen y liberan su celda.
+	# Los nombres vienen del archivo de guardado: sólo se aceptan nombres simples de nodos
+	# hijos (sin rutas) que sean objetos levantables.
+	for nombre in GameManager.objetos_tomados:
+		var n := str(nombre)
+		if n.is_empty() or n.validate_node_name() != n or not has_node(n):
+			continue
+		var obj = get_node(n)
+		if "item" in obj and obj.has_method("interact"):
+			ocupacion.liberar(celda_de(obj.position), obj)
+			remove_child(obj)
+			obj.queue_free()
+	# Dos pasadas: primero todos sueltan sus celdas y después cada uno toma las guardadas.
+	var datos_npcs: Dictionary = d.get("npcs", {})
+	for n in _vecinos:
+		n.soltar_celdas()
+	var player = get_node_or_null("Player")
+	if player:
+		for c in ocupacion.celdas_de(player):
+			ocupacion.liberar(c, player)
+	for n in _vecinos:
+		if datos_npcs.has(String(n.name)):
+			n.restaurar(datos_npcs[String(n.name)])
+		else:
+			ocupacion.reservar(n.celda_logica(), n)
+	if player:
+		var j: Dictionary = d.get("jugador", {})
+		var c = j.get("celda", [])
+		if c.size() == 2:
+			player.colocar_en(Vector2i(int(c[0]), int(c[1])))
+		var f = j.get("facing", [0, 1])
+		player.facing = Vector2(float(f[0]), float(f[1]))
+	charlas_totales = int(d.get("charlas_totales", 0))
+	_ultima_charla.clear()
+	var uc: Dictionary = d.get("ultima_charla", {})
+	for k in uc:
+		_ultima_charla[str(k)] = int(uc[k])
 
 
 # ==================== HELPERS ====================
@@ -356,31 +587,17 @@ func _draw_labels():
 # ==================== TILE-BASED COLLISION ====================
 
 func is_walkable(world_pos: Vector2) -> bool:
-	var tx := int(world_pos.x) / T
-	var ty := int(world_pos.y) / T
-	var tile = get_tile(tx, ty)
-	if tile not in [Tile.GRASS, Tile.ROAD, Tile.PLAZA, Tile.SIDEWALK, Tile.PLATFORM]:
-		return false
-	for child in get_children():
-		if child.has_method("interact"):
-			var ntx := int(child.position.x) / T
-			var nty := int(child.position.y) / T
-			if ntx == tx and nty == ty:
-				return false
-		if child.has_method("bloquea") and child.bloquea(tx, ty):
-			return false
-	return true
+	"""Verifica si una posición es caminable: estáticamente transitable + sin ocupantes dinámicos."""
+	var celda = celda_de(world_pos)
+	return es_transitable_estatica(celda) and ocupacion.esta_libre(celda)
 
 
 func get_npc_at(world_pos: Vector2):
-	var tx := int(world_pos.x) / T
-	var ty := int(world_pos.y) / T
-	for child in get_children():
-		if child.has_method("interact"):
-			var ntx := int(child.position.x) / T
-			var nty := int(child.position.y) / T
-			if ntx == tx and nty == ty:
-				return child
+	"""Devuelve el interactuable (NPC u objeto) en una posición, si existe."""
+	var celda = celda_de(world_pos)
+	var ocupante = ocupacion.ocupante(celda)
+	if ocupante and ocupante.has_method("interact"):
+		return ocupante
 	return null
 
 

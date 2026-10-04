@@ -1,0 +1,82 @@
+{
+  "id": "padre_quique",
+  "nombre": "Padre Quique",
+  "descripcion": "Cura de la Parroquia Inmaculada Concepción; visita a los vecinos y organiza la olla popular.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.6,
+      "social": 0.85,
+      "ocio": 0.3,
+      "deber": 0.9
+    },
+    "fuerza_rutina": 0.85
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "energia": 70,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 8,
+      "hasta": 12,
+      "poi": "iglesia"
+    },
+    {
+      "dias": [
+        6
+      ],
+      "desde": 18,
+      "hasta": 20,
+      "poi": "iglesia"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "desde": 15,
+      "hasta": 17,
+      "poi": "escuela"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "Los domingos hay misa a las 10 y a las 19.",
+    "El padre Quique organiza la olla popular los jueves."
+  ],
+  "dialogos_por_humor": {}
+}

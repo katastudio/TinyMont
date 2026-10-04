@@ -29,6 +29,7 @@ func _draw() -> void:
 
 func interact(_player_pos: Vector2) -> void:
 	GameManager.agregar_item(item)
+	GameManager.registrar_objeto_tomado(name)
 	if nombre != "":
 		GameManager.start_dialog("Monti", ["¡Encontre " + nombre + "!"], Color("547ff3"))
 	queue_free()   # ya lo tenés

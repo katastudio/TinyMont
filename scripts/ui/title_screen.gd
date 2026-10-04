@@ -1,6 +1,7 @@
 extends Control
 ## Pantalla de bienvenida (después del boot splash). Postal del barrio: cielo, pasto,
-## El Tanque y Monti; título, una explicación breve y un botón "Iniciar" con play.
+## El Tanque y Monti; título, una explicación breve y un botón "Iniciar" (o "Continuar"
+## si hay partida guardada, con un enlace para empezar una nueva) con play.
 ## 100% procedural. Al iniciar carga el juego (main.tscn).
 
 const CharacterArt = preload("res://scripts/art/character_art.gd")
@@ -26,6 +27,8 @@ const GLYPHS := {
 var _t := 0.0
 var _pressed := false
 var _hint_sonido := false   # web: falta el primer gesto para activar el audio
+var _hay_partida := false   # hay partida guardada: el botón dice CONTINUAR
+var _pressed_nueva := false
 
 
 func _ready() -> void:
@@ -34,6 +37,7 @@ func _ready() -> void:
 	# En web el AudioContext arranca suspendido hasta el primer gesto:
 	# se muestra un hint y al primer input se reinicia el tema del título.
 	_hint_sonido = OS.has_feature("web")
+	_hay_partida = GameManager.has_save()
 	# Botón de mute abajo a la derecha (mismo widget que el HUD).
 	var mute := MuteButton.new()
 	add_child(mute)
@@ -54,7 +58,7 @@ func _process(delta: float) -> void:
 
 func _button_rect() -> Rect2:
 	var w := size.x
-	var bw := 118.0
+	var bw := 140.0 if _hay_partida else 118.0
 	return Rect2((w - bw) / 2.0, size.y - 46.0, bw, 30.0)
 
 
@@ -173,12 +177,24 @@ func _draw_button(font: Font) -> void:
 	draw_rect(body, INK, false, 2.0)
 	# Triángulo de play + etiqueta (nudge óptico +1)
 	var cy := body.get_center().y
-	var tx := body.position.x + 26
+	var etiqueta := "CONTINUAR" if _hay_partida else "INICIAR"
+	# Triángulo (11 px) + separación (7 px) + texto, centrados en el botón.
+	var ancho_texto := font.get_string_size(etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 13).x if font else 60.0
+	var tx := body.get_center().x - (18.0 + ancho_texto) / 2.0
 	draw_colored_polygon(PackedVector2Array([
 		Vector2(tx, cy - 7), Vector2(tx, cy + 7), Vector2(tx + 11, cy),
 	]), INK)
 	if font:
-		draw_string(font, Vector2(tx + 18, cy + 5), "INICIAR", HORIZONTAL_ALIGNMENT_LEFT, -1, 13, INK)
+		draw_string(font, Vector2(tx + 18, cy + 5), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, INK)
+	if _hay_partida and font:
+		var n := _nueva_rect()
+		var col := INK if not _pressed_nueva else BTN_DK
+		draw_string(font, Vector2(n.position.x, n.position.y + 9), "nueva partida", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, col)
+		draw_line(Vector2(n.position.x, n.position.y + 11), Vector2(n.position.x + n.size.x, n.position.y + 11), col, 1.0)
+
+
+func _nueva_rect() -> Rect2:
+	return Rect2(6.0, size.y - 16.0, 62.0, 12.0)
 
 
 # ==================== INPUT ====================
@@ -192,15 +208,21 @@ func _input(event: InputEvent) -> void:
 			return
 		if is_press:
 			_pressed = _button_rect().grow(6).has_point(event.position)
+			_pressed_nueva = _hay_partida and _nueva_rect().grow(4).has_point(event.position)
 			queue_redraw()
 		else:
 			if _pressed and _button_rect().grow(6).has_point(event.position):
 				_start()
+			elif _pressed_nueva and _nueva_rect().grow(4).has_point(event.position):
+				_nueva_partida()
 			_pressed = false
+			_pressed_nueva = false
 			queue_redraw()
 	elif event is InputEventKey and event.pressed and not event.echo:
 		if event.keycode in [KEY_ENTER, KEY_KP_ENTER, KEY_SPACE, KEY_Z]:
 			_start()
+		elif event.keycode == KEY_N and _hay_partida:
+			_nueva_partida()
 
 
 # Primer gesto en web: el AudioContext ya se reanuda solo, pero el tema venía
@@ -220,4 +242,15 @@ func _primer_gesto_web(event: InputEvent) -> void:
 
 func _start() -> void:
 	set_process_input(false)
+	GameManager.cargar_al_iniciar = _hay_partida
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
+
+
+## Descarta la partida guardada y arranca de cero (el reloj vuelve al lunes 8:00).
+func _nueva_partida() -> void:
+	GameManager.borrar_partida()
+	GameManager.inventario.clear()
+	GameManager.misiones.clear()
+	WorldClock.reiniciar(WorldClock.semilla)
+	_hay_partida = false
+	_start()

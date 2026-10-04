@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=4 uid="uid://bg1hk0ph6rk2"]
+
+[ext_resource type="Script" path="res://tests/test_mundo_vivo.gd" id="test"]
+
+[node name="TestMundoVivo" type="Control"]
+script = ExtResource("test")

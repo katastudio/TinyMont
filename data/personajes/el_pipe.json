@@ -1,0 +1,81 @@
+{
+  "id": "el_pipe",
+  "nombre": "El Pipe",
+  "descripcion": "Pasajero eterno del Roca; siempre está esperando un tren que viene demorado.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.6,
+      "energia": 0.6,
+      "social": 0.6,
+      "ocio": 0.5,
+      "deber": 0.7
+    },
+    "fuerza_rutina": 0.7
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "energia": 70,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "desde": 6,
+      "hasta": 9,
+      "poi": "anden"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "desde": 18,
+      "hasta": 20,
+      "poi": "anden"
+    },
+    {
+      "dias": [
+        5,
+        6
+      ],
+      "desde": 20,
+      "hasta": 24,
+      "poi": "el_faro"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "De noche en la estación pasan cosas raras, dice el Pipe.",
+    "El Roca para El Jagüel viene con demora otra vez."
+  ],
+  "dialogos_por_humor": {}
+}

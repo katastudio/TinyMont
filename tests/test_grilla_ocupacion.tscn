@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=4 uid="uid://c7xdc5x6yo0v"]
+
+[ext_resource type="Script" path="res://tests/test_grilla_ocupacion.gd" id="1_test"]
+
+[node name="TestGrillaOcupacion" type="Node"]
+script = ExtResource("1_test")

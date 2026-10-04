@@ -1,0 +1,103 @@
+{
+  "id": "walter",
+  "nombre": "Walter",
+  "descripcion": "Colectivero del 306; recorre su línea del centro a Constitución.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.6,
+      "energia": 0.6,
+      "social": 0.5,
+      "ocio": 0.4,
+      "deber": 0.95
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 70,
+      "social": 10,
+      "ocio": 10,
+      "deber": 10
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 6,
+      "hasta": 10,
+      "poi": "terminal_306"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 10,
+      "hasta": 14,
+      "poi": "parada_306"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 14,
+      "hasta": 18,
+      "poi": "terminal_306"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "desde": 18,
+      "hasta": 20,
+      "poi": "parada_306"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "El 306 sale cada quince minutos desde la terminal.",
+    "Walter dice que la SUBE se carga adelante y se baja por atrás."
+  ],
+  "dialogos_por_humor": {}
+}

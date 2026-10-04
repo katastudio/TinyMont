@@ -1,0 +1,65 @@
+{
+  "id": "el_chino",
+  "nombre": "El Chino",
+  "descripcion": "Parrillero de la plaza; su choripán con chimichurri casero es leyenda.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.7,
+      "energia": 0.5,
+      "social": 0.8,
+      "ocio": 0.4,
+      "deber": 0.9
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 30,
+      "social": 30,
+      "ocio": 0,
+      "deber": 80
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 11,
+      "hasta": 23,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "El chimichurri del Chino es receta de la abuela.",
+    "Los domingos el Chino agota los choris antes de las dos."
+  ],
+  "dialogos_por_humor": {}
+}

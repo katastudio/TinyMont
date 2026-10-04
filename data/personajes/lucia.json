@@ -1,0 +1,75 @@
+{
+  "id": "lucia",
+  "nombre": "Lucía",
+  "descripcion": "Desarrolladora en Kata Studio; está haciendo un juego sobre Monte Grande.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.6,
+      "energia": 0.7,
+      "social": 0.5,
+      "ocio": 0.6,
+      "deber": 0.9
+    },
+    "fuerza_rutina": 0.8
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 0,
+      "ocio": 10,
+      "deber": 80
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "desde": 9,
+      "hasta": 18,
+      "poi": "propio"
+    },
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "desde": 13,
+      "hasta": 14,
+      "poi": "mostaza"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "En Kata Studio están haciendo un juego del barrio.",
+    "Lucía dice que la plaza va a salir en el juego."
+  ],
+  "dialogos_por_humor": {}
+}

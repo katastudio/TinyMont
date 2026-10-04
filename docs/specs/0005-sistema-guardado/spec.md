@@ -1,6 +1,6 @@
 # Spec 0005 — Sistema de guardado (save/load)
 
-- **Estado:** draft
+- **Estado:** implementado (2026-10-03, junto con spec 0010 F4). Pendiente: CA3 en web.
 - **Milestone:** mvp-0.1.0
 - **Autor:** Martín
 - **Relacionado:** roadmap #B5
@@ -29,15 +29,23 @@ ya hablados). Guardado a archivo `user://save.json`.
 
 ## 5. Criterios de aceptación
 
-- [ ] CA1. Guardar, cerrar y reabrir restaura la posición del player.
-- [ ] CA2. `has_save()` permite a la pantalla de título mostrar "Continuar" (integra con 0004).
+- [x] CA1. Guardar, cerrar y reabrir restaura la posición del player.
+  *Verificado:* `test_guardado`.
+- [x] CA2. `has_save()` permite a la pantalla de título mostrar "Continuar" (integra con 0004).
+  *Verificado por captura de la pantalla de título.*
 - [ ] CA3. Funciona en export web (persistencia en navegador).
 
 ## 6. Restricciones
 
 - GDScript / sin deps. ✔ no requiere ADR (JSON es nativo de Godot).
 
-## 7. Preguntas abiertas
+## 7. Decisiones (2026-10-03)
+
+- Guardado automático: cada hora de juego, al cambiar una misión y al cerrar o pasar a
+  segundo plano. No hay guardado manual (R4 queda reemplazado por el autoguardado).
+- Archivo único `user://partida.json`; el título ofrece CONTINUAR y "nueva partida".
+
+## 8. Preguntas abiertas
 
 - ¿Dónde se dispara el guardado? ¿menú o punto físico (ej: la casa del player)?
 

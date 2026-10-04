@@ -24,7 +24,7 @@ jobs:
   export-and-deploy:
     runs-on: ubuntu-latest
     container:
-      image: barichello/godot-ci:4.4.1
+      image: barichello/godot-ci:4.7.1
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -35,14 +35,25 @@ jobs:
       - name: Instalar template web_nothreads (falta en la imagen de CI)
         run: |
           set -e
-          VER=4.4.1-stable
-          DEST="$HOME/.local/share/godot/export_templates/4.4.1.stable"
+          VER=4.7.1-stable
+          DEST="$HOME/.local/share/godot/export_templates/4.7.1.stable"
           mkdir -p "$DEST"
           wget -q -O /tmp/templates.tpz \
             "https://github.com/godotengine/godot/releases/download/${VER}/Godot_v${VER}_export_templates.tpz"
           unzip -o -q /tmp/templates.tpz "templates/web_nothreads_*" -d /tmp/tpz
           cp -f /tmp/tpz/templates/web_nothreads_*.zip "$DEST"/
           echo "Templates web instalados:"; ls -1 "$DEST" | grep web
+
+      - name: Importar proyecto (registra class_name nuevos)
+        run: godot --headless --editor --quit --path . || true
+
+      - name: Tests headless
+        run: |
+          set -e
+          for t in tests/test_*.tscn; do
+            echo "==> $t"
+            timeout 300 godot --headless --path . "res://$t"
+          done
 
       - name: Exportar build Web
         run: |
