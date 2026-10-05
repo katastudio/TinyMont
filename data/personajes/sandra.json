@@ -61,5 +61,26 @@
     "Las medialunas de Sandra salen a las seis de la mañana.",
     "Sandra le guarda vasitos a Marcos para el café."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Huelo las facturas todo el día, no aguanto.",
+      "Me como una medialuna, una sola."
+    ],
+    "cansado": [
+      "Arranqué a las cuatro y media, estoy fundida.",
+      "Hornear desde la madrugada cansa."
+    ],
+    "aburrido": [
+      "Hoy no se vende ni un chipá.",
+      "La plaza está tranquila esta mañana."
+    ],
+    "solo": [
+      "Marcos está en la estación y yo acá solita.",
+      "¿Te tomás un mate cocido conmigo?"
+    ],
+    "contento": [
+      "¡Se terminaron todas las facturas!",
+      "Hoy el chipá salió perfecto."
+    ]
+  }
 }

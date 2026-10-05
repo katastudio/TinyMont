@@ -61,5 +61,26 @@
     "Gille perdió su trompeta cerca de la plaza.",
     "Cuando Gille toca, la plaza se queda escuchando."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Tocar la trompeta abre el apetito, ¿sabías?",
+      "Después del ensayo como cualquier cosa."
+    ],
+    "cansado": [
+      "Ensayamos hasta tarde, estoy sin aire.",
+      "Los labios no me dan más de tanto soplar."
+    ],
+    "aburrido": [
+      "Sin música el barrio está muy callado.",
+      "Hoy no tengo con quién zapar."
+    ],
+    "solo": [
+      "Un músico sin público es muy triste.",
+      "¿Querés que te toque algo? Escuchá."
+    ],
+    "contento": [
+      "¡Hoy la plaza bailó con la trompeta!",
+      "El barrio suena mejor cuando hay música."
+    ]
+  }
 }

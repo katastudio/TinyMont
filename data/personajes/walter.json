@@ -99,5 +99,26 @@
     "El 306 sale cada quince minutos desde la terminal.",
     "Walter dice que la SUBE se carga adelante y se baja por atrás."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Manejando todo el día, almuerzo en la terminal.",
+      "El 306 no para ni para comer, viste."
+    ],
+    "cansado": [
+      "Doble turno en el 306, estoy fundido.",
+      "El tránsito de hoy me dejó destruido."
+    ],
+    "aburrido": [
+      "Mismo recorrido, mismas paradas, todos los días.",
+      "Hoy el colectivo vino vacío."
+    ],
+    "solo": [
+      "Arriba del colectivo nadie le habla al chofer.",
+      "Charlemos un rato antes de la próxima vuelta."
+    ],
+    "contento": [
+      "¡Hoy no hubo nada de tránsito!",
+      "Los pasajeros me saludaron al bajar."
+    ]
+  }
 }

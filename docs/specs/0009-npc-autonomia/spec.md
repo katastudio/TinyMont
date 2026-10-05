@@ -67,9 +67,9 @@ todo configurable desde el Inspector.
 
 - [x] CA1. Dado el mapa cargado, cuando pasan 3 segundos, entonces los NPCs han cambiado
   de celda al menos una vez según su rutina. _Verificado: test_npc_movimiento valida cambios de celda._
-- [ ] CA2. Dado un NPC deambulando, cuando termina su movimiento, ocupa una celda diferente
+- [x] CA2. Dado un NPC deambulando, cuando termina su movimiento, ocupa una celda diferente
   a la anterior, distancia ≤ radio configurado, y es caminable (`is_walkable` true). _Verificado: _elegir_destino_deambular_._
-- [ ] CA3. Dado un NPC en patrulla, cuando visita un waypoint, se detiene brevemente
+- [x] CA3. Dado un NPC en patrulla, cuando visita un waypoint, se detiene brevemente
   (pausa configurable) antes de avanzar al siguiente. _Verificado: estado ESPERANDO con timer pausa._
 - [ ] CA4. Dado un NPC en movimiento, cuando el player le habla, entonces el NPC se detiene en
   su celda actual, queda orientado hacia el player y no se mueve hasta cerrar el diálogo; al
@@ -82,9 +82,9 @@ todo configurable desde el Inspector.
   frames (1 minuto a 60 fps) con 23 NPCs y verifica en cada frame la R1 (ninguna celda con dos
   ocupantes, ninguna celda del player pisada) y que ningún NPC está en una celda no caminable. _Infraestructura lista; test preparado._
 
-> **Nota 2026-10-03:** con la fase 2 los 23 NPCs pasaron a la rutina CEREBRO. DEAMBULAR y
-> PATRULLAR siguen disponibles como respaldo, pero ningún NPC de la escena las usa, así que CA2
-> y CA3 quedan sin test que los ejercite. La mecánica de pasos, ocupación y pausa selectiva que
+> **Nota 2026-10-04:** con la fase 2 los 23 NPCs pasaron a la rutina CEREBRO. DEAMBULAR y
+> PATRULLAR siguen como respaldo y `test_rutinas_simples` las ejercita configurando a Tito y a
+> Walter en runtime (CA2 y CA3). La mecánica de pasos, ocupación y pausa selectiva que
 > usa el cerebro sí está cubierta por `test_npc_movimiento` y `test_mundo_vivo`.
 
 ## 6. Restricciones (de la constitución)

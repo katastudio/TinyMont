@@ -72,5 +72,26 @@
     "Monte Grande es la Ciudad de los Árboles.",
     "El ginkgo de la plaza es más viejo que la estación, dice Ramón."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Me como una manzana del árbol, si me dejan.",
+      "Las hojas no se comen, una lástima."
+    ],
+    "cansado": [
+      "Regué todos los canteros, estoy molido.",
+      "Los árboles tienen paciencia, yo ya no tanto."
+    ],
+    "aburrido": [
+      "En otoño hay más que hacer con las hojas.",
+      "Ya conté todos los ginkgos de la plaza."
+    ],
+    "solo": [
+      "A los árboles les hablo, pero no contestan.",
+      "¿Te interesan los árboles? Te cuento todo."
+    ],
+    "contento": [
+      "El ginkgo está más lindo que nunca.",
+      "Plantamos un árbol nuevo en la plaza."
+    ]
+  }
 }

@@ -61,5 +61,26 @@
     "El kiosco de Beto está abierto casi las 24 horas.",
     "Beto fía a los del barrio, pero anota todo."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Vendo golosinas pero estoy a dieta, qué ironía.",
+      "Me como un alfajor, nadie se entera."
+    ],
+    "cansado": [
+      "Abrir 24 horas tiene sus costos, pibe.",
+      "Anoche no cerré el ojo en el kiosco."
+    ],
+    "aburrido": [
+      "Ya acomodé todas las golosinas dos veces.",
+      "Hoy no vino ni un cliente a comprar figuritas."
+    ],
+    "solo": [
+      "Detrás del mostrador uno se siente solo.",
+      "Quedate, que te convido una Manaos."
+    ],
+    "contento": [
+      "¡Hoy se vendieron todas las figuritas!",
+      "El kiosco anda bárbaro esta semana."
+    ]
+  }
 }

@@ -70,5 +70,26 @@
     "En La Veneciana la fugazzeta sale más que la muzza.",
     "Los viernes la pizzería se llena después del partido."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Sirvo pizzas todo el día y no pruebo ni una.",
+      "Me guardé una porción de fugazzeta para después."
+    ],
+    "cansado": [
+      "Hoy la pizzería explotó, estoy muerta.",
+      "Doble turno, me duelen los pies."
+    ],
+    "aburrido": [
+      "Mesas vacías, ¿dónde se metió la gente?",
+      "Si no entra nadie, me pongo a doblar servilletas."
+    ],
+    "solo": [
+      "¡Al fin alguien! Hoy no vino ni el Pipe.",
+      "Quedate un rato, que no hay clientes."
+    ],
+    "contento": [
+      "¡Hoy salieron como veinte fugazzetas!",
+      "Los clientes de siempre me alegran el día."
+    ]
+  }
 }

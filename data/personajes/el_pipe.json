@@ -77,5 +77,26 @@
     "De noche en la estación pasan cosas raras, dice el Pipe.",
     "El Roca para El Jagüel viene con demora otra vez."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Esperando el tren me comí todos los caramelos.",
+      "Si el Roca no viene, me voy a comprar un chori."
+    ],
+    "cansado": [
+      "Tantas horas en el andén me dejan hecho pelota.",
+      "Me quedé dormido y casi pierdo el tren."
+    ],
+    "aburrido": [
+      "Ya conté todos los durmientes de la vía.",
+      "Otro tren demorado... qué embole."
+    ],
+    "solo": [
+      "En el andén nadie habla, todos con el celular.",
+      "Charlemos, que el tren viene cuando viene."
+    ],
+    "contento": [
+      "¡Hoy el Roca llegó a horario! Un milagro.",
+      "Llegué temprano y conseguí asiento."
+    ]
+  }
 }

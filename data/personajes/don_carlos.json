@@ -72,5 +72,26 @@
     "La plaza Mitre es de 1904 y está en diagonal a las calles.",
     "Antes el tren paraba más seguido, decían los viejos."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Me comería un sánguche de miga entero.",
+      "Con el estómago vacío no cuento bien la historia."
+    ],
+    "cansado": [
+      "Uf, a mi edad la plaza se camina despacio.",
+      "Dejame sentar un ratito en el banco."
+    ],
+    "aburrido": [
+      "Hoy la plaza está más quieta que nunca.",
+      "Si no pasa nada, te cuento lo de 1904 otra vez."
+    ],
+    "solo": [
+      "¡Qué suerte que pasaste! No había nadie para charlar.",
+      "Contame algo, que hoy no hablé con nadie."
+    ],
+    "contento": [
+      "Qué lindo día para estar en la plaza, pibe.",
+      "El barrio está hermoso hoy, ¿viste?"
+    ]
+  }
 }

@@ -61,5 +61,26 @@
     "Tiaguito ensaya canciones en la estación.",
     "Tiaguito busca su micrófono para grabar un tema."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Rimando con hambre no me sale nada.",
+      "Un pancho y vuelvo a escribir."
+    ],
+    "cansado": [
+      "Escribí rimas toda la noche, no dormí.",
+      "Grabé tres temas hoy, estoy liquidado."
+    ],
+    "aburrido": [
+      "Me falta inspiración para el tema nuevo.",
+      "Hoy no se me ocurre ni una rima."
+    ],
+    "solo": [
+      "Necesito alguien que escuche mis rimas.",
+      "¿Te tiro un freestyle? Es cortito."
+    ],
+    "contento": [
+      "¡Me salió una rima zarpada hoy!",
+      "De El Jagüel pal mundo, y hoy más que nunca."
+    ]
+  }
 }

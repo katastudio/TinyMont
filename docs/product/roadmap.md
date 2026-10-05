@@ -66,8 +66,8 @@ emergentes, vida social y guardado.
 
 | # | Ítem | Estado | Spec |
 |---|------|--------|------|
-| C7 | Retratos en el cuadro de diálogo | pendiente | — |
-| C8 | Gestos puntuales (AnimationPlayer / tween) | idea | — |
+| C7 | Retratos en el cuadro de diálogo | hecho (v0.7.0, `test_retrato_dialogo`) | — |
+| C8 | Gestos puntuales: saltito y saludo procedurales | hecho (v0.7.0, `test_gestos`) | — |
 | B5 | Sistema de guardado base | hecho (v0.6.0) | [0005](../specs/0005-sistema-guardado/spec.md) |
 | B6 | Transición entre mapas (plaza ↔ monte_grande) | draft | [0006](../specs/0006-transicion-mapas/spec.md) |
 | B8 | Más NPCs y mini-quests | idea | — |

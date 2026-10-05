@@ -69,5 +69,26 @@
     "El gato de Doña Rosa se llama Mostaza, como el local.",
     "Doña Rosa sabe quién se mudó antes que nadie."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Me hice unas milanesas y me olvidé de comerlas.",
+      "A esta hora ya tendría que estar almorzando."
+    ],
+    "cansado": [
+      "Barrí toda la vereda, estoy agotada.",
+      "El gato no me dejó dormir en toda la noche."
+    ],
+    "aburrido": [
+      "Desde el balcón hoy no pasa nada interesante.",
+      "Ni un chisme nuevo en toda la cuadra."
+    ],
+    "solo": [
+      "Vení, nene, sentate que te cuento.",
+      "Hoy no pasó ni el cartero a saludar."
+    ],
+    "contento": [
+      "¡Qué lindo verte por acá, querido!",
+      "Hoy amaneció un día precioso."
+    ]
+  }
 }

@@ -43,6 +43,11 @@ func _anim_cfg() -> Dictionary:
 	}
 
 
+## Descriptor para el retrato del cuadro de diálogo.
+func retrato() -> Dictionary:
+	return _descriptor()
+
+
 func _descriptor() -> Dictionary:
 	return {
 		skin = piel, hair = pelo_color, hair_style = pelo,
@@ -206,9 +211,14 @@ func _subir_bici() -> void:
 	var bici := _bici_cercana()
 	if bici == null:
 		return   # no hay bici cerca: no pasa nada
+	MusicManager.play_sfx("timbre_bici")
+	montar_bici(bici)
+
+
+## Monta una bici concreta (también lo usa la carga de partida).
+func montar_bici(bici: Node2D) -> void:
 	GameManager.en_bici = true
 	GameManager.bici_color = bici.color
-	MusicManager.play_sfx("timbre_bici")
 	bici.visible = false
 	bici.set_process(false)      # pausa su animación mientras está "guardada"
 	_bici_ref = bici

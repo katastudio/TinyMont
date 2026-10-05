@@ -78,5 +78,26 @@
     "Los domingos hay misa a las 10 y a las 19.",
     "El padre Quique organiza la olla popular los jueves."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Después de misa siempre tengo hambre, hijo.",
+      "La olla popular me deja con ganas de un plato."
+    ],
+    "cansado": [
+      "Visité a muchos vecinos hoy, estoy cansado.",
+      "Preparar la olla popular lleva su trabajo."
+    ],
+    "aburrido": [
+      "La parroquia está muy tranquila hoy.",
+      "Hoy no vino nadie a la parroquia."
+    ],
+    "solo": [
+      "Me alegra que pases a saludar, hijo.",
+      "Contame cómo te trata el barrio."
+    ],
+    "contento": [
+      "La olla popular alcanzó para todos.",
+      "Hoy el coro cantó hermoso en misa."
+    ]
+  }
 }

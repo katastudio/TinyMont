@@ -81,5 +81,26 @@
     "En el almacén de Marta todavía se fía con libreta.",
     "Marta sabe qué cocina cada familia los domingos."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Atiendo el almacén y me olvido de comer.",
+      "Me corto un pedazo de queso y sigo."
+    ],
+    "cansado": [
+      "Acomodar la mercadería me deja rendida.",
+      "Hoy cerré tarde, estoy muy cansada."
+    ],
+    "aburrido": [
+      "La libreta de fiados no se llena sola.",
+      "Hoy está muy tranquilo el almacén."
+    ],
+    "solo": [
+      "Las vecinas hoy no vinieron a charlar.",
+      "Pasá, nene, que te cuento las novedades."
+    ],
+    "contento": [
+      "Hoy todos pagaron lo que debían, qué alegría.",
+      "Me llegó el dulce de leche que esperaba."
+    ]
+  }
 }

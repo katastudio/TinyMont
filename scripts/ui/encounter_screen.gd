@@ -422,7 +422,7 @@ func _activar(idx: int) -> void:
 	match idx:
 		0:  # HABLAR: máquina de misión del NPC, mostrada con el diálogo normal
 			_modo = "hablando"
-			GameManager.start_dialog(_npc.npc_name, _npc.dialogo_lines(), _npc.camiseta)
+			GameManager.start_dialog(_npc.npc_name, _npc.dialogo_lines(), _npc.camiseta, _npc.retrato())
 		1:
 			_modo = "mochila"
 			_pagina = 0

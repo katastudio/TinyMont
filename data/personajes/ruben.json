@@ -73,5 +73,26 @@
     "Rubén tiene el puesto de diarios hace 40 años.",
     "Las figuritas del Mundial se agotaron en una mañana."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Leí todos los diarios y no desayuné.",
+      "Un sánguche de miga y sigo con el puesto."
+    ],
+    "cansado": [
+      "Cuarenta años abriendo a las seis cansan.",
+      "Hoy me pesan los paquetes de diarios."
+    ],
+    "aburrido": [
+      "Ya leí el diario de punta a punta.",
+      "Hoy no hay ninguna noticia que valga la pena."
+    ],
+    "solo": [
+      "Antes la gente charlaba más en el puesto.",
+      "¿Sabés las últimas noticias del barrio?"
+    ],
+    "contento": [
+      "¡Salió el álbum nuevo de figuritas!",
+      "Hoy vendí todos los diarios temprano."
+    ]
+  }
 }

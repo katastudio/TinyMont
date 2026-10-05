@@ -68,5 +68,26 @@
     "Esta semana hay función de tango en el teatro.",
     "Mili ensaya en la plaza cuando no hay nadie."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Antes de la función no como, después sí.",
+      "Me muero por una medialuna de Sandra."
+    ],
+    "cansado": [
+      "Tres funciones seguidas, no doy más.",
+      "Ensayé toda la mañana, necesito descansar."
+    ],
+    "aburrido": [
+      "Sin ensayo hoy, me aburro como una ostra.",
+      "El teatro cerrado es muy triste."
+    ],
+    "solo": [
+      "Necesito público, aunque sea uno solo.",
+      "¿Me escuchás un monólogo? Es cortito."
+    ],
+    "contento": [
+      "¡Anoche la sala estaba llena!",
+      "Los aplausos me duran toda la semana."
+    ]
+  }
 }

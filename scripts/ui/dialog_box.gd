@@ -23,6 +23,10 @@ var name_plate: Panel
 var name_label: Label
 var text_label: Label
 var indicator: Control
+var retrato: Control
+
+const MARGEN_TEXTO := 4.0
+const MARGEN_CON_RETRATO := 32.0   # 26 px de retrato con marco + separación
 
 
 func _ready():
@@ -87,6 +91,15 @@ func _build_ui():
 	text_label.clip_text = true
 	inner.add_child(text_label)
 
+	# Retrato del que habla, a la izquierda del texto (sólo si se pasa un descriptor)
+	retrato = Control.new()
+	retrato.set_script(preload("res://scripts/ui/retrato_dialogo.gd"))
+	retrato.position = Vector2(3, 3)
+	retrato.size = Vector2(26, 26)
+	retrato.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	retrato.visible = false
+	inner.add_child(retrato)
+
 	# Indicador de avance (parpadea), anclado abajo a la derecha del interior
 	# Flechita ▼ dibujada por código (no depende de la fuente; en web el glyph
 	# "▼" no existía y se veía como un cuadrado con basura).
@@ -133,9 +146,12 @@ func _layout() -> void:
 	name_plate.offset_bottom = -51.0 - reserve
 
 
-func show_dialog(speaker: String, lines: Array, color: Color = Pal.WHITE):
+func show_dialog(speaker: String, lines: Array, color: Color = Pal.WHITE, retrato_desc: Dictionary = {}):
 	current_lines = lines
 	speaker_color = color
+	retrato.descriptor = retrato_desc
+	retrato.visible = not retrato_desc.is_empty()
+	text_label.offset_left = MARGEN_CON_RETRATO if retrato.visible else MARGEN_TEXTO
 	line_index = 0
 	visible = true
 	_layout()

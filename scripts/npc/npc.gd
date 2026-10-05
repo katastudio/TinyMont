@@ -85,6 +85,12 @@ var _opcion_actual: Dictionary = {}      # opción elegida (POI o lugar propio) 
 var _minutos_actividad: int = 0          # minutos de juego restantes de la actividad en curso
 var historial_pois: Array[String] = []   # ids de POIs donde completó una actividad (tests y depuración)
 
+# Gestos puntuales (roadmap C8): nombre -> duración en segundos
+const GESTOS := {"saltito": 0.5, "saludo": 1.0}
+const ALTURA_SALTITO := 4.0
+var _gesto: String = ""
+var _t_gesto: float = 0.0
+
 # Vida social (spec 0010, F3)
 const UMBRAL_SOCIAL := 20.0              # urgencia social mínima para buscar charla
 const ALIVIO_CHARLA := 40.0              # cuánto baja la urgencia social una charla
@@ -98,6 +104,11 @@ func _anim_cfg() -> Dictionary:
 		respira = respira, respira_amp = respira_amplitud, respira_vel = respira_velocidad,
 		parpadea = parpadea, parpadeo_cada = parpadeo_cada,
 	}
+
+
+## Descriptor para el retrato del cuadro de diálogo.
+func retrato() -> Dictionary:
+	return _descriptor()
 
 
 func _descriptor() -> Dictionary:
@@ -142,6 +153,10 @@ func _ready():
 func _process(delta):
 	# Avanza la animación (respiración/parpadeo). Corre también en el editor (@tool).
 	_t += delta
+	if _gesto != "":
+		_t_gesto += delta
+		if _t_gesto >= GESTOS[_gesto]:
+			_gesto = ""
 
 	# Movimiento: solo en runtime, si el mundo existe
 	if not Engine.is_editor_hint() and is_instance_valid(_mundo):
@@ -152,7 +167,12 @@ func _process(delta):
 
 func _draw():
 	var st = CharacterArt.anim_state(_t, _anim_cfg(), _paso_activo, float(get_index()) * 0.6)
-	CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob), 1.0)
+	var alto := altura_gesto()
+	CharacterArt.draw_on(self, CharacterArt.map_rects(_descriptor(), st), Vector2(-8, -10 - st.bob - alto), 1.0)
+	if _gesto == "saludo":
+		# Mano que saluda al costado de la cabeza, alternando de lado a lado.
+		var vaiven := 1.0 if int(_t_gesto * 8.0) % 2 == 0 else 0.0
+		draw_rect(Rect2(7 + vaiven, -13 - st.bob, 2, 3), piel)
 	if _minutos_charla > 0:
 		_dibujar_globo()
 
@@ -329,7 +349,28 @@ func _on_encounter_ended() -> void:
 
 # ==================== INTERACCIÓN ====================
 
+## Dispara un gesto puntual ("saltito" o "saludo"); los desconocidos se ignoran.
+func gesto(nombre: String) -> void:
+	if not GESTOS.has(nombre):
+		return
+	_gesto = nombre
+	_t_gesto = 0.0
+	queue_redraw()
+
+
+func gesto_actual() -> String:
+	return _gesto
+
+
+## Altura actual del cuerpo por el gesto (el saltito es una parábola de ALTURA_SALTITO px).
+func altura_gesto() -> float:
+	if _gesto != "saltito":
+		return 0.0
+	return sin(PI * clampf(_t_gesto / GESTOS["saltito"], 0.0, 1.0)) * ALTURA_SALTITO
+
+
 func interact(player_pos: Vector2):
+	gesto("saludo")
 	_en_dialogo = true
 	_mirar(player_pos)
 	_pos_interlocutor = player_pos
@@ -486,6 +527,7 @@ func celda_logica() -> Vector2i:
 func iniciar_charla(otro: Node2D, minutos: int) -> void:
 	_minutos_charla = minutos
 	_interlocutor = otro
+	gesto("saludo")
 	_mirar(otro.global_position)
 	_cerebro.necesidades["social"] = maxf(0.0, _cerebro.necesidades["social"] - ALIVIO_CHARLA)
 	queue_redraw()
@@ -504,6 +546,36 @@ func _registrar_charla_jugador() -> int:
 	return previa
 
 
+const UMBRAL_HUMOR := 70.0       # urgencia a partir de la cual una necesidad marca el ánimo
+const UMBRAL_CONTENTO := 35.0    # todas las necesidades por debajo: contento
+const HUMOR_POR_NECESIDAD := [["hambre", "hambriento"], ["energia", "cansado"], ["ocio", "aburrido"], ["social", "solo"]]
+
+
+## Ánimo actual según las necesidades: hambriento, cansado, aburrido, solo, contento o "".
+func humor() -> String:
+	if _cerebro == null:
+		return ""
+	var nec: Dictionary = _cerebro.necesidades
+	for par in HUMOR_POR_NECESIDAD:
+		if nec.get(par[0], 0.0) >= UMBRAL_HUMOR:
+			return par[1]
+	for n in nec:
+		if nec[n] >= UMBRAL_CONTENTO:
+			return ""
+	return "contento"
+
+
+## Una línea de la ficha para el ánimo actual; rota según cuántas veces hablaron.
+func _linea_de_humor(relacion: int) -> String:
+	var h := humor()
+	if h == "":
+		return ""
+	var opciones: Array = _ficha.get("dialogos_por_humor", {}).get(h, [])
+	if opciones.is_empty():
+		return ""
+	return str(opciones[relacion % opciones.size()])
+
+
 ## Envuelve las líneas ambientales con saludo según relación, hambre y el último chisme.
 func _ambiente(base: Array, relacion: int) -> Array:
 	if memoria == null:
@@ -514,8 +586,9 @@ func _ambiente(base: Array, relacion: int) -> Array:
 	elif relacion >= 2:
 		lineas.append("¡Hola de nuevo, %s!" % GameManager.jugador_nombre)
 	lineas.append_array(base)
-	if _cerebro and _cerebro.necesidades["hambre"] >= 80.0:
-		lineas.append("Perdoná, tengo un hambre bárbara. Ya me voy a comer algo.")
+	var linea_humor := _linea_de_humor(relacion)
+	if linea_humor != "":
+		lineas.append(linea_humor)
 	var rumor := memoria.ultimo_rumor_ajeno()
 	if not rumor.is_empty():
 		lineas.append("¿Te enteraste? %s" % rumor.texto)
@@ -646,6 +719,7 @@ func dialogo_lines() -> Array:
 				GameManager.set_estado_mision(mision_id, "completada")
 				if recompensa_item != "":
 					GameManager.agregar_item(recompensa_item)
+				gesto("saltito")
 				if memoria:
 					# La ayuda del jugador se vuelve noticia que el barrio va a comentar.
 					memoria.sembrar(["%s le dio una mano a %s." % [GameManager.jugador_nombre, npc_name]], WorldClock.minutos, npc_name)

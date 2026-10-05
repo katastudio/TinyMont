@@ -24,6 +24,6 @@
 
 ## Pendiente
 - [ ] Verificación manual en Android y en web (persistencia en el navegador, rendimiento)
-- [ ] Ningún NPC de la escena usa ya DEAMBULAR o PATRULLAR: falta un test que ejercite esas rutinas
-- [ ] `dialogos_por_humor` de las fichas todavía no se usa
-- [ ] Guardar la posición de la bici (hoy al cargar Monti aparece a pie)
+- [x] Test de las rutinas de respaldo DEAMBULAR y PATRULLAR (`test_rutinas_simples`)
+- [x] `dialogos_por_humor`: cinco ánimos derivados de las necesidades, líneas en las 23 fichas (`test_humor`)
+- [x] Guardar la bici: posición y si el jugador va montado (`test_guardado`)

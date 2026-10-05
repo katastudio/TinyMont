@@ -61,5 +61,26 @@
     "Don Jorge dice que desde la plaza se ve Saturno.",
     "El telescopio de Don Jorge necesita una lente nueva."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Mirando el cielo me olvido de cenar.",
+      "Un café con leche y vuelvo al telescopio."
+    ],
+    "cansado": [
+      "Me quedé despierto mirando estrellas.",
+      "Las noches de observación me dejan cansado."
+    ],
+    "aburrido": [
+      "Está nublado, no se ve ni la Luna.",
+      "Sin cielo despejado no hay nada que mirar."
+    ],
+    "solo": [
+      "¿Te muestro una constelación esta noche?",
+      "Al telescopio le falta compañía."
+    ],
+    "contento": [
+      "¡Anoche se vieron los anillos de Saturno!",
+      "El cielo es de todos y es gratis."
+    ]
+  }
 }

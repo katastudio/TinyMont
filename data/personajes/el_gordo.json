@@ -67,5 +67,26 @@
     "En el club se juega al fútbol desde 1911.",
     "El sábado hay clásico y el Gordo ya tiene la bandera lista."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Me como un vacío entero, te lo juro.",
+      "¿Sabés dónde venden choripán por acá?"
+    ],
+    "cansado": [
+      "Grité tanto en la cancha que me quedé sin voz.",
+      "Después del partido no me levanta nadie."
+    ],
+    "aburrido": [
+      "Sin fútbol entre semana no sé qué hacer.",
+      "¿Cuándo juega el Club? Necesito cancha."
+    ],
+    "solo": [
+      "Nadie quiere hablar de fútbol conmigo hoy.",
+      "¿Vos sos hincha de algún club? Contame."
+    ],
+    "contento": [
+      "¡Ganamos el domingo! Todavía festejo.",
+      "El Club está jugando bárbaro este año."
+    ]
+  }
 }

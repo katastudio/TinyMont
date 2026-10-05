@@ -67,3 +67,6 @@ func _validar_ficha(f: Dictionary, ids_poi: Dictionary, quien: String) -> void:
 		for d in e.get("dias", []):
 			_check(int(d) in range(0, 7), "%s: día fuera de rango en el plan" % quien)
 	_check(f.get("rumores_semilla", []).size() >= 2, "%s: al menos 2 rumores semilla" % quien)
+	var humores: Dictionary = f.get("dialogos_por_humor", {})
+	for h in ["hambriento", "cansado", "aburrido", "solo", "contento"]:
+		_check(humores.get(h, []).size() >= 1, "%s: líneas para el humor %s" % [quien, h])

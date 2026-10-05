@@ -305,7 +305,34 @@ func snapshot() -> Dictionary:
 		"npcs": npcs,
 		"charlas_totales": charlas_totales,
 		"ultima_charla": _ultima_charla.duplicate(),
+		"bicis": _snapshot_bicis(player),
 	}
+
+
+## Por cada bici: dónde está estacionada y si el jugador va montado en ella.
+func _snapshot_bicis(player) -> Dictionary:
+	var bicis := {}
+	for child in get_children():
+		if child.has_method("es_bici"):
+			var montada: bool = player != null and player._bici_ref == child
+			bicis[String(child.name)] = {"pos": [child.position.x, child.position.y], "montada": montada}
+	return bicis
+
+
+func _restaurar_bicis(datos: Dictionary, player) -> void:
+	for nombre in datos:
+		var n := str(nombre)
+		if n.validate_node_name() != n or not has_node(n):
+			continue
+		var bici = get_node(n)
+		if not bici.has_method("es_bici"):
+			continue
+		var b: Dictionary = datos[nombre]
+		var pos = b.get("pos", [])
+		if pos.size() == 2:
+			bici.position = Vector2(float(pos[0]), float(pos[1]))
+		if bool(b.get("montada", false)) and player:
+			player.montar_bici(bici)
 
 
 func restaurar(d: Dictionary) -> void:
@@ -344,6 +371,7 @@ func restaurar(d: Dictionary) -> void:
 			player.colocar_en(Vector2i(int(c[0]), int(c[1])))
 		var f = j.get("facing", [0, 1])
 		player.facing = Vector2(float(f[0]), float(f[1]))
+	_restaurar_bicis(d.get("bicis", {}), player)
 	charlas_totales = int(d.get("charlas_totales", 0))
 	_ultima_charla.clear()
 	var uc: Dictionary = d.get("ultima_charla", {})

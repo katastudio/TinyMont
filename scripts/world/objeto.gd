@@ -31,5 +31,7 @@ func interact(_player_pos: Vector2) -> void:
 	GameManager.agregar_item(item)
 	GameManager.registrar_objeto_tomado(name)
 	if nombre != "":
-		GameManager.start_dialog("Monti", ["¡Encontre " + nombre + "!"], Color("547ff3"))
+		var monti = get_parent().get_node_or_null("Player") if get_parent() else null
+		var cara: Dictionary = monti.retrato() if monti and monti.has_method("retrato") else {}
+		GameManager.start_dialog("Monti", ["¡Encontre " + nombre + "!"], Color("547ff3"), cara)
 	queue_free()   # ya lo tenés

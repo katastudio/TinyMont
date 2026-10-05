@@ -85,5 +85,26 @@
     "Tito es el mejor jugador de bochas de la plaza.",
     "La plaza no cambia, por suerte, dice Tito."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Las bochas dan hambre, aunque no parezca.",
+      "Antes del partido me como unas facturas."
+    ],
+    "cansado": [
+      "Tres partidos seguidos, me duele la espalda.",
+      "Dejame descansar en el banco un rato."
+    ],
+    "aburrido": [
+      "Sin rivales no hay partido, pibe.",
+      "Hoy no vino nadie a jugar a las bochas."
+    ],
+    "solo": [
+      "Los muchachos no aparecieron hoy.",
+      "¿Jugamos una? Te enseño, es fácil."
+    ],
+    "contento": [
+      "¡Gané los tres partidos de la mañana!",
+      "Arrimé la bocha al bochín, de taquito."
+    ]
+  }
 }

@@ -61,5 +61,26 @@
     "El café de Marcos se sirve en vasitos que le trae Sandra.",
     "Marcos abre el puesto con el primer tren."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Vendo café todo el día y almuerzo un chipá.",
+      "Me tomo un cortado y sigo atendiendo."
+    ],
+    "cansado": [
+      "Salí de casa a las tres de la mañana.",
+      "Veinte cuadras caminando y después el puesto."
+    ],
+    "aburrido": [
+      "Entre tren y tren no pasa nada.",
+      "Hoy el café no se vende ni regalado."
+    ],
+    "solo": [
+      "Vení, que te convido un cafecito.",
+      "Los pasajeros pasan apurados, nadie charla."
+    ],
+    "contento": [
+      "¡Hoy se vendió todo el café!",
+      "El café se toma todo el año, como el mate."
+    ]
+  }
 }

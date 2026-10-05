@@ -61,5 +61,26 @@
     "El chimichurri del Chino es receta de la abuela.",
     "Los domingos el Chino agota los choris antes de las dos."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Cocino todo el día y como al final, siempre.",
+      "Me guardé un chori con mucho chimi."
+    ],
+    "cansado": [
+      "La parrilla a pleno me deja sin fuerzas.",
+      "Atizar el fuego todo el día cansa."
+    ],
+    "aburrido": [
+      "Parrilla prendida y sin clientes, qué bajón.",
+      "Hoy no se vende ni un chori."
+    ],
+    "solo": [
+      "Nadie para charlar entre chori y chori.",
+      "Quedate, que te cuento la receta del chimi."
+    ],
+    "contento": [
+      "¡Se agotaron los choris antes del mediodía!",
+      "El chimichurri me salió espectacular."
+    ]
+  }
 }

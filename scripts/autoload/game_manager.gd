@@ -108,11 +108,12 @@ func _add_key_action(action_name: String, key: Key):
 	InputMap.action_add_event(action_name, event)
 
 
-func start_dialog(speaker_name: String, lines: Array, color: Color = Color.WHITE):
+## `retrato`: descriptor de CharacterArt del que habla; vacío = sin retrato.
+func start_dialog(speaker_name: String, lines: Array, color: Color = Color.WHITE, retrato: Dictionary = {}):
 	is_dialog_active = true
 	dialog_started.emit()
 	if dialog_box:
-		dialog_box.show_dialog(speaker_name, lines, color)
+		dialog_box.show_dialog(speaker_name, lines, color, retrato)
 
 
 func end_dialog():

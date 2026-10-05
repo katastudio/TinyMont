@@ -61,5 +61,26 @@
     "Chuchu organiza la juntada del barrio con su parlante.",
     "En Las Colinas nadie se queda solo, dice Chuchu."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Para la juntada hace falta comida, ¿no?",
+      "Me como unas empanadas y organizo todo."
+    ],
+    "cansado": [
+      "Armé la juntada de anoche, estoy fundido.",
+      "Bailé hasta tarde, no me dan las patas."
+    ],
+    "aburrido": [
+      "Sin juntada el barrio está muy apagado.",
+      "Hoy nadie se suma a nada."
+    ],
+    "solo": [
+      "En Las Colinas nadie se queda solo, ¿te sumás?",
+      "Charlemos, que me gusta la compañía."
+    ],
+    "contento": [
+      "¡La juntada de ayer estuvo tremenda!",
+      "El parlante sonó toda la noche."
+    ]
+  }
 }

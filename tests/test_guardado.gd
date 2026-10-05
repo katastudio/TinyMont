@@ -65,6 +65,8 @@ func _ready() -> void:
 	_check(distintos == 0, "cargar y seguir 30 minutos da el mismo mundo que no haber cargado")
 	_liberar(b)
 
+	_test_bici()
+
 	# Partida manipulada: rutas en los objetos y un color inválido no rompen la carga.
 	var f := FileAccess.open(RUTA, FileAccess.WRITE)
 	f.store_string(JSON.stringify({"jugador": {"bici_color": "no-es-color"}, "objetos_tomados": ["../TestGuardado", "Player", "/root"], "mundo": {}}))
@@ -112,3 +114,36 @@ func _foto(m) -> Array:
 func _liberar(m) -> void:
 	remove_child(m)
 	m.free()
+
+
+## La bici se guarda donde quedó estacionada, y montada si el jugador iba en ella.
+func _test_bici() -> void:
+	WorldClock.reiniciar(7, 8)
+	var m = _crear_mundo()
+	var p = m.get_node("Player")
+	var bici = m.get_node("Bicicleta")
+	p.colocar_en(bici.tile())
+	p._subir_bici()
+	_check(GameManager.en_bici, "el jugador se sube a la bici")
+	p.colocar_en(Vector2i(12, 14))
+	p._bajar_bici()
+	GameManager.save_game(m)
+	_liberar(m)
+	GameManager.cargar_al_iniciar = true
+	var m2 = _crear_mundo()
+	_check(m2.get_node("Bicicleta").tile() == Vector2i(12, 14), "la bici aparece donde quedó estacionada")
+	_check(not GameManager.en_bici, "a pie si se guardó a pie")
+	var p2 = m2.get_node("Player")
+	p2.colocar_en(Vector2i(12, 14))
+	p2._subir_bici()
+	GameManager.save_game(m2)
+	_liberar(m2)
+	GameManager.en_bici = false
+	GameManager.cargar_al_iniciar = true
+	var m3 = _crear_mundo()
+	_check(GameManager.en_bici, "montado si se guardó montado")
+	_check(not m3.get_node("Bicicleta").visible, "la bici montada no se ve estacionada")
+	m3.get_node("Player")._bajar_bici()
+	_check(m3.get_node("Bicicleta").visible, "al bajarse la bici vuelve a verse")
+	_liberar(m3)
+	GameManager.en_bici = false

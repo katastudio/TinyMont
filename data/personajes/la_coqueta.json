@@ -61,5 +61,26 @@
     "La Coqueta filma la plaza para sus videos.",
     "A la Coqueta se le perdió el celular con todos sus videos."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Filmo la comida pero no la como, re mal.",
+      "Antes del video me como algo rápido."
+    ],
+    "cansado": [
+      "Edité videos toda la noche, estoy muerta.",
+      "Grabar todo el día cansa más de lo que parece."
+    ],
+    "aburrido": [
+      "Hoy no encuentro nada lindo para filmar.",
+      "El barrio está quieto, no hay contenido."
+    ],
+    "solo": [
+      "Necesito alguien para salir en el video.",
+      "¿Te animás a saludar a cámara?"
+    ],
+    "contento": [
+      "¡El video de la plaza explotó!",
+      "Hoy mostré lo mejor del conurbano."
+    ]
+  }
 }

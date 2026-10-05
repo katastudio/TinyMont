@@ -71,5 +71,26 @@
     "En Kata Studio están haciendo un juego del barrio.",
     "Lucía dice que la plaza va a salir en el juego."
   ],
-  "dialogos_por_humor": {}
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Programando me olvido de almorzar.",
+      "Si no como algo, el juego no compila."
+    ],
+    "cansado": [
+      "Ayer me quedé hasta tarde arreglando bugs.",
+      "Necesito un café de Marcos urgente."
+    ],
+    "aburrido": [
+      "Hoy toca hacer documentación, qué embole.",
+      "Estoy esperando que termine de exportar el juego."
+    ],
+    "solo": [
+      "En el estudio hoy estoy sola, todos en remoto.",
+      "¿Querés que te cuente cómo hacemos el juego?"
+    ],
+    "contento": [
+      "¡Hoy salió una versión nueva del juego!",
+      "Los vecinos se mueven solos, ¿no es genial?"
+    ]
+  }
 }
