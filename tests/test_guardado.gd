@@ -108,7 +108,7 @@ func _foto(m) -> Array:
 		if "npc_name" in n:
 			foto.append("%s@%s pos=%s act=%s nec=%s hechos=%d rel=%s" % [
 				n.npc_name, m.celda_de(n.global_position), n.global_position, n.actividad_actual(),
-				n._cerebro.necesidades, n.memoria.hechos.size(), n.memoria.relaciones])
+				n._cerebro.necesidades, n.memoria.hechos.size(), _ordenado(n.memoria.relaciones)])
 	return foto
 
 
@@ -176,3 +176,10 @@ func _test_progreso_de_misiones() -> void:
 	GameManager.contadores.clear()
 	GameManager.misiones.erase("m_cuenta")
 	GameManager.misiones.erase("m_contador")
+
+
+## Relaciones como texto con claves ordenadas (JSON no conserva el orden de inserción).
+func _ordenado(d: Dictionary) -> String:
+	var claves := d.keys()
+	claves.sort()
+	return ",".join(claves.map(func(k): return "%s=%s" % [k, d[k]]))

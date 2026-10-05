@@ -48,6 +48,11 @@ func mover(desde: Vector2i, hacia: Vector2i, quien: Object) -> bool:
 	return true
 
 
+func celdas_ocupadas() -> Array:
+	"""Todas las celdas con un ocupante vivo."""
+	return _grilla.keys().filter(func(c): return is_instance_valid(_grilla[c]))
+
+
 func celdas_de(quien: Object) -> Array[Vector2i]:
 	"""Devuelve todas las celdas ocupadas por 'quien'."""
 	var result: Array[Vector2i] = []

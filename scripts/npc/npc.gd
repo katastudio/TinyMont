@@ -318,6 +318,14 @@ func _avanzar_en_camino(delta: float) -> void:
 		_timer_bloqueo = ESPERA_BLOQUEO
 		if _fallos_consecutivos >= MAX_FALLOS:
 			_volver_a_esperar()
+		elif _fallos_consecutivos == 1:
+			# Algo quieto tapa el paso: recalcular el camino esquivando las celdas ocupadas.
+			var rodeo: Array[Vector2i] = _mundo.camino(_celda_actual, _camino.back(), true)
+			if rutina == Rutina.DEAMBULAR and rodeo.any(func(c): return maxi(absi(c.x - _celda_spawn.x), absi(c.y - _celda_spawn.y)) > radio_deambular):
+				rodeo = []   # quien deambula no sale de su radio, ni para rodear
+			if not rodeo.is_empty():
+				_camino = rodeo
+				_indice_camino = 0
 		return
 
 	_fallos_consecutivos = 0

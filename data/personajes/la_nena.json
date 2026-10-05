@@ -1,0 +1,81 @@
+{
+  "id": "la_nena",
+  "nombre": "La Nena",
+  "descripcion": "La voz pop del país.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.5,
+      "social": 0.9,
+      "ocio": 0.8,
+      "deber": 0.5
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 30,
+      "ocio": 30,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 7,
+      "hasta": 22,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "La Nena canta en la ducha y se escucha en toda la cuadra.",
+    "La Nena tiene un micrófono rosa de la suerte."
+  ],
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Antes de cantar, algo liviano."
+    ],
+    "cansado": [
+      "Tres shows seguidos, estoy rendida."
+    ],
+    "aburrido": [
+      "Sin ensayo me aburro."
+    ],
+    "solo": [
+      "¡Cantemos algo juntos!"
+    ],
+    "contento": [
+      "¡Me salió la nota más alta!"
+    ]
+  }
+}

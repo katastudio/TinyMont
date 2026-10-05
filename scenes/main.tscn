@@ -307,6 +307,7 @@ recuerdo. Ya sos de
 la banda del barrio."]
 requisito_item = "trompeta"
 recompensa_item = "partitura"
+ayudas = [{"mision": "salina_zapada", "item": "aviso_gille", "lineas": ["¿Don Salina quiere zapar? ¡Decile que voy!"], "recordatorio": ["Ya le dije a Don Salina que voy."]}, {"mision": "biza_nota", "item": "nota_secreta", "lineas": ["La nota secreta del barrio... es un La.", "El La del silbato del Roca. Contaselo al Biza."], "recordatorio": ["Era un La, el del silbato del tren."]}]
 
 [node name="ElDiez" parent="." instance=ExtResource("npc_src")]
 position = Vector2(438, 135)
@@ -379,6 +380,7 @@ La proxima tiramos
 unas rimas juntos."]
 requisito_item = "microfono"
 recompensa_item = "rima"
+ayudas = [{"mision": "duko_freestyle", "item": "confirmacion_tiaguito", "lineas": ["¿Freestyle con El Duko? ¡Vamos!", "Decile que llevo las rimas."], "recordatorio": ["Ya confirmé, voy con todo."]}]
 
 [node name="LaCoqueta" parent="." instance=ExtResource("npc_src")]
 position = Vector2(88, 215)
@@ -778,3 +780,219 @@ capacidad = 2
 hora_desde = 5
 hora_hasta = 23
 duracion_min = 60
+
+[node name="DonSalina" parent="." instance=ExtResource("npc_src")]
+position = Vector2(296, 584)
+npc_name = "Don Salina"
+rutina = 3
+pelo = "bald"
+vello_facial = "beard"
+gorra = "fedora"
+gorra_color = Color(0.478431, 0.290196, 0.164706, 1)
+camiseta = Color(0.541176, 0.352941, 0.227451, 1)
+dialog_lines = ["Las manos se acuerdan de cada acorde.", "La guitarra y el barrio, mis dos amores."]
+mision_id = "salina_zapada"
+dialog_encargo = ["Buenas, pibe. Me dicen Don Salina, guitarrista de acá.", "Quiero zapar con Gille en la plaza esta tarde.", "¿Le avisás que lo espero? Volvé con su respuesta."]
+dialog_recordatorio = ["¿Hablaste con Gille? Anda por la plaza con su trompeta."]
+dialog_entrega = ["¡Viene! Hoy la plaza suena lindo.", "Tomá esta púa de madera. Hecha a mano, como todo lo bueno."]
+requisito_item = "aviso_gille"
+recompensa_item = "pua"
+
+[node name="Rodri" parent="." instance=ExtResource("npc_src")]
+position = Vector2(216, 216)
+npc_name = "Rodri"
+rutina = 3
+pelo = "slick"
+pelo_color = Color(0.101961, 0.101961, 0.101961, 1)
+vello_facial = "stubble"
+camiseta = Color(0.478431, 0.227451, 0.690196, 1)
+marca = "badge"
+dialog_lines = ["La cumbia es el idioma del barrio.", "¡Esta noche se baila!"]
+mision_id = "rodri_invitaciones"
+dialog_encargo = ["¡Eeeh! Soy Rodri, canto cumbia desde pibe.", "Hoy hago un show y quiero el barrio lleno.", "Repartí invitaciones a 3 vecinos y volvé."]
+dialog_recordatorio = ["Faltan invitaciones. ¡Hablá con más vecinos!"]
+dialog_entrega = ["¡Va a estar lleno! Sos un groso.", "Tomá mi CD de cumbia, firmado y todo."]
+requisito_contador = 3
+linea_contacto = "¿Una invitación al show de Rodri? ¡Ahí voy a estar!"
+recompensa_item = "cd_cumbia"
+
+[node name="JuliNoticias" parent="." instance=ExtResource("npc_src")]
+position = Vector2(232, 488)
+npc_name = "Juli Noticias"
+rutina = 3
+pelo = "long"
+pelo_color = Color(0.909804, 0.752941, 0.439216, 1)
+lentes = true
+camiseta = Color(0.956863, 0.956863, 0.956863, 1)
+marca = "badge"
+marca_color = Color(0.847059, 0.188235, 0.188235, 1)
+dialog_lines = ["Una buena nota empieza escuchando.", "El barrio siempre tiene algo para contar."]
+mision_id = "juli_entrevista"
+requiere_completadas = 5
+dialog_bloqueada = ["Hola, soy Juli, la periodista del barrio.", "Quiero hacerle una nota al recién llegado...", "...pero primero el barrio te tiene que conocer. Ayudá a 5 vecinos y volvé."]
+dialog_encargo = ["¡Ahora sí! Todo el barrio habla de vos.", "Contame: ¿qué es lo que más te gusta de Monte Grande?", "Perfecto. Sale en la tapa de mañana."]
+dialog_recordatorio = ["La nota ya está en imprenta."]
+dialog_entrega = ["Tomá, te guardé la portada. ¡Sos noticia!"]
+recompensa_item = "portada"
+ayudas = [{"mision": "caby_movil", "item": "confirmacion_juli", "lineas": ["¿El móvil sale de la plaza? ¡Gracias por avisar!", "Decile a Caby que ahí estaré."], "recordatorio": ["Ya le confirmé a Caby, gracias."]}]
+
+[node name="Caby" parent="." instance=ExtResource("npc_src")]
+position = Vector2(424, 504)
+npc_name = "Caby"
+rutina = 3
+pelo = "slick"
+pelo_color = Color(0.941176, 0.941176, 0.941176, 1)
+camiseta = Color(0.658824, 0.815686, 0.941176, 1)
+dialog_lines = ["La elegancia no se compra, se practica.", "¡Buenas tardes, Monte Grande!"]
+mision_id = "caby_movil"
+dialog_encargo = ["Buenas tardes. Me dicen Caby, conductor de la tele.", "El móvil de TV sale desde la plaza en un rato.", "¿Le avisás a Juli Noticias? Necesito que confirme."]
+dialog_recordatorio = ["¿Ya hablaste con Juli? Suele estar cerca del Municipio."]
+dialog_entrega = ["¡Confirmado! Salimos en vivo.", "Tomá esta corbata. Para las ocasiones especiales."]
+requisito_item = "confirmacion_juli"
+recompensa_item = "corbata"
+
+[node name="ElAtajatodo" parent="." instance=ExtResource("npc_src")]
+position = Vector2(504, 296)
+npc_name = "El Atajatodo"
+rutina = 3
+pelo = "short"
+pelo_color = Color(0.909804, 0.752941, 0.439216, 1)
+camiseta = Color(0.184314, 0.658824, 0.309804, 1)
+marca = "badge"
+dialog_lines = ["Bajo los tres palos no pasa nada.", "Concentración, arquero, concentración."]
+mision_id = "atajatodo_guantes"
+dialog_encargo = ["¡Qué hacés, crack! Soy el Atajatodo, el arquero.", "Perdí mis guantes de la suerte cerca del club.", "Sin ellos no atajo ni un resfrío. ¿Me los buscás?"]
+dialog_recordatorio = ["Los guantes tienen que estar por el club, fijate bien."]
+dialog_entrega = ["¡Mis guantes! Ahora sí, que vengan los penales.", "Tomá estos dorados. Para que atajes todo vos también."]
+requisito_item = "guantes"
+recompensa_item = "guantes_dorados"
+ayudas = [{"mision": "roman_practica", "item": "aviso_atajatodo", "lineas": ["¿Práctica mañana? ¡Ahí voy a estar!", "Decile a Román que cuente conmigo."], "recordatorio": ["Ya le dije que voy, gracias."]}]
+
+[node name="Franquito" parent="." instance=ExtResource("npc_src")]
+position = Vector2(424, 72)
+npc_name = "Franquito"
+rutina = 3
+pelo = "short"
+pelo_color = Color(0.415686, 0.290196, 0.164706, 1)
+gorra = "cap"
+gorra_color = Color(0.125490, 0.313725, 0.752941, 1)
+camiseta = Color(0.125490, 0.313725, 0.752941, 1)
+marca = "badge"
+dialog_lines = ["La velocidad está en la cabeza.", "Cada curva se aprende."]
+mision_id = "franquito_carrera"
+dialog_encargo = ["¡Hola! Soy Franquito, piloto.", "Necesito la bandera a cuadros que tiene Román en el club.", "¡Tenés 30 segundos! Andá y volvé. ¡Largaste!"]
+dialog_recordatorio = ["¡Rápido, que corre el reloj! La bandera la tiene Román."]
+dialog_entrega = ["¡Récord de vuelta! Sos un piloto nato.", "Tomá mi casco de carrera. Te lo ganaste."]
+requisito_item = "bandera"
+recompensa_item = "casco"
+limite_segundos = 30.0
+
+[node name="ElDuko" parent="." instance=ExtResource("npc_src")]
+position = Vector2(296, 88)
+npc_name = "El Duko"
+rutina = 3
+pelo = "curly"
+pelo_color = Color(0.909804, 0.909804, 0.909804, 1)
+lentes = true
+camiseta = Color(0.101961, 0.101961, 0.101961, 1)
+dialog_lines = ["El flow no se enseña, se vive.", "En la estación hay eco, ideal para rimar."]
+mision_id = "duko_freestyle"
+dialog_encargo = ["Ey, ¿todo bien? Me dicen El Duko.", "Hoy hay freestyle en la estación y falta alguien.", "Invitá a Tiaguito y traeme su respuesta."]
+dialog_recordatorio = ["¿Y Tiaguito? Sin él no arrancamos."]
+dialog_entrega = ["¡Se suma! Hoy se prende fuego la estación.", "Tomá esta cadena. Brilla como el barrio."]
+requisito_item = "confirmacion_tiaguito"
+recompensa_item = "cadena"
+
+[node name="Emi" parent="." instance=ExtResource("npc_src")]
+position = Vector2(408, 568)
+npc_name = "Emi"
+rutina = 3
+pelo = "long"
+pelo_color = Color(0.690196, 0.501961, 0.313725, 1)
+gorra = "headband"
+gorra_color = Color(0.941176, 0.415686, 0.658824, 1)
+camiseta = Color(0.964706, 0.658824, 0.784314, 1)
+dialog_lines = ["¡Qué lindo es volver al barrio!", "Brillo, brillo y más brillo."]
+mision_id = "emi_vincha"
+dialog_encargo = ["¡Hola, hola! Soy Emi.", "Se me cayó la vincha cerca de la fuente.", "¿Me ayudás a encontrarla? ¡Es mi favorita!"]
+dialog_recordatorio = ["Tiene que estar cerca de la fuente, brilla un montón."]
+dialog_entrega = ["¡Mi vincha! Sos un sol.", "Tomá esta con brillos, así nos parecemos."]
+requisito_item = "vincha"
+recompensa_item = "vincha_brillos"
+ayudas = [{"mision": "nena_dueto", "item": "respuesta_emi", "lineas": ["¿Un dueto con La Nena? ¡Obvio que sí!", "Decile que la espero para ensayar."], "recordatorio": ["Ya le dije que sí, ¡qué emoción!"]}]
+
+[node name="ElBiza" parent="." instance=ExtResource("npc_src")]
+position = Vector2(184, 360)
+npc_name = "El Biza"
+rutina = 3
+gorra = "cap"
+gorra_color = Color(0.101961, 0.101961, 0.101961, 1)
+lentes = true
+camiseta = Color(0.101961, 0.101961, 0.101961, 1)
+dialog_lines = ["Una buena sesión empieza con una buena nota.", "Shhh... estoy escuchando el barrio."]
+mision_id = "biza_nota"
+dialog_encargo = ["...Hola. Soy El Biza. Hago sesiones.", "Dicen que Gille sabe la nota secreta del barrio.", "Preguntale cuál es y volvé a contármela."]
+dialog_recordatorio = ["¿Y la nota? Gille la sabe."]
+dialog_entrega = ["Esa es. La voy a usar en la próxima sesión.", "Tomá mis lentes. Ahora sos productor."]
+requisito_item = "nota_secreta"
+recompensa_item = "lentes_productor"
+
+[node name="LaNena" parent="." instance=ExtResource("npc_src")]
+position = Vector2(488, 536)
+npc_name = "La Nena"
+rutina = 3
+pelo = "long"
+pelo_color = Color(0.439216, 0.784314, 0.941176, 1)
+camiseta = Color(0.439216, 0.784314, 0.941176, 1)
+dialog_lines = ["¡Cantar es mi forma de abrazar!", "El barrio tiene muy buen oído."]
+mision_id = "nena_dueto"
+dialog_encargo = ["¡Holaaa! Me dicen La Nena.", "Quiero grabar un dueto con Emi.", "¿Le llevás la propuesta? Andá por la plaza."]
+dialog_recordatorio = ["¿Qué dijo Emi? ¡Me muero de nervios!"]
+dialog_entrega = ["¡Dijo que sí! Va a ser hermoso.", "Tomá mi micrófono rosa. Para que cantes vos también."]
+requisito_item = "respuesta_emi"
+recompensa_item = "microfono_rosa"
+
+[node name="ElLuki" parent="." instance=ExtResource("npc_src")]
+position = Vector2(136, 408)
+npc_name = "El Luki"
+rutina = 3
+pelo = "curly"
+pelo_color = Color(0.188235, 0.313725, 0.752941, 1)
+camiseta = Color(0.188235, 0.313725, 0.752941, 1)
+marca = "stripes"
+dialog_lines = ["El cuarteto se baila con el corazón.", "¡Todos a cantar el estribillo!"]
+mision_id = "luki_karaoke"
+dialog_encargo = ["¡Eeeh, qué tal! Soy El Luki.", "Esta noche hay karaoke de cuarteto en la plaza.", "Invitá a 3 vecinos y volvé a contarme."]
+dialog_recordatorio = ["¡Faltan invitados! El cuarteto es mejor en patota."]
+dialog_entrega = ["¡Se llenó! Va a ser una fiesta.", "Tomá tu entrada al baile. Primera fila."]
+requisito_contador = 3
+linea_contacto = "¿Karaoke de cuarteto con El Luki? ¡Me prendo!"
+recompensa_item = "entrada_baile"
+
+[node name="Roman" parent="." instance=ExtResource("npc_src")]
+position = Vector2(440, 296)
+npc_name = "Román"
+rutina = 3
+pelo = "short"
+pelo_color = Color(0.101961, 0.101961, 0.101961, 1)
+camiseta = Color(0.109804, 0.235294, 0.611765, 1)
+marca = "badge"
+marca_color = Color(0.960784, 0.772549, 0.094118, 1)
+dialog_lines = ["El fútbol se juega con la cabeza levantada.", "El club es una familia."]
+mision_id = "roman_practica"
+dialog_encargo = ["Buenas. Soy Román, ahora ayudo en el club.", "Mañana hay práctica y el arquero no sabe.", "Avisale al Atajatodo y traeme su respuesta."]
+dialog_recordatorio = ["¿Le avisaste al Atajatodo? Anda por el club."]
+dialog_entrega = ["Bien ahí. Así se arma un equipo.", "Tomá esta camiseta azul y oro. Es tuya."]
+requisito_item = "aviso_atajatodo"
+recompensa_item = "camiseta_azul_oro"
+ayudas = [{"mision": "franquito_carrera", "item": "bandera", "lineas": ["¿La bandera para Franquito? ¡Tomá, volá!"], "recordatorio": ["¡Corré, que se acaba el tiempo!"]}]
+
+[node name="Guantes" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(536, 312)
+item = "guantes"
+nombre = "los guantes del Atajatodo"
+
+[node name="Vincha" parent="." instance=ExtResource("7_objeto")]
+position = Vector2(328, 568)
+item = "vincha"
+nombre = "la vincha de Emi"

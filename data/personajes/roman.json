@@ -1,0 +1,81 @@
+{
+  "id": "roman",
+  "nombre": "Román",
+  "descripcion": "Ídolo eterno que ahora ayuda en el club.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.6,
+      "social": 0.7,
+      "ocio": 0.6,
+      "deber": 0.9
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 30,
+      "ocio": 30,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 7,
+      "hasta": 22,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "Román entrena a los chicos del club los sábados.",
+    "Dicen que Román nunca pierde la pelota."
+  ],
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Después de la práctica, un asado."
+    ],
+    "cansado": [
+      "Mucho trabajo en el club hoy."
+    ],
+    "aburrido": [
+      "Sin práctica, el club está muy quieto."
+    ],
+    "solo": [
+      "¿Pateamos un poco? Despacito."
+    ],
+    "contento": [
+      "El equipo entrenó bárbaro hoy."
+    ]
+  }
+}

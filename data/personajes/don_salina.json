@@ -1,0 +1,81 @@
+{
+  "id": "don_salina",
+  "nombre": "Don Salina",
+  "descripcion": "Guitarrista de manos mágicas, nacido en el barrio.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.6,
+      "social": 0.8,
+      "ocio": 0.9,
+      "deber": 0.3
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 30,
+      "ocio": 30,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 7,
+      "hasta": 22,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "Don Salina toca la guitarra en la plaza los domingos.",
+    "Dicen que Don Salina aprendió a tocar de oído."
+  ],
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Un mate y unas galletitas, y sigo tocando."
+    ],
+    "cansado": [
+      "Las manos piden descanso, pibe."
+    ],
+    "aburrido": [
+      "Sin zapada la tarde no pasa más."
+    ],
+    "solo": [
+      "La guitarra suena mejor con compañía."
+    ],
+    "contento": [
+      "¡Hoy los acordes salen solos!"
+    ]
+  }
+}

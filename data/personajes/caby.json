@@ -1,0 +1,81 @@
+{
+  "id": "caby",
+  "nombre": "Caby",
+  "descripcion": "Conductor elegante de la tele, de la zona.",
+  "personalidad": {
+    "afinidad": {
+      "hambre": 0.5,
+      "energia": 0.6,
+      "social": 0.85,
+      "ocio": 0.6,
+      "deber": 0.6
+    },
+    "fuerza_rutina": 0.9
+  },
+  "decaimiento": {
+    "hambre": 8,
+    "energia": 5,
+    "social": 6,
+    "ocio": 6,
+    "deber": 4
+  },
+  "necesidades_iniciales": {
+    "hambre": 30,
+    "energia": 20,
+    "social": 35,
+    "ocio": 30,
+    "deber": 35
+  },
+  "lugar_propio": {
+    "satisface": {
+      "hambre": 0,
+      "energia": 60,
+      "social": 30,
+      "ocio": 30,
+      "deber": 20
+    }
+  },
+  "plan_semanal": [
+    {
+      "dias": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "desde": 7,
+      "hasta": 22,
+      "poi": "propio"
+    },
+    {
+      "dias": [],
+      "desde": 22,
+      "hasta": 7,
+      "poi": "propio"
+    }
+  ],
+  "rumores_semilla": [
+    "Caby nunca sale sin corbata.",
+    "El móvil de TV va a filmar la Plaza Mitre."
+  ],
+  "dialogos_por_humor": {
+    "hambriento": [
+      "Antes de salir al aire, un cafecito."
+    ],
+    "cansado": [
+      "Las grabaciones largas cansan, pero se disfrutan."
+    ],
+    "aburrido": [
+      "Sin cámara me siento raro."
+    ],
+    "solo": [
+      "¡Buenas tardes! Qué lindo saludar."
+    ],
+    "contento": [
+      "¡Hoy el programa salió impecable!"
+    ]
+  }
+}

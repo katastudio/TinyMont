@@ -204,9 +204,19 @@ func es_transitable_estatica(celda: Vector2i) -> bool:
 	return _es_transitable_estatica_sin_astar(celda)
 
 
-func camino(desde: Vector2i, hasta: Vector2i) -> Array[Vector2i]:
-	"""Calcula el camino óptimo usando A*. Devuelve lista de celdas (sin incluir origen)."""
+func camino(desde: Vector2i, hasta: Vector2i, esquivar_ocupadas: bool = false) -> Array[Vector2i]:
+	"""Calcula el camino óptimo usando A*. Devuelve lista de celdas (sin incluir origen).
+	Con esquivar_ocupadas, las celdas ocupadas en este momento cuentan como obstáculo
+	(se marcan sólidas sólo durante el cálculo)."""
+	var tapadas: Array = []
+	if esquivar_ocupadas:
+		for c in ocupacion.celdas_ocupadas():
+			if c != desde and c != hasta and astar.is_in_boundsv(c) and not astar.is_point_solid(c):
+				astar.set_point_solid(c, true)
+				tapadas.append(c)
 	var path = astar.get_id_path(desde, hasta)
+	for c in tapadas:
+		astar.set_point_solid(c, false)
 	var result: Array[Vector2i] = []
 	for i in range(1, path.size()):  # Saltar el primer punto (origen)
 		result.append(path[i])

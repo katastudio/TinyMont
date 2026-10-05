@@ -62,7 +62,14 @@ emergentes, vida social y guardado.
 | E4 | F4: guardado del mundo, autoguardado, CONTINUAR en el título | hecho | [0005](../specs/0005-sistema-guardado/spec.md) + [0010](../specs/0010-mundo-vivo/spec.md) |
 | E5 | Verificación manual en Android y web (rendimiento, persistencia) | pendiente | — |
 
-### Backlog pendiente (sin cambiar en v0.6.0)
+## Milestone `v0.7.0` — La historia del barrio (implementado 2026-10-04)
+
+| # | Ítem | Estado | Spec |
+|---|------|--------|------|
+| F1 | Historia principal: intro con Marcos, 20 misiones, álbum, final en la plaza | hecho | [0008](../specs/0008-historia-principal-misiones/spec.md) |
+| F2 | Retratos en el diálogo, gestos, diálogos por humor | hecho | — |
+
+### Backlog pendiente
 
 | # | Ítem | Estado | Spec |
 |---|------|--------|------|
@@ -70,12 +77,12 @@ emergentes, vida social y guardado.
 | C8 | Gestos puntuales: saltito y saludo procedurales | hecho (v0.7.0, `test_gestos`) | — |
 | B5 | Sistema de guardado base | hecho (v0.6.0) | [0005](../specs/0005-sistema-guardado/spec.md) |
 | B6 | Transición entre mapas (plaza ↔ monte_grande) | draft | [0006](../specs/0006-transicion-mapas/spec.md) |
-| B8 | Más NPCs y mini-quests | idea | — |
+| B8 | Más NPCs y mini-quests: 12 personajes nuevos con misiones (35 vecinos, 20 misiones) | hecho (v0.7.0) | [0008](../specs/0008-historia-principal-misiones/spec.md) |
 
 ## Backlog futuro (sin milestone)
 
 - Transiciones día/noche con tinte de paleta (requiere ADR de assets).
-- Inventario simple + objetos coleccionables.
+- ~~Inventario simple + objetos coleccionables.~~ Hecho en v0.7.0: álbum del barrio + mochila en el HUD.
 - Más barrios / mapas (requiere ADR de scope + assets).
 - Entrar/salir de edificios (requiere plan de arquitectura).
 - Puntuación / logros / achievements.

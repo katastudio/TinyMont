@@ -1,6 +1,6 @@
 # Spec 0008 — Historia principal y misiones (el álbum del barrio)
 
-- **Estado:** draft
+- **Estado:** implementado (2026-10-04, v0.7.0). Roster validado por el autor ("implementá todo").
 - **Milestone:** v0.3.0-beta
 - **Autor:** Martín
 - **Relacionado:** roadmap #D1, spec 0007 (personajes típicos), spec 0009 (autonomía de NPCs), ADR-0001 (render procedural)
@@ -140,17 +140,23 @@ Notas de diseño:
 
 ## 7. Criterios de aceptación (verificables)
 
-- [ ] CA1. Dado un juego nuevo, cuando Monti habla con un NPC por primera vez, entonces
+- [x] CA1. Dado un juego nuevo, cuando Monti habla con un NPC por primera vez, entonces
   el NPC se presenta y le encarga su misión (estado pasa a "en curso").
-- [ ] CA2. Dado una misión en curso, cuando el jugador vuelve a hablar con el NPC sin
+  *Verificado:* `test_misiones` y `test_elenco`.
+- [x] CA2. Dado una misión en curso, cuando el jugador vuelve a hablar con el NPC sin
   cumplirla, entonces recibe una línea de recordatorio (no se repite la presentación).
-- [ ] CA3. Dado el requisito de una misión cumplido, cuando el jugador habla con el NPC,
+  *Verificado:* `test_misiones`.
+- [x] CA3. Dado el requisito de una misión cumplido, cuando el jugador habla con el NPC,
   entonces recibe el objeto icónico y el álbum lo refleja.
-- [ ] CA4. Dado el álbum abierto, entonces se ve un espacio por personaje definido con
+  *Verificado:* `test_elenco` y `test_album`.
+- [x] CA4. Dado el álbum abierto, entonces se ve un espacio por personaje definido con
   silueta/objeto y un contador (ej: 7/N).
-- [ ] CA5. Dado todos los objetos del roster coleccionados, entonces se reproduce la
+  *Verificado:* `test_album` (un espacio por misión del catálogo, contador N/M).
+- [x] CA5. Dado todos los objetos del roster coleccionados, entonces se reproduce la
   secuencia de victoria en Plaza Mitre y el juego marca el final.
-- [ ] CA6. La misión de Juli Noticias sólo se habilita con 5 misiones completadas.
+  *Verificado:* `test_historia` (el barrio se reúne en la plaza y aparece la pantalla final).
+- [x] CA6. La misión de Juli Noticias sólo se habilita con 5 misiones completadas.
+  *Verificado:* `test_misiones` y `test_elenco` (Juli exige 5 completadas).
 - [ ] CA7. Corre en web (GL Compatibility) sin errores.
 
 ## 8. Restricciones (de la constitución)
@@ -158,7 +164,22 @@ Notas de diseño:
 - Paleta / 160×144 / GL Compatibility / GDScript / grid-based.
 - Objetos del álbum y entidades buscables dibujados por código. ✔ no requiere ADR.
 
-## 9. Preguntas abiertas
+## 9. Decisiones de implementación (2026-10-04)
+
+- **Elenco:** los 12 candidatos de §4.2 pasaron al juego con nombre de guiño (sin nombres reales,
+  `test_elenco` lo verifica). Tiaguito, Gille y El Diez (Leo) ya existían con su misión propia.
+- **Mecánicas nuevas del motor (`npc.gd` + `GameManager`):** varios roles de ayudante por vecino
+  (`ayudas`), misiones de contador (`requisito_contador`), progreso previo (`requiere_completadas`)
+  y contrarreloj (`limite_segundos`, pausa en diálogos, reintentable). El total del álbum sale
+  del catálogo de la escena (20 misiones).
+- **Objetos icónicos:** cada misión regala un objeto propio dibujado por código (sin "recuerdo" genérico).
+- **Álbum:** pantalla propia con X/Tab o el botón del HUD; el HUD muestra la mochila y la cuenta regresiva.
+- **Introducción:** Marcos recibe a Monti sólo en partida nueva desde el título.
+- **Final:** al completar el álbum el barrio camina a la Plaza Mitre; al llegar Monti aparece la
+  pantalla final con créditos y descargo, y después se sigue paseando.
+- **Descargo (R7):** en el título y en los créditos.
+
+## 10. Preguntas abiertas (históricas)
 
 - ¿El álbum muestra una frase de recuerdo por objeto (mini enciclopedia del barrio)?
 - ¿La secuencia de victoria reúne físicamente a los 15 NPCs en la plaza (depende de
