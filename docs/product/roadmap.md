@@ -81,7 +81,7 @@ emergentes, vida social y guardado.
 
 ## Backlog futuro (sin milestone)
 
-- Transiciones día/noche con tinte de paleta (requiere ADR de assets).
+- ~~Transiciones día/noche con tinte de paleta.~~ Hecho en v0.7.0 (ADR-0004, reloj en el HUD).
 - ~~Inventario simple + objetos coleccionables.~~ Hecho en v0.7.0: álbum del barrio + mochila en el HUD.
 - Más barrios / mapas (requiere ADR de scope + assets).
 - Entrar/salir de edificios (requiere plan de arquitectura).

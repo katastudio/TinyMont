@@ -54,7 +54,7 @@ func _draw() -> void:
 		draw_string(font, Vector2(mx, 16 + top), "Tiempo " + cuenta, HORIZONTAL_ALIGNMENT_LEFT, -1, 8,
 				Color("ff6a5a") if parpadeo else Color("ecece4"))
 	else:
-		var lugares := int(maxf(0.0, (w - 24.0 - 140.0) / SLOT))
+		var lugares := int(maxf(0.0, (w - 24.0 - 110.0) / SLOT))
 		var lleva := mochila()
 		for i in range(mini(lugares, maxi(lleva.size(), 3))):
 			var r := Rect2(mx + i * SLOT, 4 + top, SLOT - 2, 16)
@@ -63,6 +63,10 @@ func _draw() -> void:
 			draw_rect(r, Color("14141a"), false, 1.0)
 			if i < lleva.size():
 				ItemArt.draw_on(self, lleva[i], r)
+
+	# Hora del barrio, a la izquierda del botón de mute.
+	if font:
+		draw_string(font, Vector2(w - 104, 15 + top), texto_hora(), HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("ecece4"))
 
 	# Botón del álbum (derecha). Al completarlo -> medalla + "¡Completo!".
 	var b := boton_album_rect()
@@ -77,6 +81,10 @@ func _draw() -> void:
 		else:
 			draw_string(font, b.position + Vector2(4, 11), "Álbum %d/%d" % [comp, total],
 					HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("ecece4"))
+
+
+func texto_hora() -> String:
+	return WorldClock.texto_hora()
 
 
 ## Objetos que lleva encima: el inventario sin las recompensas del catálogo.
@@ -104,8 +112,7 @@ func texto_cuenta() -> String:
 
 
 func _process(_delta: float) -> void:
-	if not GameManager.cuentas.is_empty():
-		queue_redraw()
+	queue_redraw()   # cuenta regresiva y reloj del barrio
 
 
 ## Tocar el botón del álbum lo abre (mobile; en teclado: X o Tab).

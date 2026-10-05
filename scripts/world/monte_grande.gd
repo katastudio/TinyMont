@@ -78,6 +78,7 @@ func _ready():
 	_add_dialog_box()
 	_create_pois()  # Recolecta los POIs de la escena
 	_iniciar_vida_social()
+	_iniciar_ciclo_dia()
 	_cargar_catalogo_misiones()
 	_iniciar_guardado()
 	GameManager.mostrar_ui_juego(true)   # HUD + controles visibles en el juego
@@ -233,6 +234,26 @@ func _create_pois():
 		if child is PuntoInteres:
 			pois.append(child)
 			poi_por_id[child.poi_id] = child
+
+
+## Tinte día/noche (ADR-0004): un CanvasModulate tiñe el mapa según la hora del reloj.
+func _iniciar_ciclo_dia() -> void:
+	var tinte := CanvasModulate.new()
+	tinte.name = "TinteDia"
+	add_child(tinte)
+	_actualizar_tinte()
+	if not WorldClock.tick.is_connected(_on_tick_tinte):
+		WorldClock.tick.connect(_on_tick_tinte)
+
+
+func _on_tick_tinte(_minutos: int) -> void:
+	_actualizar_tinte()
+
+
+func _actualizar_tinte() -> void:
+	var tinte = get_node_or_null("TinteDia")
+	if tinte:
+		tinte.color = CicloDia.tinte(WorldClock.minutos % (24 * 60))
 
 
 ## Catálogo de misiones: cada NPC que encarga una misión (no los ayudantes) aporta una entrada.
