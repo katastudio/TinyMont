@@ -514,6 +514,7 @@ func _draw():
 	for y in MAP_H:
 		for x in MAP_W:
 			_draw_tile(x, y)
+	_draw_fuente_octogonal()
 	_draw_special_buildings()
 	_draw_labels()
 
@@ -619,14 +620,59 @@ func _draw_rail(x: int, y: int, r: Rect2):
 	draw_line(Vector2(x*T, y*T+12), Vector2(x*T+T, y*T+12), Pal.WHITE, 1.0)
 
 
+## Cada celda de agua se pinta como piso de plaza; la fuente se dibuja entera encima
+## (octogonal, celeste con borde blanco, como la de la Plaza Mitre real).
 func _draw_fountain(x: int, y: int, r: Rect2):
-	draw_rect(r, Pal.WATER_DK)
-	draw_rect(Rect2(x*T+2, y*T+2, T-4, T-4), Pal.WATER)
-	var t = int(Time.get_ticks_msec() / 300.0)
-	var jet_h = 3 + (t % 3)
-	draw_rect(Rect2(x*T+7, y*T+8-jet_h, 2, jet_h), Pal.WHITE)
-	var wave = t % 4
-	draw_line(Vector2(x*T+3+wave, y*T+10), Vector2(x*T+6+wave, y*T+10), Pal.WHITE, 1.0)
+	draw_rect(r, Pal.WALL_TAN)
+
+
+## Rectángulo (en celdas) que ocupa la fuente: el bloque de agua de la plaza.
+func fuente_rect() -> Rect2i:
+	var minimo := Vector2i(MAP_W, MAP_H)
+	var maximo := Vector2i(-1, -1)
+	for y in MAP_H:
+		for x in MAP_W:
+			if get_tile(x, y) == Tile.WATER:
+				minimo = Vector2i(mini(minimo.x, x), mini(minimo.y, y))
+				maximo = Vector2i(maxi(maximo.x, x), maxi(maximo.y, y))
+	if maximo.x < 0:
+		return Rect2i()
+	return Rect2i(minimo, maximo - minimo + Vector2i.ONE)
+
+
+## Octógono de la fuente en coordenadas del mundo (esquinas recortadas un tercio de celda).
+func fuente_octogono() -> PackedVector2Array:
+	var f := fuente_rect()
+	var r := Rect2(f.position * T, f.size * T)
+	var c := float(T)
+	return PackedVector2Array([
+		r.position + Vector2(c, 0), r.position + Vector2(r.size.x - c, 0),
+		r.position + Vector2(r.size.x, c), r.position + Vector2(r.size.x, r.size.y - c),
+		r.position + Vector2(r.size.x - c, r.size.y), r.position + Vector2(c, r.size.y),
+		r.position + Vector2(0, r.size.y - c), r.position + Vector2(0, c),
+	])
+
+
+func _draw_fuente_octogonal() -> void:
+	var oct := fuente_octogono()
+	if oct.size() != 8:
+		return
+	var centro := Vector2.ZERO
+	for p in oct:
+		centro += p / 8.0
+	draw_colored_polygon(oct, Pal.WHITE)                                   # borde blanco
+	var agua := PackedVector2Array()
+	for p in oct:
+		agua.append(centro + (p - centro) * 0.86)
+	draw_colored_polygon(agua, Color("8fd8f8"))                              # celeste
+	var t := int(Time.get_ticks_msec() / 300.0)
+	var colores := [Color("ffd23c"), Color("f06aa8"), Color("6ab0f0")]       # chorros con luces de colores
+	for i in 3:
+		var alto_chorro := 6 + ((t + i) % 3) * 2
+		var x := centro.x - 8 + i * 8
+		draw_rect(Rect2(x, centro.y - alto_chorro, 2, alto_chorro), colores[i])
+	var ola := t % 4
+	draw_line(Vector2(centro.x - 14 + ola, centro.y + 10), Vector2(centro.x - 8 + ola, centro.y + 10), Pal.WHITE, 1.0)
 
 
 func _draw_special_buildings():

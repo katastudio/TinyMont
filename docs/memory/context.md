@@ -11,7 +11,8 @@
 - Motor: Godot **4.7.1** (migrado ✓).
 - El core loop (explorar + dialogar + misiones) funciona.
 - **Mundo vivo (specs 0009, 0010, 0005):** implementado. 23 NPCs con cerebro de utilidad, 18 POIs, charlas y rumores, guardado automático. 8 tests headless en verde.
-- **Próximo:** verificación manual en Android y web; luego historia principal (spec 0008).
+- **v0.7.0 (2026-10-04):** historia principal (20 misiones, álbum, intro, final), 35 vecinos, día/noche, logros, interiores y El Jagüel, fidelidad de la plaza. 20 tests headless.
+- **Próximo:** verificación manual en Android y web; habilitar producción en Play Console; contrastar calles con OpenStreetMap.
 
 ### Hecho en esta sesión (spec 0007 + B2/B3)
 

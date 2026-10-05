@@ -1015,3 +1015,23 @@ position = Vector2(344, 40)
 script = ExtResource("12_portal")
 destino = "res://scenes/mapas/el_jaguel.tscn"
 etiqueta = "Tren Roca a El Jagüel"
+
+[node name="CasaCultura" parent="." instance=ExtResource("5_tbgi4")]
+position = Vector2(240, 512)
+nombre = "CASA DE LA CULTURA"
+ancho = 2
+alto = 2
+tipo = "cultural"
+fachada = Color(0.95, 0.92, 0.82, 1)
+techo = Color(0.55, 0.25, 0.2, 1)
+cartel = Color(0.627451, 0.313726, 0.815686, 1)
+
+[node name="BancoProvincia" parent="." instance=ExtResource("5_tbgi4")]
+position = Vector2(448, 512)
+nombre = "BANCO PROVINCIA"
+ancho = 2
+alto = 2
+tipo = "generico"
+fachada = Color(0.9, 0.9, 0.92, 1)
+techo = Color(0.12, 0.35, 0.6, 1)
+cartel = Color(0.12, 0.35, 0.6, 1)

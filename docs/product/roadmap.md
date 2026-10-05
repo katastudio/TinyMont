@@ -68,6 +68,7 @@ emergentes, vida social y guardado.
 |---|------|--------|------|
 | F1 | Historia principal: intro con Marcos, 20 misiones, álbum, final en la plaza | hecho | [0008](../specs/0008-historia-principal-misiones/spec.md) |
 | F2 | Retratos en el diálogo, gestos, diálogos por humor | hecho | — |
+| F3 | Día/noche, logros, interiores y El Jagüel, fidelidad de la plaza | hecho | ADR-0004, ADR-0005, [0007](../specs/0007-fidelidad-mapa-personajes/spec.md) |
 
 ### Backlog pendiente
 
