@@ -8,7 +8,7 @@ const CharacterArt = preload("res://scripts/art/character_art.gd")
 const ItemArt = preload("res://scripts/art/item_art.gd")
 const MuteButton = preload("res://scripts/ui/mute_button.gd")
 const BAR_H := 24.0
-const SLOT := 12.0        # ancho de cada slot (los slots = una por misión, GameManager.TOTAL_MISIONES)
+const SLOT := 12.0        # ancho de cada slot (los slots = una por misión, GameManager.total_misiones())
 
 var _mute: Control
 
@@ -46,7 +46,7 @@ func _draw() -> void:
 
 	# Mochila: fila de slots (uno por misión total), con relieve inset
 	var mx := 24.0
-	for i in range(GameManager.TOTAL_MISIONES):
+	for i in range(GameManager.total_misiones()):
 		var r := Rect2(mx + i * SLOT, 4 + top, SLOT - 2, 16)
 		draw_rect(r, Color("1a1a20"))                                          # hueco oscuro
 		draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1), Color(1, 1, 1, 0.08))  # highlight
@@ -58,7 +58,7 @@ func _draw() -> void:
 	var font := ThemeDB.fallback_font
 	if font:
 		var comp := GameManager.misiones_completadas()
-		var total := GameManager.TOTAL_MISIONES
+		var total := GameManager.total_misiones()
 		if comp >= total:
 			ItemArt.draw_on(self, "medalla", Rect2(w - 60, 3 + top, 14, 16))
 			draw_string(font, Vector2(w - 44, 15 + top), "¡Completo!",

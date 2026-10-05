@@ -78,6 +78,7 @@ func _ready():
 	_add_dialog_box()
 	_create_pois()  # Recolecta los POIs de la escena
 	_iniciar_vida_social()
+	_cargar_catalogo_misiones()
 	_iniciar_guardado()
 	GameManager.mostrar_ui_juego(true)   # HUD + controles visibles en el juego
 	MusicManager.play_music("tema_pueblo")
@@ -222,6 +223,15 @@ func _create_pois():
 		if child is PuntoInteres:
 			pois.append(child)
 			poi_por_id[child.poi_id] = child
+
+
+## Catálogo de misiones: cada NPC que encarga una misión (no los ayudantes) aporta una entrada.
+func _cargar_catalogo_misiones() -> void:
+	var cat := {}
+	for child in get_children():
+		if "mision_id" in child and child.mision_id != "" and child.otorga_item == "":
+			cat[child.mision_id] = {"giver": child.npc_name, "recompensa": child.recompensa_item}
+	GameManager.catalogo = cat
 
 
 func _iniciar_vida_social() -> void:

@@ -66,6 +66,7 @@ func _ready() -> void:
 	_liberar(b)
 
 	_test_bici()
+	_test_progreso_de_misiones()
 
 	# Partida manipulada: rutas en los objetos y un color inválido no rompen la carga.
 	var f := FileAccess.open(RUTA, FileAccess.WRITE)
@@ -147,3 +148,31 @@ func _test_bici() -> void:
 	_check(m3.get_node("Bicicleta").visible, "al bajarse la bici vuelve a verse")
 	_liberar(m3)
 	GameManager.en_bici = false
+
+
+## El catálogo sale de la escena y el guardado conserva contadores y cuentas regresivas.
+func _test_progreso_de_misiones() -> void:
+	WorldClock.reiniciar(8, 8)
+	var m = _crear_mundo()
+	_check(GameManager.catalogo.has("marcos_vasitos") and GameManager.catalogo.has("rosa_gato"), "el mundo carga el catálogo de misiones")
+	_check(not GameManager.catalogo.has(""), "el catálogo no incluye vecinos sin misión")
+	_check(GameManager.catalogo["marcos_vasitos"].giver == "Marcos", "el catálogo sabe quién da cada misión")
+	GameManager.misiones["m_cuenta"] = "en_curso"
+	GameManager.iniciar_cuenta("m_cuenta", 42.5, "bandera")
+	GameManager.misiones["m_contador"] = "en_curso"
+	GameManager.iniciar_contador("m_contador", "Rodri", 3, "¡Gracias!")
+	GameManager.registrar_contacto("Tito")
+	GameManager.save_game(m)
+	_liberar(m)
+	GameManager.cuentas.clear()
+	GameManager.contadores.clear()
+	GameManager.cargar_al_iniciar = true
+	var m2 = _crear_mundo()
+	_check(is_equal_approx(GameManager.tiempo_restante("m_cuenta"), 42.5), "la cuenta regresiva sobrevive al guardado")
+	_check(GameManager.contador_de("m_contador") == 1, "el contador sobrevive al guardado")
+	_check(GameManager.registrar_contacto("Tito").is_empty(), "un vecino ya contado no vuelve a contar tras cargar")
+	_liberar(m2)
+	GameManager.cuentas.clear()
+	GameManager.contadores.clear()
+	GameManager.misiones.erase("m_cuenta")
+	GameManager.misiones.erase("m_contador")

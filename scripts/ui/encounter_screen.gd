@@ -234,9 +234,9 @@ func _dibujar_monti(lay: Dictionary) -> void:
 	_root.draw_string(font, p.position + Vector2(6.0, 13.0), GameManager.jugador_nombre,
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 8, TEXTO)
 	_root.draw_string(font, p.position + Vector2(48.0, 13.0), "Mis. %d/%d" %
-			[GameManager.misiones_completadas(), GameManager.TOTAL_MISIONES],
+			[GameManager.misiones_completadas(), GameManager.total_misiones()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 7, DORADO)
-	for i in range(GameManager.TOTAL_MISIONES):
+	for i in range(GameManager.total_misiones()):
 		var r := Rect2(p.position.x + 5.0 + i * 11.0, p.position.y + 20.0, 10.0, 18.0)
 		_root.draw_rect(r, Color("1a1a20"))
 		_root.draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0), Color(1, 1, 1, 0.08))
@@ -307,7 +307,7 @@ func _nombre_item(id: String) -> String:
 func _dibujar_misiones(box: Rect2) -> void:
 	var font := ThemeDB.fallback_font
 	_root.draw_string(font, box.position + Vector2(8.0, 16.0), "Misiones completadas: %d/%d" %
-			[GameManager.misiones_completadas(), GameManager.TOTAL_MISIONES],
+			[GameManager.misiones_completadas(), GameManager.total_misiones()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 8, TEXTO)
 	var linea: String
 	if _npc.mision_id == "":

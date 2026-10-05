@@ -165,8 +165,84 @@ func get_estado_mision(id: String) -> String:
 	return misiones.get(id, "no_iniciada")
 
 
-const TOTAL_MISIONES := 8   # total de misiones de la beta (para el contador y el cierre)
+const TOTAL_MISIONES := 8   # respaldo si todavía no hay catálogo (ej: tests sin mundo)
 var _victoria := false
+
+## Catálogo de misiones del mundo: mision_id -> {giver, recompensa}. Lo carga MonteGrande
+## desde los NPCs de la escena; el total y el álbum se derivan de acá (spec 0008 R3).
+var catalogo: Dictionary = {}
+## Misiones de contador en curso: mision_id -> {giver, objetivo, linea, contactos: [nombres]}
+var contadores: Dictionary = {}
+## Misiones contrarreloj en curso: mision_id -> {restante: segundos, item: recado que se pierde}
+var cuentas: Dictionary = {}
+
+signal cuenta_vencida(mision_id: String)
+
+
+func total_misiones() -> int:
+	return catalogo.size() if not catalogo.is_empty() else TOTAL_MISIONES
+
+
+## Registra una misión de contador al encargarse (ej: repartir 3 invitaciones).
+func iniciar_contador(mision_id: String, giver: String, objetivo: int, linea: String) -> void:
+	contadores[mision_id] = {"giver": giver, "objetivo": objetivo, "linea": linea, "contactos": []}
+
+
+func contador_de(mision_id: String) -> int:
+	return contadores.get(mision_id, {}).get("contactos", []).size()
+
+
+## El jugador habló con `nombre`: suma en cada misión de contador en curso donde todavía no
+## lo contó (salvo quien la encargó). Devuelve las líneas de agradecimiento a agregar.
+func registrar_contacto(nombre: String) -> Array:
+	var lineas: Array = []
+	for id in contadores:
+		var c: Dictionary = contadores[id]
+		if get_estado_mision(id) != "en_curso" or c.giver == nombre or nombre in c.contactos:
+			continue
+		if c.contactos.size() >= int(c.objetivo):
+			continue
+		c.contactos.append(nombre)
+		if str(c.linea) != "":
+			lineas.append(str(c.linea))
+	return lineas
+
+
+## Arranca la cuenta regresiva de una misión contrarreloj (spec 0008 R8).
+func iniciar_cuenta(mision_id: String, segundos: float, item_recado: String) -> void:
+	cuentas[mision_id] = {"restante": segundos, "item": item_recado}
+
+
+## Segundos que le quedan a la misión, o -1 si no tiene cuenta activa.
+func tiempo_restante(mision_id: String) -> float:
+	return float(cuentas[mision_id].restante) if cuentas.has(mision_id) else -1.0
+
+
+func detener_cuenta(mision_id: String) -> void:
+	cuentas.erase(mision_id)
+
+
+## El tiempo de las contrarreloj sólo corre mientras el jugador puede moverse.
+func _process(delta: float) -> void:
+	if cuentas.is_empty() or is_dialog_active or is_encounter_active:
+		return
+	for id in cuentas.keys():
+		cuentas[id].restante = float(cuentas[id].restante) - delta
+		if cuentas[id].restante <= 0.0:
+			_vencer_cuenta(id)
+
+
+## Vencida: la misión vuelve a no iniciada y se pierde el objeto del recado (reintentable).
+func _vencer_cuenta(mision_id: String) -> void:
+	var item := str(cuentas[mision_id].item)
+	cuentas.erase(mision_id)
+	if item != "" and tiene_item(item):
+		quitar_item(item)
+	misiones[mision_id] = "no_iniciada"
+	mision_cambiada.emit()
+	cuenta_vencida.emit(mision_id)
+	if dialog_box:
+		start_dialog("Monti", ["¡Se acabó el tiempo!", "Puedo volver a intentarlo hablando de nuevo."], Color("547ff3"))
 
 
 func set_estado_mision(id: String, estado: String) -> void:
@@ -177,7 +253,9 @@ func set_estado_mision(id: String, estado: String) -> void:
 		MusicManager.play_sfx("jingle_mision")
 	# Cierre de la beta: al completar todas, festejo (una sola vez, tras cerrar
 	# el diálogo de la última entrega).
-	if not _victoria and misiones_completadas() >= TOTAL_MISIONES:
+	if estado == "completada":
+		detener_cuenta(id)
+	if not _victoria and misiones_completadas() >= total_misiones():
 		_victoria = true
 		dialog_ended.connect(_mostrar_victoria, CONNECT_ONE_SHOT)
 
@@ -191,10 +269,11 @@ func _mostrar_victoria() -> void:
 	], Color("ffd23c"))
 
 
+## Misiones completadas del catálogo (o todas, si todavía no hay catálogo).
 func misiones_completadas() -> int:
 	var n := 0
 	for k in misiones:
-		if misiones[k] == "completada":
+		if misiones[k] == "completada" and (catalogo.is_empty() or catalogo.has(k)):
 			n += 1
 	return n
 
@@ -232,7 +311,8 @@ func save_game(mundo: Node = null) -> bool:
 	var datos := {
 		"version": VERSION_GUARDADO,
 		"jugador": {"nombre": jugador_nombre, "inventario": inventario.duplicate(),
-			"misiones": misiones.duplicate(), "bici_color": bici_color.to_html()},
+			"misiones": misiones.duplicate(), "bici_color": bici_color.to_html(),
+			"contadores": contadores.duplicate(true), "cuentas": cuentas.duplicate(true)},
 		"objetos_tomados": objetos_tomados.duplicate(),
 		"mundo": mundo.snapshot(),
 	}
@@ -264,7 +344,17 @@ func leer_partida() -> Dictionary:
 		bici_color = Color.html(color_guardado)
 	en_bici = false
 	objetos_tomados = datos.get("objetos_tomados", []).duplicate()
-	_victoria = misiones_completadas() >= TOTAL_MISIONES
+	contadores = {}
+	var cs: Dictionary = j.get("contadores", {})
+	for id in cs:
+		var c: Dictionary = cs[id]
+		contadores[str(id)] = {"giver": str(c.get("giver", "")), "objetivo": int(c.get("objetivo", 0)),
+			"linea": str(c.get("linea", "")), "contactos": Array(c.get("contactos", [])).map(func(x): return str(x))}
+	cuentas = {}
+	var ct: Dictionary = j.get("cuentas", {})
+	for id in ct:
+		cuentas[str(id)] = {"restante": float(ct[id].get("restante", 0.0)), "item": str(ct[id].get("item", ""))}
+	_victoria = misiones_completadas() >= total_misiones()
 	inventario_cambiado.emit()
 	return datos
 

@@ -45,6 +45,14 @@ enum Estado { ESPERANDO, ELEGIR_DESTINO, CAMINANDO, EN_ACTIVIDAD }
 @export var requisito_item: String = ""            # giver: objeto que pide para completar
 @export var recompensa_item: String = ""           # giver: objeto que regala al completar
 @export var otorga_item: String = ""               # helper: objeto que entrega durante la misión
+## Requisitos opcionales del giver (spec 0008): progreso previo, contador o contrarreloj.
+@export var requiere_completadas: int = 0          # misiones completadas necesarias para encargar
+@export var dialog_bloqueada: Array = []           # qué dice si todavía no alcanza el progreso
+@export var requisito_contador: int = 0            # vecinos distintos con los que hay que hablar
+@export var linea_contacto: String = ""            # lo que dice cada vecino contactado (ej: invitación)
+@export var limite_segundos: float = 0.0           # >0: contrarreloj (segundos reales, pausa en diálogos)
+## Roles de ayudante en misiones ajenas: [{mision, item, lineas, recordatorio}].
+@export var ayudas: Array = []
 
 @export_group("Rutina")
 @export var rutina: Rutina = Rutina.QUIETO
@@ -693,13 +701,30 @@ func restaurar(d: Dictionary) -> void:
 # a decir. La usa la pantalla de encuentro (opción HABLAR).
 func dialogo_lines() -> Array:
 	var relacion := _registrar_charla_jugador()
-	# NPC ambiental (sin misión): diálogo simple con lo que pasa en el barrio.
+	# Misiones de contador ajenas: este vecino cuenta como contactado (ej: recibe una invitación).
+	var extra: Array = GameManager.registrar_contacto(npc_name)
+	return _lineas_de_mision(relacion) + extra
+
+
+func _lineas_de_mision(relacion: int) -> Array:
+	# Roles de ayudante en misiones ajenas: entrega el recado una vez mientras siga en curso.
+	for ay in ayudas:
+		var item := str(ay.get("item", ""))
+		if GameManager.get_estado_mision(str(ay.get("mision", ""))) == "en_curso" and item != "" \
+				and not GameManager.tiene_item(item):
+			GameManager.agregar_item(item)
+			return Array(ay.get("lineas", []))
+
+	# NPC ambiental (sin misión propia): diálogo simple con lo que pasa en el barrio.
 	if mision_id == "":
+		for ay in ayudas:
+			if GameManager.tiene_item(str(ay.get("item", ""))) and not Array(ay.get("recordatorio", [])).is_empty():
+				return Array(ay.recordatorio)
 		return _ambiente(dialog_lines, relacion)
 
 	var estado := GameManager.get_estado_mision(mision_id)
 
-	# AYUDANTE: entrega su objeto mientras la misión está en curso (ej: Sandra da los vasitos).
+	# AYUDANTE clásico: entrega su objeto mientras la misión está en curso (ej: Sandra da los vasitos).
 	if otorga_item != "":
 		if estado == "en_curso" and not GameManager.tiene_item(otorga_item):
 			GameManager.agregar_item(otorga_item)
@@ -711,21 +736,47 @@ func dialogo_lines() -> Array:
 	# GIVER: encarga, recuerda y completa la misión (ej: Marcos).
 	match estado:
 		"no_iniciada":
+			if GameManager.misiones_completadas() < requiere_completadas:
+				return _lineas(dialog_bloqueada)
 			GameManager.set_estado_mision(mision_id, "en_curso")
+			if requisito_contador > 0:
+				GameManager.iniciar_contador(mision_id, npc_name, requisito_contador, linea_contacto)
+			if limite_segundos > 0.0:
+				GameManager.iniciar_cuenta(mision_id, limite_segundos, requisito_item)
+			if _sin_requisitos():
+				_completar_mision()
+				return _lineas(dialog_encargo) + dialog_entrega
 			return _lineas(dialog_encargo)
 		"en_curso":
-			if requisito_item != "" and GameManager.tiene_item(requisito_item):
-				GameManager.quitar_item(requisito_item)
-				GameManager.set_estado_mision(mision_id, "completada")
-				if recompensa_item != "":
-					GameManager.agregar_item(recompensa_item)
-				gesto("saltito")
-				if memoria:
-					# La ayuda del jugador se vuelve noticia que el barrio va a comentar.
-					memoria.sembrar(["%s le dio una mano a %s." % [GameManager.jugador_nombre, npc_name]], WorldClock.minutos, npc_name)
+			if _requisito_cumplido():
+				_completar_mision()
 				return _lineas(dialog_entrega)
 			return _lineas(dialog_recordatorio)
 	return _ambiente(dialog_lines, relacion)      # misión completada: charla post-misión
+
+
+func _sin_requisitos() -> bool:
+	return requisito_item == "" and requisito_contador <= 0
+
+
+func _requisito_cumplido() -> bool:
+	if requisito_item != "" and not GameManager.tiene_item(requisito_item):
+		return false
+	if requisito_contador > 0 and GameManager.contador_de(mision_id) < requisito_contador:
+		return false
+	return true
+
+
+## Cierra la misión: consume el requisito, da la recompensa y se vuelve noticia del barrio.
+func _completar_mision() -> void:
+	if requisito_item != "":
+		GameManager.quitar_item(requisito_item)
+	GameManager.set_estado_mision(mision_id, "completada")
+	if recompensa_item != "":
+		GameManager.agregar_item(recompensa_item)
+	gesto("saltito")
+	if memoria:
+		memoria.sembrar(["%s le dio una mano a %s." % [GameManager.jugador_nombre, npc_name]], WorldClock.minutos, npc_name)
 
 
 func _mirar(player_pos: Vector2) -> void:
