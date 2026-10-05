@@ -14,13 +14,6 @@ const TEXTO := Color("ecece4")
 const DORADO := Color("ffd23c")
 const OPCIONES := ["HABLAR", "MOCHILA", "MISIONES", "CHAU"]
 const POR_PAGINA := 4
-const NOMBRES_ITEM := {
-	vasitos = "Vasitos", cafecito = "Cafecito", trompeta = "Trompeta",
-	pelota = "Pelota", recuerdo = "Recuerdo", microfono = "Micrófono",
-	celular = "Celular", parlante = "Parlante", medalla = "Medalla",
-	gato = "Mostaza", lente = "Lente",
-}
-
 var _npc = null
 var _modo := "menu"      # menu | mochila | misiones | hablando | cerrando
 var _col := 0            # celda seleccionada del menú 2x2
@@ -236,7 +229,7 @@ func _dibujar_monti(lay: Dictionary) -> void:
 	_root.draw_string(font, p.position + Vector2(48.0, 13.0), "Mis. %d/%d" %
 			[GameManager.misiones_completadas(), GameManager.total_misiones()],
 			HORIZONTAL_ALIGNMENT_LEFT, -1, 7, DORADO)
-	for i in range(GameManager.total_misiones()):
+	for i in range(8):   # entran 8 casilleros en el panel; el resto se ve en MOCHILA y en el álbum
 		var r := Rect2(p.position.x + 5.0 + i * 11.0, p.position.y + 20.0, 10.0, 18.0)
 		_root.draw_rect(r, Color("1a1a20"))
 		_root.draw_rect(Rect2(r.position.x, r.position.y, r.size.x, 1.0), Color(1, 1, 1, 0.08))
@@ -301,7 +294,7 @@ func _dibujar_mochila(box: Rect2) -> void:
 
 
 func _nombre_item(id: String) -> String:
-	return NOMBRES_ITEM.get(id, id.capitalize())
+	return ItemArt.nombre(id)
 
 
 func _dibujar_misiones(box: Rect2) -> void:

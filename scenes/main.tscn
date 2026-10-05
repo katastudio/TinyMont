@@ -115,7 +115,7 @@ dialog_entrega = ["¡Mostaza! ¡Ay,
 gracias, nene!", "Tomate un recuerdo,
 sos un sol."]
 requisito_item = "gato"
-recompensa_item = "recuerdo"
+recompensa_item = "foto_gato"
 
 [node name="Npc06DonRamon" parent="." instance=ExtResource("npc_src")]
 position = Vector2(344, 488)
@@ -243,7 +243,7 @@ ganaste.", "Ya sos del barrio,
 Monti. Bienvenido
 a Monte Grande."]
 requisito_item = "vasitos"
-recompensa_item = "recuerdo"
+recompensa_item = "cafecito"
 
 [node name="PuestoMarcos" parent="." instance=ExtResource("6_puesto")]
 position = Vector2(368, 48)
@@ -306,7 +306,7 @@ Gracias, grande.", "Tomate esto de
 recuerdo. Ya sos de
 la banda del barrio."]
 requisito_item = "trompeta"
-recompensa_item = "recuerdo"
+recompensa_item = "partitura"
 
 [node name="ElDiez" parent="." instance=ExtResource("npc_src")]
 position = Vector2(438, 135)
@@ -335,7 +335,7 @@ dialog_entrega = ["¡Esa! Gracias,
 crack.", "Tomate un recuerdo.
 Nos vemos, campeon."]
 requisito_item = "pelota"
-recompensa_item = "recuerdo"
+recompensa_item = "pelota_dorada"
 
 [node name="Trompeta" parent="." instance=ExtResource("7_objeto")]
 position = Vector2(312, 583)
@@ -378,7 +378,7 @@ Gracias, capo.", "Tomate un recuerdo.
 La proxima tiramos
 unas rimas juntos."]
 requisito_item = "microfono"
-recompensa_item = "recuerdo"
+recompensa_item = "rima"
 
 [node name="LaCoqueta" parent="." instance=ExtResource("npc_src")]
 position = Vector2(88, 215)
@@ -410,7 +410,7 @@ un genio.", "Tomate un recuerdo
 y saluda a camara:
 ¡acompañenon!"]
 requisito_item = "celular"
-recompensa_item = "recuerdo"
+recompensa_item = "aro_de_luz"
 
 [node name="Chuchu" parent="." instance=ExtResource("npc_src")]
 position = Vector2(112, 127)
@@ -443,7 +443,7 @@ Grande, vecino.", "Tomate un recuerdo.
 Aca ayudamos entre
 todos, siempre."]
 requisito_item = "parlante"
-recompensa_item = "recuerdo"
+recompensa_item = "pulsera"
 
 [node name="Microfono" parent="." instance=ExtResource("7_objeto")]
 position = Vector2(264, 664)
@@ -488,7 +488,7 @@ Gracias, vecino.", "Tomate un recuerdo.
 Volve de noche a
 ver las estrellas."]
 requisito_item = "lente"
-recompensa_item = "recuerdo"
+recompensa_item = "mapa_estelar"
 
 [node name="Gato" parent="." instance=ExtResource("7_objeto")]
 position = Vector2(616, 262)

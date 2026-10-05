@@ -104,10 +104,15 @@ func _liberar_origen() -> void:
 	_celda_origen = null
 
 
+## Monti camina sólo si no hay diálogo, encuentro ni álbum abierto.
+func puede_moverse() -> bool:
+	return not (GameManager.is_dialog_active or GameManager.is_encounter_active or GameManager.album_abierto)
+
+
 func _physics_process(delta):
 	if Engine.is_editor_hint():
 		return
-	if GameManager.is_dialog_active or GameManager.is_encounter_active:
+	if not puede_moverse():
 		return
 
 	if is_moving:
@@ -165,7 +170,7 @@ func _can_move_to(pos: Vector2) -> bool:
 func _unhandled_input(event: InputEvent) -> void:
 	if Engine.is_editor_hint():
 		return
-	if GameManager.is_dialog_active or GameManager.is_encounter_active:
+	if not puede_moverse():
 		return
 	if event.is_action_pressed("toggle_bici"):
 		_toggle_bici()

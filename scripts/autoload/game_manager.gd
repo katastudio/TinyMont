@@ -9,6 +9,8 @@ signal encounter_ended
 var is_dialog_active: bool = false
 var dialog_box = null
 
+var album_abierto: bool = false        # el álbum del barrio frena al player
+var album: CanvasLayer = null
 var is_encounter_active: bool = false   # pantalla de encuentro abierta (frena al player)
 var _encounter: CanvasLayer = null
 
@@ -97,6 +99,7 @@ func _setup_input():
 	_add_key_action("interact", KEY_SPACE)
 	_add_key_action("menu", KEY_X)
 	_add_key_action("menu", KEY_ESCAPE)
+	_add_key_action("album", KEY_TAB)
 
 
 func _add_key_action(action_name: String, key: Key):
@@ -157,6 +160,32 @@ func quitar_item(item: String) -> bool:
 
 func tiene_item(item: String) -> bool:
 	return item in inventario
+
+
+# ==================== ÁLBUM DEL BARRIO ====================
+
+func abrir_album() -> void:
+	if album == null:
+		album = CanvasLayer.new()
+		album.set_script(preload("res://scripts/ui/album.gd"))
+		add_child(album)
+	album.visible = true
+	album_abierto = true
+
+
+func cerrar_album() -> void:
+	if album:
+		album.visible = false
+	album_abierto = false
+
+
+## X (menú) o Tab abren el álbum mientras se camina; dentro de diálogos o encuentros no.
+func _unhandled_input(event: InputEvent) -> void:
+	if album_abierto or is_dialog_active or is_encounter_active or mundo_activo == null:
+		return
+	if event.is_action_pressed("menu") or event.is_action_pressed("album"):
+		abrir_album()
+		get_viewport().set_input_as_handled()
 
 
 # ==================== MISIONES ====================
