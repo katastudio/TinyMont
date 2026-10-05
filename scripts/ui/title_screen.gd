@@ -186,6 +186,8 @@ func _draw_button(font: Font) -> void:
 	]), INK)
 	if font:
 		draw_string(font, Vector2(tx + 18, cy + 5), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, INK)
+	if font:
+		draw_string(font, Vector2(0, size.y - 54.0), descargo(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 6, Color(INK, 0.75))
 	if _hay_partida and font:
 		var n := _nueva_rect()
 		var col := INK if not _pressed_nueva else BTN_DK
@@ -240,9 +242,15 @@ func _primer_gesto_web(event: InputEvent) -> void:
 	MusicManager.restart_music("tema_titulo")
 
 
+## Descargo legal de los personajes homenaje (spec 0008 R7).
+func descargo() -> String:
+	return "Personajes ficticios inspirados con cariño en ídolos populares."
+
+
 func _start() -> void:
 	set_process_input(false)
 	GameManager.cargar_al_iniciar = _hay_partida
+	GameManager.pedir_intro = not _hay_partida
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 

@@ -10,6 +10,11 @@ var is_dialog_active: bool = false
 var dialog_box = null
 
 var album_abierto: bool = false        # el álbum del barrio frena al player
+var flags: Dictionary = {}              # progreso de la historia (ej: intro_vista), se guarda
+var pedir_intro: bool = false           # el título pide la introducción de Marcos (partida nueva)
+var final: CanvasLayer = null           # pantalla final (spec 0008 R5)
+signal victoria_lograda
+signal final_cerrado
 var album: CanvasLayer = null
 var is_encounter_active: bool = false   # pantalla de encuentro abierta (frena al player)
 var _encounter: CanvasLayer = null
@@ -292,10 +297,27 @@ func set_estado_mision(id: String, estado: String) -> void:
 func _mostrar_victoria() -> void:
 	MusicManager.play_sfx("fanfarria_victoria")
 	start_dialog("Monte Grande", [
-		"¡Felicitaciones, Monti!",
-		"Ayudaste a todo\nel barrio de\nMonte Grande.",
-		"Ya sos un\nMontegrandense\nde ley. ¡Bienvenido!",
+		"¡Completaste el álbum del barrio, %s!" % jugador_nombre,
+		"Todo Monte Grande te espera en la Plaza Mitre.",
 	], Color("ffd23c"))
+	victoria_lograda.emit()
+
+
+## Pantalla final con créditos y descargo; al cerrarla se sigue paseando.
+func mostrar_final() -> void:
+	if final == null:
+		final = CanvasLayer.new()
+		final.set_script(preload("res://scripts/ui/final.gd"))
+		add_child(final)
+	final.visible = true
+	is_dialog_active = true      # frena a Monti mientras está la pantalla
+
+
+func cerrar_final() -> void:
+	if final:
+		final.visible = false
+	is_dialog_active = false
+	final_cerrado.emit()
 
 
 ## Misiones completadas del catálogo (o todas, si todavía no hay catálogo).
@@ -341,7 +363,8 @@ func save_game(mundo: Node = null) -> bool:
 		"version": VERSION_GUARDADO,
 		"jugador": {"nombre": jugador_nombre, "inventario": inventario.duplicate(),
 			"misiones": misiones.duplicate(), "bici_color": bici_color.to_html(),
-			"contadores": contadores.duplicate(true), "cuentas": cuentas.duplicate(true)},
+			"contadores": contadores.duplicate(true), "cuentas": cuentas.duplicate(true),
+			"flags": flags.duplicate(true)},
 		"objetos_tomados": objetos_tomados.duplicate(),
 		"mundo": mundo.snapshot(),
 	}
@@ -373,6 +396,7 @@ func leer_partida() -> Dictionary:
 		bici_color = Color.html(color_guardado)
 	en_bici = false
 	objetos_tomados = datos.get("objetos_tomados", []).duplicate()
+	flags = Dictionary(j.get("flags", {})).duplicate(true)
 	contadores = {}
 	var cs: Dictionary = j.get("contadores", {})
 	for id in cs:
@@ -392,6 +416,10 @@ func borrar_partida() -> void:
 	if has_save():
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta_guardado))
 	objetos_tomados.clear()
+	flags.clear()
+	contadores.clear()
+	cuentas.clear()
+	_victoria = false
 
 
 ## Autoguardado: sólo en juego real (no en tests headless) y con un mundo activo.

@@ -99,6 +99,10 @@ const ALTURA_SALTITO := 4.0
 var _gesto: String = ""
 var _t_gesto: float = 0.0
 
+# Fiesta final en la plaza (spec 0008 R5)
+const SIN_CONVOCATORIA := Vector2i(-1, -1)
+var _convocatoria: Vector2i = SIN_CONVOCATORIA
+
 # Vida social (spec 0010, F3)
 const UMBRAL_SOCIAL := 20.0              # urgencia social mínima para buscar charla
 const ALIVIO_CHARLA := 40.0              # cuánto baja la urgencia social una charla
@@ -247,7 +251,10 @@ func _volver_a_esperar() -> void:
 
 
 func _elegir_destino() -> void:
-	"""Elige el próximo destino según la rutina."""
+	"""Elige el próximo destino según la rutina (la convocatoria a la fiesta tiene prioridad)."""
+	if convocado():
+		_elegir_destino_convocado()
+		return
 	match rutina:
 		Rutina.QUIETO:
 			_camino = []
@@ -460,9 +467,9 @@ func _elegir_destino_cerebro() -> void:
 		_soltar_opcion()
 
 
-## La celda pedida si está libre (o es la propia); si no, la libre más cercana a distancia <= 2.
-func _celda_libre_cerca(celda: Vector2i) -> Vector2i:
-	for radio in range(3):
+## La celda pedida si está libre (o es la propia); si no, la libre más cercana a distancia <= radio_max.
+func _celda_libre_cerca(celda: Vector2i, radio_max: int = 2) -> Vector2i:
+	for radio in range(radio_max + 1):
 		for dy in range(-radio, radio + 1):
 			for dx in range(-radio, radio + 1):
 				if absi(dx) + absi(dy) != radio:
@@ -557,6 +564,38 @@ func _registrar_charla_jugador() -> int:
 const UMBRAL_HUMOR := 70.0       # urgencia a partir de la cual una necesidad marca el ánimo
 const UMBRAL_CONTENTO := 35.0    # todas las necesidades por debajo: contento
 const HUMOR_POR_NECESIDAD := [["hambre", "hambriento"], ["energia", "cansado"], ["ocio", "aburrido"], ["social", "solo"]]
+
+
+## Convoca al vecino a un punto (la fiesta final): deja lo que hace y va para allá.
+func convocar(celda: Vector2i) -> void:
+	_convocatoria = celda
+	if not _paso_activo:
+		_volver_a_esperar()
+		_timer_pausa = 0.0
+
+
+func convocado() -> bool:
+	return _convocatoria != SIN_CONVOCATORIA
+
+
+func liberar_convocatoria() -> void:
+	_convocatoria = SIN_CONVOCATORIA
+	if _estado == Estado.EN_ACTIVIDAD and actividad_actual() == "fiesta":
+		_volver_a_esperar()
+
+
+func _elegir_destino_convocado() -> void:
+	_camino = []
+	var destino := _celda_libre_cerca(_convocatoria, 6)
+	if destino == Vector2i(-1, -1):
+		return
+	_opcion_actual = {"id": "fiesta", "satisface": {"social": 100}, "celda": destino, "duracion": 600, "lleno": false}
+	if destino == _celda_actual:
+		_comenzar_actividad()
+		return
+	_camino = _mundo.camino(_celda_actual, destino)
+	if _camino.is_empty():
+		_soltar_opcion()
 
 
 ## Ánimo actual según las necesidades: hambriento, cansado, aburrido, solo, contento o "".
