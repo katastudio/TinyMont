@@ -153,23 +153,28 @@ func _handle_input():
 		dir = Vector2.RIGHT
 
 	if dir != Vector2.ZERO:
-		facing = dir
-		queue_redraw()
+		intentar_paso(dir)
 
-		var next_pos = position + dir * TILE_SIZE
-		if _can_move_to(next_pos):
-			# Mover en la grilla de ocupación
-			var mundo = get_parent()
-			if mundo and "ocupacion" in mundo:
-				var celda_actual = Vector2i(int(position.x / TILE_SIZE), int(position.y / TILE_SIZE))
-				var celda_siguiente = Vector2i(int(next_pos.x / TILE_SIZE), int(next_pos.y / TILE_SIZE))
-				if mundo.ocupacion.reservar(celda_siguiente, self):
-					_celda_origen = celda_actual
-					target_pos = next_pos
-					is_moving = true
-			else:
-				target_pos = next_pos
-				is_moving = true
+
+## Intenta dar un paso: "movio", "bloqueado" o "portal" (caminó contra una puerta a otro mapa).
+func intentar_paso(dir: Vector2) -> String:
+	facing = dir
+	queue_redraw()
+	var next_pos := position + dir * TILE_SIZE
+	var mundo = get_parent()
+	var celda_siguiente := Vector2i(int(next_pos.x / TILE_SIZE), int(next_pos.y / TILE_SIZE))
+	if not _can_move_to(next_pos):
+		if mundo and mundo.has_method("cruzar_portal") and mundo.cruzar_portal(celda_siguiente, self):
+			return "portal"
+		return "bloqueado"
+	if mundo and "ocupacion" in mundo:
+		var celda_actual := Vector2i(int(position.x / TILE_SIZE), int(position.y / TILE_SIZE))
+		if not mundo.ocupacion.reservar(celda_siguiente, self):
+			return "bloqueado"
+		_celda_origen = celda_actual
+	target_pos = next_pos
+	is_moving = true
+	return "movio"
 
 
 func _can_move_to(pos: Vector2) -> bool:

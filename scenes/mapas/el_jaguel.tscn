@@ -1,0 +1,39 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/mapa_secundario.gd" id="mapa"]
+[ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc"]
+
+[node name="ElJaguel" type="Node2D"]
+script = ExtResource("mapa")
+nombre_mapa = "El Jaguel"
+plano = "########################\n#HHHH.AAA.HHHH.HHHHH.HH#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#RRRRRRRRRRRRRRRRRRRRRR#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#HHH.GGGGGGGG.HHHH.HHHH#\n#HHH.GAGGGGAG.HHHH.HHHH#\n#....GGGGGGGG..........#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#RRRRRRRRRRRRRRRRRRRRRR#\n#VVVVVVVVVVVVVVVVVVVVVV#\n###########X############"
+
+[node name="VecinaJaguel" parent="." instance=ExtResource("npc")]
+position = Vector2(136, 72)
+npc_name = "Doña Elba"
+rutina = 0
+radio_deambular = 2
+pelo = "long"
+pelo_color = Color(0.752941, 0.752941, 0.752941, 1)
+camiseta = Color(0.627451, 0.313725, 0.815686, 1)
+dialog_lines = ["¡Bienvenido a El Jagüel, la otra punta del Roca!", "Acá el que no saluda es porque no es del barrio.", "Dicen que Tiaguito empezó a rimar en esta misma plaza."]
+
+[node name="KiosqueroJaguel" parent="." instance=ExtResource("npc")]
+position = Vector2(248, 120)
+npc_name = "Cacho"
+rutina = 1
+radio_deambular = 2
+pelo = "short"
+vello_facial = "beard"
+camiseta = Color(0.960784, 0.772549, 0.094118, 1)
+dialog_lines = ["Kiosco abierto, ¿qué te doy?", "De acá a Monte Grande son unas pocas estaciones."]
+
+[node name="PibeJaguel" parent="." instance=ExtResource("npc")]
+position = Vector2(136, 120)
+npc_name = "Nacho"
+rutina = 1
+radio_deambular = 2
+gorra = "cap"
+gorra_color = Color(0.101961, 0.101961, 0.101961, 1)
+camiseta = Color(0.101961, 0.101961, 0.101961, 1)
+dialog_lines = ["En El Jagüel también se rima, eh.", "Cuando Tiaguito vuelve, la plaza se llena."]

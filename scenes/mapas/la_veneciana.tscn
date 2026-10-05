@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/mapa_secundario.gd" id="mapa"]
+[ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc"]
+
+[node name="LaVeneciana" type="Node2D"]
+script = ExtResource("mapa")
+nombre_mapa = "La Veneciana"
+plano = "############\n#CCCCCCC..P#\n#..........#\n#.M..M..M..#\n#..........#\n#.M..M..M..#\n#P.........#\n#####X######"
+
+[node name="Pizzero" parent="." instance=ExtResource("npc")]
+position = Vector2(72, 40)
+npc_name = "Don Nicola"
+rutina = 0
+radio_deambular = 2
+pelo = "bald"
+vello_facial = "mustache"
+camiseta = Color(0.956863, 0.956863, 0.956863, 1)
+dialog_lines = ["¡Bienvenido a La Veneciana, la pizzería del barrio!", "La fugazzeta sale cada cinco minutos, ¿una porción?", "La masa la hacemos desde la madrugada, como siempre."]
+
+[node name="Comensal" parent="." instance=ExtResource("npc")]
+position = Vector2(152, 72)
+npc_name = "Una comensal"
+rutina = 1
+radio_deambular = 1
+pelo = "long"
+pelo_color = Color(0.415686, 0.227451, 0.164706, 1)
+camiseta = Color(0.439216, 0.784314, 0.941176, 1)
+dialog_lines = ["Vengo todos los viernes, es una tradición.", "La muzza de acá no tiene comparación."]

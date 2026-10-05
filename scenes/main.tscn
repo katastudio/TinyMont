@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/world/bicicleta.tscn" id="10_bici"]
 [ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc_src"]
 [ext_resource type="Script" path="res://scripts/world/punto_interes.gd" id="11_poi"]
+[ext_resource type="Script" path="res://scripts/world/portal.gd" id="12_portal"]
 
 [node name="MonteGrande" type="Node2D"]
 script = ExtResource("1_0wfyh")
@@ -996,3 +997,21 @@ nombre = "los guantes del Atajatodo"
 position = Vector2(328, 568)
 item = "vincha"
 nombre = "la vincha de Emi"
+
+[node name="PuertaVeneciana" type="Node2D" parent="."]
+position = Vector2(120, 200)
+script = ExtResource("12_portal")
+destino = "res://scenes/mapas/la_veneciana.tscn"
+etiqueta = "La Veneciana"
+
+[node name="PuertaClub" type="Node2D" parent="."]
+position = Vector2(456, 264)
+script = ExtResource("12_portal")
+destino = "res://scenes/mapas/club.tscn"
+etiqueta = "Club Atlético"
+
+[node name="PuertaRoca" type="Node2D" parent="."]
+position = Vector2(344, 40)
+script = ExtResource("12_portal")
+destino = "res://scenes/mapas/el_jaguel.tscn"
+etiqueta = "Tren Roca a El Jagüel"

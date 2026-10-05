@@ -1,6 +1,6 @@
 # Spec 0006 — Transición entre mapas
 
-- **Estado:** draft
+- **Estado:** implementado (2026-10-04, v0.7.0). Ver ADR-0005.
 - **Milestone:** mvp-0.1.0
 - **Autor:** Martín
 - **Relacionado:** roadmap #B6
@@ -28,11 +28,21 @@ fade out/in. Antes, arreglar que `plaza` implemente `is_walkable`/`get_npc_at`.
 - R3. Fade simple con `CanvasLayer` (paleta GB).
 - R4. `plaza.gd` debe implementar `is_walkable()` y `get_npc_at()` (hoy le faltan).
 
+## 4b. Enmienda (2026-10-04)
+
+El mapa `plaza` era un prototipo con la paleta Game Boy original, sin referencias y duplicado
+de la Plaza Mitre que ya existe en el mapa principal. Se retiró. La transición se implementó
+para mapas secundarios: interiores de La Veneciana y del Club Atlético, y el barrio El Jagüel
+(se llega en el Roca desde la estación). Ver ADR-0005.
+
 ## 5. Criterios de aceptación
 
-- [ ] CA1. Pisar un portal en `monte_grande` lleva a `plaza` en el spawn correcto, y viceversa.
-- [ ] CA2. En `plaza` las paredes ya no son atravesables (deuda técnica resuelta).
-- [ ] CA3. La transición no deja diálogos ni input "pegados".
+- [x] CA1. Caminar contra una puerta en `monte_grande` lleva al mapa secundario en su entrada, y la salida devuelve a la vereda.
+  *Verificado:* `test_mapas` (tres mapas, ida y vuelta).
+- [x] CA2. En los mapas secundarios las paredes no se atraviesan.
+  *Verificado:* `test_mapas`.
+- [x] CA3. La transición no deja diálogos ni input "pegados".
+  *Verificado:* `test_mapas` (Monti vuelve a moverse y la cámara vuelve al barrio).
 
 ## 6. Restricciones
 

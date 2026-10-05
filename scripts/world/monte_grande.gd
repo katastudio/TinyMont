@@ -768,6 +768,28 @@ func _station_exit_pos() -> Vector2:
 	return Vector2(int(MAP_W / 2.0) * T + T / 2.0, 8 * T + T / 2.0)
 
 
+# ==================== PUERTAS A OTROS MAPAS (spec 0006, ADR-0005) ====================
+
+func portales() -> Array:
+	return get_children().filter(func(n): return n is Portal)
+
+
+func portal_en(celda: Vector2i):
+	for p in portales():
+		if p.celda() == celda:
+			return p
+	return null
+
+
+## Caminar contra una puerta lleva a su mapa; Monti vuelve a aparecer en la vereda.
+func cruzar_portal(celda: Vector2i, quien: Node) -> bool:
+	var portal = portal_en(celda)
+	if portal == null or portal.destino == "":
+		return false
+	GameManager.ir_a_mapa(portal.destino, celda_de(quien.position))
+	return true
+
+
 func _add_dialog_box():
 	add_child(preload("res://scenes/ui/dialog_box.tscn").instantiate())
 

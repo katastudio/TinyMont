@@ -76,15 +76,15 @@ emergentes, vida social y guardado.
 | C7 | Retratos en el cuadro de diálogo | hecho (v0.7.0, `test_retrato_dialogo`) | — |
 | C8 | Gestos puntuales: saltito y saludo procedurales | hecho (v0.7.0, `test_gestos`) | — |
 | B5 | Sistema de guardado base | hecho (v0.6.0) | [0005](../specs/0005-sistema-guardado/spec.md) |
-| B6 | Transición entre mapas (plaza ↔ monte_grande) | draft | [0006](../specs/0006-transicion-mapas/spec.md) |
+| B6 | Transición entre mapas: puertas a interiores y barrios (ADR-0005) | hecho (v0.7.0) | [0006](../specs/0006-transicion-mapas/spec.md) |
 | B8 | Más NPCs y mini-quests: 12 personajes nuevos con misiones (35 vecinos, 20 misiones) | hecho (v0.7.0) | [0008](../specs/0008-historia-principal-misiones/spec.md) |
 
 ## Backlog futuro (sin milestone)
 
 - ~~Transiciones día/noche con tinte de paleta.~~ Hecho en v0.7.0 (ADR-0004, reloj en el HUD).
 - ~~Inventario simple + objetos coleccionables.~~ Hecho en v0.7.0: álbum del barrio + mochila en el HUD.
-- Más barrios / mapas (requiere ADR de scope + assets).
-- Entrar/salir de edificios (requiere plan de arquitectura).
+- ~~Más barrios / mapas.~~ Hecho en v0.7.0: El Jagüel, en el Roca (ADR-0005).
+- ~~Entrar/salir de edificios.~~ Hecho en v0.7.0: La Veneciana y el Club Atlético (ADR-0005).
 - ~~Puntuación / logros / achievements.~~ Hecho en v0.7.0: 10 logros con aviso, en el álbum y en el guardado.
 
 ## Notas

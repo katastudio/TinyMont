@@ -13,6 +13,10 @@ var album_abierto: bool = false        # el álbum del barrio frena al player
 var flags: Dictionary = {}              # progreso de la historia (ej: intro_vista), se guarda
 var pedir_intro: bool = false           # el título pide la introducción de Marcos (partida nueva)
 var final: CanvasLayer = null           # pantalla final (spec 0008 R5)
+var mapa_secundario: Node = null        # interior o barrio cargado encima del mapa principal
+var transicion_inmediata: bool = false  # tests: sin fundido
+var _vereda_retorno := Vector2i.ZERO    # celda del barrio donde reaparece Monti al volver
+var _fundido: CanvasLayer = null
 signal victoria_lograda
 signal logro_desbloqueado(id: String)
 
@@ -184,6 +188,64 @@ func quitar_item(item: String) -> bool:
 
 func tiene_item(item: String) -> bool:
 	return item in inventario
+
+
+# ==================== MAPAS SECUNDARIOS (spec 0006, ADR-0005) ====================
+# El mapa principal nunca se destruye: se oculta y sigue simulando (el barrio sigue vivo).
+
+func ir_a_mapa(escena: String, vereda: Vector2i) -> void:
+	if mapa_secundario != null or mundo_activo == null:
+		return
+	_vereda_retorno = vereda
+	await _fundir(true)
+	var jugador = mundo_activo.get_node_or_null("Player")
+	if jugador:
+		jugador.set_physics_process(false)
+		jugador.set_process_unhandled_input(false)
+		jugador.get_node("Camera2D").enabled = false
+	mundo_activo.visible = false
+	mapa_secundario = load(escena).instantiate()
+	mundo_activo.get_parent().add_child(mapa_secundario)
+	await _fundir(false)
+
+
+func volver_al_barrio() -> void:
+	if mapa_secundario == null:
+		return
+	await _fundir(true)
+	mapa_secundario.get_parent().remove_child(mapa_secundario)
+	mapa_secundario.queue_free()
+	mapa_secundario = null
+	if mundo_activo:
+		mundo_activo.visible = true
+		var jugador = mundo_activo.get_node_or_null("Player")
+		if jugador:
+			jugador.colocar_en(_vereda_retorno)
+			jugador.set_physics_process(true)
+			jugador.set_process_unhandled_input(true)
+			var cam: Camera2D = jugador.get_node("Camera2D")
+			cam.enabled = true
+			cam.make_current()
+	await _fundir(false)
+
+
+## Fundido a negro entre mapas (en tests, inmediato).
+func _fundir(a_negro: bool) -> void:
+	if transicion_inmediata or DisplayServer.get_name() == "headless":
+		return
+	if _fundido == null:
+		_fundido = CanvasLayer.new()
+		_fundido.layer = 20
+		var r := ColorRect.new()
+		r.color = Color(0, 0, 0, 0)
+		r.set_anchors_preset(Control.PRESET_FULL_RECT)
+		r.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		_fundido.add_child(r)
+		add_child(_fundido)
+	var rect: ColorRect = _fundido.get_child(0)
+	var tw := create_tween()
+	tw.tween_property(rect, "color:a", 1.0 if a_negro else 0.0, 0.2)
+	await tw.finished
 
 
 # ==================== ÁLBUM DEL BARRIO ====================

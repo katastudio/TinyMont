@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/world/mapa_secundario.gd" id="mapa"]
+[ext_resource type="PackedScene" uid="uid://dhhuuwvijdnxn" path="res://scenes/npc/npc.tscn" id="npc"]
+
+[node name="ClubAtletico" type="Node2D"]
+script = ExtResource("mapa")
+nombre_mapa = "Club Atletico"
+plano = "##############\n#LLLLLLLLLLLL#\n#GGGGGFGGGGGG#\n#GGGGGGGGGGGG#\n#LLLLLLLLLLLL#\n#GGGGGGGGGGGG#\n#GGGGGGGGGGGG#\n#GGGGGFGGGGGG#\n#..P.........#\n######X#######"
+
+[node name="Utilero" parent="." instance=ExtResource("npc")]
+position = Vector2(56, 136)
+npc_name = "El Utilero"
+rutina = 0
+radio_deambular = 2
+gorra = "cap"
+gorra_color = Color(0.184314, 0.658824, 0.309804, 1)
+camiseta = Color(0.184314, 0.658824, 0.309804, 1)
+dialog_lines = ["Acá se juega al fútbol desde 1911, pibe.", "Cuidame la cancha, que la acabamos de marcar.", "Los sábados entrenan los chicos con Román."]
+
+[node name="Jugador" parent="." instance=ExtResource("npc")]
+position = Vector2(120, 88)
+npc_name = "Un jugador"
+rutina = 1
+radio_deambular = 2
+pelo = "short"
+camiseta = Color(0.847059, 0.188235, 0.188235, 1)
+marca = "stripes"
+dialog_lines = ["¡Pasala, pasala!", "Mañana tenemos partido, hay que ganar."]
