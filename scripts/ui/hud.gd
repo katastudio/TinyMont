@@ -11,6 +11,9 @@ const BAR_H := 24.0
 const SLOT := 12.0        # ancho de cada slot (los slots = una por misión, GameManager.total_misiones())
 
 var _mute: Control
+var _aviso := ""          # aviso del último logro desbloqueado
+var _t_aviso := 0.0
+const DURACION_AVISO := 3.5
 
 
 func _ready() -> void:
@@ -18,6 +21,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	GameManager.inventario_cambiado.connect(queue_redraw)
 	GameManager.mision_cambiada.connect(queue_redraw)
+	GameManager.logro_desbloqueado.connect(_on_logro)
 	_mute = MuteButton.new()
 	add_child(_mute)
 	resized.connect(_ubicar_mute)
@@ -64,6 +68,13 @@ func _draw() -> void:
 			if i < lleva.size():
 				ItemArt.draw_on(self, lleva[i], r)
 
+	# Aviso de logro: cinta dorada debajo de la barra.
+	if texto_aviso() != "" and font:
+		var cinta := Rect2(w / 2.0 - 70, bar_h + 4, 140, 14)
+		draw_rect(cinta.grow(1), Color("14141a"))
+		draw_rect(cinta, Color("ffd23c"))
+		draw_string(font, Vector2(cinta.position.x, cinta.position.y + 10), texto_aviso(), HORIZONTAL_ALIGNMENT_CENTER, cinta.size.x, 7, Color("241008"))
+
 	# Hora del barrio, a la izquierda del botón de mute.
 	if font:
 		draw_string(font, Vector2(w - 104, 15 + top), texto_hora(), HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("ecece4"))
@@ -81,6 +92,16 @@ func _draw() -> void:
 		else:
 			draw_string(font, b.position + Vector2(4, 11), "Álbum %d/%d" % [comp, total],
 					HORIZONTAL_ALIGNMENT_LEFT, -1, 7, Color("ecece4"))
+
+
+func _on_logro(id: String) -> void:
+	_aviso = "¡Logro! " + str(GameManager.LOGROS[id].nombre)
+	_t_aviso = DURACION_AVISO
+	MusicManager.play_sfx("jingle_mision")
+
+
+func texto_aviso() -> String:
+	return _aviso if _t_aviso > 0.0 else ""
 
 
 func texto_hora() -> String:
@@ -111,8 +132,9 @@ func texto_cuenta() -> String:
 	return "%d:%02d" % [seg / 60, seg % 60]
 
 
-func _process(_delta: float) -> void:
-	queue_redraw()   # cuenta regresiva y reloj del barrio
+func _process(delta: float) -> void:
+	_t_aviso = maxf(0.0, _t_aviso - delta)
+	queue_redraw()   # cuenta regresiva, reloj del barrio y aviso de logros
 
 
 ## Tocar el botón del álbum lo abre (mobile; en teclado: X o Tab).

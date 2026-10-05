@@ -566,6 +566,10 @@ func _registrar_charla_jugador() -> int:
 		return 0
 	var previa := memoria.relacion_con("jugador")
 	memoria.ajustar_relacion("jugador", 1)
+	if memoria.relacion_con("jugador") >= GameManager.AMIGO_DESDE:
+		GameManager.registrar_amigo(npc_name)
+	if WorldClock.hora() >= 5 and WorldClock.hora() < 7:
+		GameManager.desbloquear_logro("madrugador")
 	return previa
 
 
@@ -647,6 +651,7 @@ func _ambiente(base: Array, relacion: int) -> Array:
 	var rumor := memoria.ultimo_rumor_ajeno()
 	if not rumor.is_empty():
 		lineas.append("¿Te enteraste? %s" % rumor.texto)
+		GameManager.registrar_rumor_escuchado(rumor.texto)
 	return lineas
 
 
@@ -822,6 +827,8 @@ func _completar_mision() -> void:
 	if recompensa_item != "":
 		GameManager.agregar_item(recompensa_item)
 	gesto("saltito")
+	if limite_segundos > 0.0:
+		GameManager.desbloquear_logro("contra_reloj")
 	if memoria:
 		memoria.sembrar(["%s le dio una mano a %s." % [GameManager.jugador_nombre, npc_name]], WorldClock.minutos, npc_name)
 

@@ -85,7 +85,7 @@ emergentes, vida social y guardado.
 - ~~Inventario simple + objetos coleccionables.~~ Hecho en v0.7.0: álbum del barrio + mochila en el HUD.
 - Más barrios / mapas (requiere ADR de scope + assets).
 - Entrar/salir de edificios (requiere plan de arquitectura).
-- Puntuación / logros / achievements.
+- ~~Puntuación / logros / achievements.~~ Hecho en v0.7.0: 10 logros con aviso, en el álbum y en el guardado.
 
 ## Notas
 

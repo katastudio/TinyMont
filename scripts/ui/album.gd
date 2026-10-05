@@ -40,6 +40,10 @@ func espacios() -> Array:
 	return lista
 
 
+func texto_logros() -> String:
+	return "Logros %d/%d" % [GameManager.logros.size(), GameManager.LOGROS.size()]
+
+
 func texto_contador() -> String:
 	var n := espacios().filter(func(e): return e.conseguido).size()
 	return "%d/%d" % [n, GameManager.total_misiones()]
@@ -66,7 +70,7 @@ func _dibujar() -> void:
 	var ancho := COLUMNAS * SEP_X + 12.0
 	var lista := espacios()
 	var filas := ceili(lista.size() / float(COLUMNAS))
-	var alto := 24.0 + filas * SEP_Y
+	var alto := 24.0 + filas * SEP_Y + 30.0
 	var panel := Rect2((s.x - ancho) / 2.0, maxf(28.0, (s.y - alto) / 2.0), ancho, alto)
 	_hoja.draw_rect(panel.grow(2), MARCO)
 	_hoja.draw_rect(panel, FONDO)
@@ -89,3 +93,20 @@ func _dibujar() -> void:
 				_hoja.draw_rect(Rect2(celda + Vector2(LADO - 4, 1), Vector2(3, 3)), DORADO)
 		if font:
 			_hoja.draw_string(font, celda + Vector2(-4, LADO + 8), e.giver, HORIZONTAL_ALIGNMENT_CENTER, LADO + 8, 5, TEXTO if e.conseguido else Color(1, 1, 1, 0.45))
+	# Logros: una estrella por logro (llena si está desbloqueado) y el contador.
+	var y_logros := panel.position.y + 24.0 + filas * SEP_Y + 2.0
+	if font:
+		_hoja.draw_string(font, Vector2(panel.position.x + 8, y_logros + 8), texto_logros(), HORIZONTAL_ALIGNMENT_LEFT, -1, 7, DORADO)
+	var i := 0
+	for id in GameManager.LOGROS:
+		var c := Vector2(panel.position.x + 14 + i * ((ancho - 20) / GameManager.LOGROS.size()), y_logros + 20)
+		_estrella(c, DORADO if GameManager.tiene_logro(id) else Color(1, 1, 1, 0.18))
+		i += 1
+
+
+func _estrella(c: Vector2, color: Color) -> void:
+	_hoja.draw_colored_polygon(PackedVector2Array([
+		c + Vector2(0, -5), c + Vector2(1.5, -1.5), c + Vector2(5, -1), c + Vector2(2, 1.5),
+		c + Vector2(3, 5), c + Vector2(0, 3), c + Vector2(-3, 5), c + Vector2(-2, 1.5),
+		c + Vector2(-5, -1), c + Vector2(-1.5, -1.5),
+	]), color)

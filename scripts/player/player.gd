@@ -104,6 +104,19 @@ func _liberar_origen() -> void:
 	_celda_origen = null
 
 
+## Logros por recorrido: celdas en bici y lugares del barrio visitados.
+func _al_llegar_a_celda() -> void:
+	if GameManager.en_bici:
+		GameManager.registrar_pedaleo()
+	var mundo = get_parent()
+	if mundo and "pois" in mundo:
+		var celda := Vector2i(int(position.x / TILE_SIZE), int(position.y / TILE_SIZE))
+		for poi in mundo.pois:
+			var d: Vector2i = poi.celda() - celda
+			if absi(d.x) + absi(d.y) <= 1:
+				GameManager.registrar_visita(poi.poi_id)
+
+
 ## Monti camina sólo si no hay diálogo, encuentro ni álbum abierto.
 func puede_moverse() -> bool:
 	return not (GameManager.is_dialog_active or GameManager.is_encounter_active or GameManager.album_abierto)
@@ -122,6 +135,7 @@ func _physics_process(delta):
 			position = target_pos
 			is_moving = false
 			_liberar_origen()
+			_al_llegar_a_celda()
 	else:
 		_handle_input()
 

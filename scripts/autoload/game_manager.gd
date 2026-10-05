@@ -14,6 +14,24 @@ var flags: Dictionary = {}              # progreso de la historia (ej: intro_vis
 var pedir_intro: bool = false           # el título pide la introducción de Marcos (partida nueva)
 var final: CanvasLayer = null           # pantalla final (spec 0008 R5)
 signal victoria_lograda
+signal logro_desbloqueado(id: String)
+
+# --- Logros ---
+const LOGROS := {
+	"primer_encargo": {"nombre": "Primer encargo", "desc": "Completá una misión."},
+	"medio_album": {"nombre": "Medio álbum", "desc": "Completá 10 misiones."},
+	"vecino_de_ley": {"nombre": "Vecino de ley", "desc": "Completá el álbum del barrio."},
+	"chismoso": {"nombre": "Chismoso del barrio", "desc": "Escuchá 5 rumores distintos."},
+	"querido": {"nombre": "Querido por todos", "desc": "Hacete amigo de 3 vecinos."},
+	"ciclista": {"nombre": "Ciclista", "desc": "Recorré 100 cuadras en bici."},
+	"explorador": {"nombre": "Explorador", "desc": "Pasá por 15 lugares del barrio."},
+	"noctambulo": {"nombre": "Noctámbulo", "desc": "Andá por el barrio a las 2 de la mañana."},
+	"madrugador": {"nombre": "Madrugador", "desc": "Hablá con alguien antes de las 7."},
+	"contra_reloj": {"nombre": "Contra reloj", "desc": "Ganá una carrera contra el tiempo."},
+}
+const AMIGO_DESDE := 5          # relación con el jugador para contar como amigo
+var logros: Dictionary = {}     # id -> true
+var progreso_logros: Dictionary = {"rumores": [], "amigos": [], "pedaleo": 0, "visitas": []}
 signal final_cerrado
 var album: CanvasLayer = null
 var is_encounter_active: bool = false   # pantalla de encuentro abierta (frena al player)
@@ -40,6 +58,7 @@ var _touch: CanvasLayer = null
 
 
 func _ready():
+	WorldClock.hora_cambiada.connect(_on_hora_logros)
 	_setup_input()
 	_adaptar_pantalla()
 	_add_hud()
@@ -202,6 +221,64 @@ func get_estado_mision(id: String) -> String:
 const TOTAL_MISIONES := 8   # respaldo si todavía no hay catálogo (ej: tests sin mundo)
 var _victoria := false
 
+# ==================== LOGROS ====================
+
+func tiene_logro(id: String) -> bool:
+	return logros.has(id)
+
+
+func desbloquear_logro(id: String) -> void:
+	if logros.has(id) or not LOGROS.has(id):
+		return
+	logros[id] = true
+	logro_desbloqueado.emit(id)
+
+
+func _revisar_logros_de_misiones() -> void:
+	var n := misiones_completadas()
+	if n >= 1:
+		desbloquear_logro("primer_encargo")
+	if n >= 10:
+		desbloquear_logro("medio_album")
+	if n >= total_misiones() and not catalogo.is_empty():
+		desbloquear_logro("vecino_de_ley")
+
+
+func registrar_rumor_escuchado(texto: String) -> void:
+	var r: Array = progreso_logros.rumores
+	if not (texto in r):
+		r.append(texto)
+	if r.size() >= 5:
+		desbloquear_logro("chismoso")
+
+
+func registrar_amigo(nombre: String) -> void:
+	var a: Array = progreso_logros.amigos
+	if not (nombre in a):
+		a.append(nombre)
+	if a.size() >= 3:
+		desbloquear_logro("querido")
+
+
+func registrar_pedaleo() -> void:
+	progreso_logros.pedaleo = int(progreso_logros.pedaleo) + 1
+	if progreso_logros.pedaleo >= 100:
+		desbloquear_logro("ciclista")
+
+
+func registrar_visita(poi_id: String) -> void:
+	var v: Array = progreso_logros.visitas
+	if not (poi_id in v):
+		v.append(poi_id)
+	if v.size() >= 15:
+		desbloquear_logro("explorador")
+
+
+func _on_hora_logros(hora: int) -> void:
+	if hora == 2 and mundo_activo != null:
+		desbloquear_logro("noctambulo")
+
+
 ## Catálogo de misiones del mundo: mision_id -> {giver, recompensa}. Lo carga MonteGrande
 ## desde los NPCs de la escena; el total y el álbum se derivan de acá (spec 0008 R3).
 var catalogo: Dictionary = {}
@@ -289,6 +366,7 @@ func set_estado_mision(id: String, estado: String) -> void:
 	# el diálogo de la última entrega).
 	if estado == "completada":
 		detener_cuenta(id)
+		_revisar_logros_de_misiones()
 	if not _victoria and misiones_completadas() >= total_misiones():
 		_victoria = true
 		dialog_ended.connect(_mostrar_victoria, CONNECT_ONE_SHOT)
@@ -364,7 +442,8 @@ func save_game(mundo: Node = null) -> bool:
 		"jugador": {"nombre": jugador_nombre, "inventario": inventario.duplicate(),
 			"misiones": misiones.duplicate(), "bici_color": bici_color.to_html(),
 			"contadores": contadores.duplicate(true), "cuentas": cuentas.duplicate(true),
-			"flags": flags.duplicate(true)},
+			"flags": flags.duplicate(true), "logros": logros.keys(),
+			"progreso_logros": progreso_logros.duplicate(true)},
 		"objetos_tomados": objetos_tomados.duplicate(),
 		"mundo": mundo.snapshot(),
 	}
@@ -397,6 +476,12 @@ func leer_partida() -> Dictionary:
 	en_bici = false
 	objetos_tomados = datos.get("objetos_tomados", []).duplicate()
 	flags = Dictionary(j.get("flags", {})).duplicate(true)
+	logros = {}
+	for id in j.get("logros", []):
+		logros[str(id)] = true
+	var pl: Dictionary = j.get("progreso_logros", {})
+	progreso_logros = {"rumores": Array(pl.get("rumores", [])), "amigos": Array(pl.get("amigos", [])),
+		"pedaleo": int(pl.get("pedaleo", 0)), "visitas": Array(pl.get("visitas", []))}
 	contadores = {}
 	var cs: Dictionary = j.get("contadores", {})
 	for id in cs:
@@ -417,6 +502,8 @@ func borrar_partida() -> void:
 		DirAccess.remove_absolute(ProjectSettings.globalize_path(ruta_guardado))
 	objetos_tomados.clear()
 	flags.clear()
+	logros.clear()
+	progreso_logros = {"rumores": [], "amigos": [], "pedaleo": 0, "visitas": []}
 	contadores.clear()
 	cuentas.clear()
 	_victoria = false
