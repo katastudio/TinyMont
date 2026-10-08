@@ -38,17 +38,18 @@ func _ready() -> void:
 	# se muestra un hint y al primer input se reinicia el tema del título.
 	_hint_sonido = OS.has_feature("web")
 	_hay_partida = GameManager.has_save()
-	# Botón de mute abajo a la derecha (mismo widget que el HUD).
+	# Botón de mute (mismo widget que el HUD).
 	var mute := MuteButton.new()
 	add_child(mute)
+	# Arriba a la derecha: abajo quedan los botones CONTINUAR / NUEVA PARTIDA.
 	mute.anchor_left = 1.0
-	mute.anchor_top = 1.0
+	mute.anchor_top = 0.0
 	mute.anchor_right = 1.0
-	mute.anchor_bottom = 1.0
+	mute.anchor_bottom = 0.0
 	mute.offset_left = -22.0
-	mute.offset_top = -22.0
+	mute.offset_top = 6.0
 	mute.offset_right = -6.0
-	mute.offset_bottom = -6.0
+	mute.offset_bottom = 22.0
 
 
 func _process(delta: float) -> void:
@@ -56,10 +57,31 @@ func _process(delta: float) -> void:
 	queue_redraw()   # anima la respiración de Monti
 
 
+const BTN2 := Color("f2ead1")       # botón secundario: crema (no compite con el naranja)
+const BTN2_DK := Color("b8a880")
+
+
 func _button_rect() -> Rect2:
 	var w := size.x
 	var bw := 140.0 if _hay_partida else 118.0
-	return Rect2((w - bw) / 2.0, size.y - 46.0, bw, 30.0)
+	# Con partida guardada, CONTINUAR sube para dejar lugar a NUEVA PARTIDA debajo.
+	var y := size.y - (70.0 if _hay_partida else 46.0)
+	return Rect2((w - bw) / 2.0, y, bw, 30.0)
+
+
+## Botón secundario NUEVA PARTIDA, centrado debajo del principal.
+func _nueva_rect() -> Rect2:
+	var bw := 112.0
+	return Rect2((size.x - bw) / 2.0, size.y - 32.0, bw, 20.0)
+
+
+## Qué hace un toque en `pos`: "iniciar", "nueva" o "".
+func accion_en(pos: Vector2) -> String:
+	if _button_rect().grow(6).has_point(pos):
+		return "iniciar"
+	if _hay_partida and _nueva_rect().grow(4).has_point(pos):
+		return "nueva"
+	return ""
 
 
 func _draw() -> void:
@@ -117,7 +139,7 @@ func _draw() -> void:
 
 	# --- Hint de sonido (solo web, hasta el primer gesto) ---
 	if _hint_sonido and font:
-		draw_string(font, Vector2(0, _button_rect().position.y - 8),
+		draw_string(font, Vector2(0, _button_rect().position.y - 18),
 			"Toca para activar el sonido", HORIZONTAL_ALIGNMENT_CENTER, w, 7,
 			Color(Color("f2ead1"), 0.6))
 
@@ -187,16 +209,31 @@ func _draw_button(font: Font) -> void:
 	if font:
 		draw_string(font, Vector2(tx + 18, cy + 5), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 13, INK)
 	if font:
-		draw_string(font, Vector2(0, size.y - 54.0), descargo(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 6, Color(INK, 0.75))
-	if _hay_partida and font:
-		var n := _nueva_rect()
-		var col := INK if not _pressed_nueva else BTN_DK
-		draw_string(font, Vector2(n.position.x, n.position.y + 9), "nueva partida", HORIZONTAL_ALIGNMENT_LEFT, -1, 9, col)
-		draw_line(Vector2(n.position.x, n.position.y + 11), Vector2(n.position.x + n.size.x, n.position.y + 11), col, 1.0)
+		draw_string(font, Vector2(0, r.position.y - 8.0), descargo(), HORIZONTAL_ALIGNMENT_CENTER, size.x, 6, Color(INK, 0.75))
+	if _hay_partida:
+		_draw_boton_nueva(font)
 
 
-func _nueva_rect() -> Rect2:
-	return Rect2(6.0, size.y - 16.0, 62.0, 12.0)
+## NUEVA PARTIDA: mismo lenguaje que el botón principal (sombra, hundido, brillo, borde
+## de tinta) en crema, con un ícono de reinicio dibujado por código.
+func _draw_boton_nueva(font: Font) -> void:
+	var r := _nueva_rect()
+	var down := 2.0 if _pressed_nueva else 0.0
+	draw_rect(Rect2(r.position.x, r.position.y + 2, r.size.x, r.size.y), BTN2_DK)
+	var body := Rect2(r.position.x, r.position.y + down, r.size.x, r.size.y)
+	draw_rect(body, BTN2.darkened(0.1) if _pressed_nueva else BTN2)
+	draw_rect(Rect2(body.position.x + 2, body.position.y + 2, body.size.x - 4, body.size.y * 0.4), Color(1, 1, 1, 0.35))
+	draw_rect(body, INK, false, 2.0)
+	var etiqueta := "NUEVA PARTIDA"
+	var ancho_texto := font.get_string_size(etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 9).x if font else 70.0
+	var x0 := body.get_center().x - (14.0 + ancho_texto) / 2.0
+	var c := Vector2(x0 + 4.0, body.get_center().y)
+	# Flecha circular de reinicio: arco de 3/4 de vuelta + punta.
+	draw_arc(c, 4.0, -PI * 0.25, PI * 1.25, 10, INK, 1.5)
+	var punta := c + Vector2(cos(-PI * 0.25), sin(-PI * 0.25)) * 4.0
+	draw_colored_polygon(PackedVector2Array([punta + Vector2(-3, -2), punta + Vector2(2, -3), punta + Vector2(1, 2)]), INK)
+	if font:
+		draw_string(font, Vector2(x0 + 14.0, body.get_center().y + 3.0), etiqueta, HORIZONTAL_ALIGNMENT_LEFT, -1, 9, INK)
 
 
 # ==================== INPUT ====================
@@ -209,13 +246,15 @@ func _input(event: InputEvent) -> void:
 		if event is InputEventMouseButton and event.button_index != MOUSE_BUTTON_LEFT:
 			return
 		if is_press:
-			_pressed = _button_rect().grow(6).has_point(event.position)
-			_pressed_nueva = _hay_partida and _nueva_rect().grow(4).has_point(event.position)
+			var accion := accion_en(event.position)
+			_pressed = accion == "iniciar"
+			_pressed_nueva = accion == "nueva"
 			queue_redraw()
 		else:
-			if _pressed and _button_rect().grow(6).has_point(event.position):
+			var accion := accion_en(event.position)
+			if _pressed and accion == "iniciar":
 				_start()
-			elif _pressed_nueva and _nueva_rect().grow(4).has_point(event.position):
+			elif _pressed_nueva and accion == "nueva":
 				_nueva_partida()
 			_pressed = false
 			_pressed_nueva = false
