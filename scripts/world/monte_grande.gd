@@ -236,7 +236,20 @@ func _create_pois():
 			poi_por_id[child.poi_id] = child
 
 
-## Tinte día/noche (ADR-0004): un CanvasModulate tiñe el mapa según la hora del reloj.
+## Hora real fija para tests (-1 = usar la hora actual de Argentina).
+var hora_real_fija: float = -1.0
+
+
+func hora_real() -> float:
+	return hora_real_fija if hora_real_fija >= 0.0 else EstiloMapa.hora_argentina_ahora()
+
+
+func estilo_actual() -> String:
+	return EstiloMapa.estilo_para_hora(hora_real())
+
+
+## Estilo del mapa en tiempo real (ADR-0004): un CanvasModulate tiñe el mapa según la
+## hora actual de Argentina (mañana, tarde o noche), no según el reloj del juego.
 func _iniciar_ciclo_dia() -> void:
 	var tinte := CanvasModulate.new()
 	tinte.name = "TinteDia"
@@ -253,7 +266,7 @@ func _on_tick_tinte(_minutos: int) -> void:
 func _actualizar_tinte() -> void:
 	var tinte = get_node_or_null("TinteDia")
 	if tinte:
-		tinte.color = CicloDia.tinte(WorldClock.minutos % (24 * 60))
+		tinte.color = EstiloMapa.tinte(hora_real())
 
 
 ## Catálogo de misiones: cada NPC que encarga una misión (no los ayudantes) aporta una entrada.

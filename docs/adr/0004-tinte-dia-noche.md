@@ -33,3 +33,13 @@ debe leerse bien también con el tinte nocturno.
 
 **Impacto en la constitución:** precisa §1: la paleta es la base diurna; el tinte horario
 del mundo está permitido mientras la interfaz conserve los colores de `Pal`.
+
+
+## Enmienda (2026-10-08): estilo en tiempo real
+
+A pedido del autor, el estilo del mapa sigue la **hora real de Argentina** (UTC-3, calculada
+desde la hora UTC del sistema), no el reloj del juego. Hay tres estilos: mañana (6 a 12),
+tarde (12 a 20) y noche (20 a 6), con una transición de una hora en cada cambio
+(`scripts/world/estilo_mapa.gd`). El clima se sumará como un segundo tinte multiplicativo
+(`EstiloMapa.CLIMAS`). Los mapas exteriores (El Jagüel) también se tiñen; los interiores no.
+Las rutinas de los vecinos siguen el reloj del juego (un día = 24 minutos reales).

@@ -23,6 +23,8 @@ const COLORES := {
 }
 
 @export var nombre_mapa: String = ""
+## Exterior (otro barrio): se tiñe con el estilo de la hora real. Interior: iluminado, sin tinte.
+@export var exterior: bool = false
 @export_multiline var plano: String = "#X#"
 
 var ocupacion := GrillaOcupacion.new()
@@ -44,6 +46,18 @@ func _ready() -> void:
 	_armar_astar()
 	_registrar_interactuables()
 	_crear_jugador()
+	if exterior:
+		var tinte := CanvasModulate.new()
+		tinte.name = "TinteDia"
+		tinte.color = EstiloMapa.tinte(EstiloMapa.hora_argentina_ahora())
+		add_child(tinte)
+		WorldClock.tick.connect(_on_tick_tinte)
+
+
+func _on_tick_tinte(_minutos: int) -> void:
+	var tinte = get_node_or_null("TinteDia")
+	if tinte:
+		tinte.color = EstiloMapa.tinte(EstiloMapa.hora_argentina_ahora())
 
 
 func _leer_plano() -> void:

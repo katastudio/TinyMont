@@ -6,6 +6,7 @@
 [node name="ElJaguel" type="Node2D"]
 script = ExtResource("mapa")
 nombre_mapa = "El Jaguel"
+exterior = true
 plano = "########################\n#HHHH.AAA.HHHH.HHHHH.HH#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#RRRRRRRRRRRRRRRRRRRRRR#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#HHH.GGGGGGGG.HHHH.HHHH#\n#HHH.GAGGGGAG.HHHH.HHHH#\n#....GGGGGGGG..........#\n#VVVVVVVVVVVVVVVVVVVVVV#\n#RRRRRRRRRRRRRRRRRRRRRR#\n#VVVVVVVVVVVVVVVVVVVVVV#\n###########X############"
 
 [node name="VecinaJaguel" parent="." instance=ExtResource("npc")]
