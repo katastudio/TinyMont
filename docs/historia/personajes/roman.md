@@ -3,7 +3,7 @@
 - **Nodo:** `Roman` en `scenes/main.tscn`
 - **Ficha:** `data/personajes/roman.json`
 - **Ubicación:** celda (27, 18), Norte (Alem y comercios)
-- **Aspecto:** pelo: short, marca: badge
+- **Aspecto:** marca: badge
 
 ## Quién es
 

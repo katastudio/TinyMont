@@ -3,7 +3,7 @@
 - **Nodo:** `Franquito` en `scenes/main.tscn`
 - **Ficha:** `data/personajes/franquito.json`
 - **Ubicación:** celda (26, 4), Estación y andén
-- **Aspecto:** pelo: short, gorra: cap, marca: badge
+- **Aspecto:** gorra: cap, marca: badge
 
 ## Quién es
 

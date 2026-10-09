@@ -3,7 +3,7 @@
 - **Nodo:** `ElAtajatodo` en `scenes/main.tscn`
 - **Ficha:** `data/personajes/el_atajatodo.json`
 - **Ubicación:** celda (31, 18), Norte (Alem y comercios)
-- **Aspecto:** pelo: short, marca: badge
+- **Aspecto:** marca: badge
 
 ## Quién es
 
