@@ -184,7 +184,7 @@ func _es_transitable_estatica_sin_astar(celda: Vector2i) -> bool:
 func _register_static_interactables() -> void:
 	"""Registra objetos estáticos con interact() en la grilla de ocupación."""
 	for child in get_children():
-		if child.has_method("interact") and not child is CharacterBody2D:
+		if child.has_method("interact") and not child is CharacterBody2D and not child.has_method("disponible"):
 			# Es un interactuable estático (no el player)
 			var celda = celda_de(child.position)
 			ocupacion.reservar(celda, child)
@@ -273,9 +273,40 @@ func _actualizar_tinte() -> void:
 func _cargar_catalogo_misiones() -> void:
 	var cat := {}
 	for child in get_children():
-		if "mision_id" in child and child.mision_id != "" and child.otorga_item == "":
+		if "npc_name" in child and child.mision_id != "" and child.otorga_item == "":
 			cat[child.mision_id] = {"giver": child.npc_name, "recompensa": child.recompensa_item}
 	GameManager.catalogo = cat
+	_preparar_objetos_de_mision()
+
+
+## Cada objeto buscable pertenece a la misión cuyo giver lo pide; aparece cuando se encarga.
+func _preparar_objetos_de_mision() -> void:
+	var mision_de_item := {}
+	for child in get_children():
+		if "npc_name" in child and child.requisito_item != "":
+			mision_de_item[child.requisito_item] = child.mision_id
+	for o in _objetos_de_mision():
+		if o.mision_id == "":
+			o.mision_id = mision_de_item.get(o.item, "")
+	_sincronizar_objetos()
+	if not GameManager.mision_cambiada.is_connected(_sincronizar_objetos):
+		GameManager.mision_cambiada.connect(_sincronizar_objetos)
+	if not WorldClock.tick.is_connected(_on_tick_objetos):
+		WorldClock.tick.connect(_on_tick_objetos)
+
+
+func _objetos_de_mision() -> Array:
+	return get_children().filter(func(n): return n.has_method("disponible"))
+
+
+func _sincronizar_objetos() -> void:
+	for o in _objetos_de_mision():
+		if is_instance_valid(o) and not o.is_queued_for_deletion():
+			o.sincronizar(self)
+
+
+func _on_tick_objetos(_minutos: int) -> void:
+	_sincronizar_objetos()   # reintenta los que esperaban que un vecino se corra
 
 
 func _iniciar_vida_social() -> void:
@@ -328,6 +359,7 @@ func _iniciar_guardado() -> void:
 		if not datos.is_empty():
 			restaurar(datos.get("mundo", {}))
 		GameManager.restaurando = false
+	_sincronizar_objetos()   # con las misiones ya cargadas, aparecen los objetos encargados
 	if not GameManager.victoria_lograda.is_connected(_fiesta_en_la_plaza):
 		GameManager.victoria_lograda.connect(_fiesta_en_la_plaza)
 	if not GameManager.final_cerrado.is_connected(_terminar_fiesta):

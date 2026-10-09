@@ -25,7 +25,7 @@ func _ready() -> void:
 	# Todo objeto que aparece en una misión tiene ícono y nombre propios.
 	var objetos := {}
 	for n in m.get_children():
-		if "mision_id" in n:
+		if "npc_name" in n:
 			for id in [n.recompensa_item, n.requisito_item, n.otorga_item]:
 				if id != "":
 					objetos[id] = n.npc_name

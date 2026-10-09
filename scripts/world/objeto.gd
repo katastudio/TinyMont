@@ -12,8 +12,30 @@ const ItemArt = preload("res://scripts/art/item_art.gd")
 		item = v
 		queue_redraw()
 @export var nombre: String = ""   # ej: "la trompeta" -> feedback al recogerlo
+## Misión que lo desbloquea. Vacío = la deduce el mapa (la misión cuyo giver pide este item).
+## Hasta que esa misión se encarga, el objeto no se ve, no se agarra y no tapa su celda.
+@export var mision_id: String = ""
 
 var _t := 0.0
+var _colocado := false    # visible y registrado en la grilla
+
+
+## true si el jugador ya puede encontrarlo (su misión fue encargada).
+func disponible() -> bool:
+	return mision_id == "" or GameManager.get_estado_mision(mision_id) != "no_iniciada"
+
+
+## Aparece o desaparece según su misión. Si al aparecer su celda está ocupada, espera.
+func sincronizar(mundo: Node) -> void:
+	var celda: Vector2i = mundo.celda_de(position)
+	if disponible():
+		if not _colocado and mundo.ocupacion.reservar(celda, self):
+			_colocado = true
+	elif _colocado:
+		mundo.ocupacion.liberar(celda, self)
+		_colocado = false
+	if not Engine.is_editor_hint():
+		visible = _colocado
 
 
 func _process(delta: float) -> void:
@@ -28,6 +50,8 @@ func _draw() -> void:
 
 
 func interact(_player_pos: Vector2) -> void:
+	if not _colocado:
+		return    # todavía nadie te pidió buscarlo
 	GameManager.agregar_item(item)
 	GameManager.registrar_objeto_tomado(name)
 	if nombre != "":

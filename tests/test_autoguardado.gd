@@ -34,6 +34,7 @@ func _ready() -> void:
 	WorldClock.avanzar(5)
 	_check(FileAccess.file_exists(RUTA), "a los 10 minutos de juego guarda solo")
 
+	GameManager.set_estado_mision("gille_trompeta", "en_curso")   # la trompeta aparece al encargarse
 	_borrar()
 	m.get_node("Trompeta").interact(Vector2.ZERO)
 	GameManager.end_dialog()

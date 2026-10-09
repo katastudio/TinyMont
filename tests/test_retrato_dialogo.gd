@@ -32,6 +32,7 @@ func _ready() -> void:
 	_check(caja.text_label.offset_left < 10.0, "sin retrato el texto ocupa todo el ancho")
 	GameManager.end_dialog()
 
+	GameManager.set_estado_mision("gille_trompeta", "en_curso")   # la trompeta aparece al encargarse
 	m.get_node("Trompeta").interact(Vector2.ZERO)
 	_check(caja.retrato.visible and caja.retrato.descriptor == m.get_node("Player").retrato(), "al encontrar un objeto habla Monti con su retrato")
 	GameManager.end_dialog()

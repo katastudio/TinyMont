@@ -30,8 +30,9 @@ func _ready() -> void:
 	var trompeta = a.get_node_or_null("Trompeta")
 	_check(trompeta != null, "la trompeta está en el mapa")
 	var celda_trompeta: Vector2i = a.celda_de(trompeta.position)
-	trompeta.interact(Vector2.ZERO)  # el jugador levanta la trompeta
 	GameManager.set_estado_mision("gille_trompeta", "en_curso")
+	GameManager.set_estado_mision("eldiez_pelota", "en_curso")     # encargada, pelota sin levantar
+	trompeta.interact(Vector2.ZERO)  # el jugador levanta la trompeta
 	a.get_node("Player").colocar_en(Vector2i(10, 10))
 	GameManager.save_game(a)
 	_check(GameManager.has_save(), "has_save() es true después de guardar")
@@ -49,6 +50,8 @@ func _ready() -> void:
 	_check(not GameManager.cargar_al_iniciar, "la carga pendiente se consume al iniciar el mundo")
 	_check(b.get_node_or_null("Trompeta") == null, "la trompeta levantada no reaparece")
 	_check(b.ocupacion.esta_libre(celda_trompeta), "su celda queda libre")
+	var pelota = b.get_node("Pelota")
+	_check(pelota.visible and b.get_npc_at(pelota.position) == pelota, "un objeto de una misión ya encargada aparece al cargar")
 	_check("trompeta" in GameManager.inventario, "el inventario se restaura")
 	_check(GameManager.get_estado_mision("gille_trompeta") == "en_curso", "las misiones se restauran")
 	_check(b.celda_de(b.get_node("Player").position) == Vector2i(10, 10), "la posición del jugador se restaura")
