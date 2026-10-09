@@ -13,6 +13,8 @@ enum Estado { ESPERANDO, ELEGIR_DESTINO, CAMINANDO, EN_ACTIVIDAD }
 
 @export var npc_name: String = "Vecino"
 @export var dialog_lines: Array = ["¡Hola!"]
+## Lo que cuenta la primera vez que el jugador le habla (antes de su diálogo normal).
+@export var dialog_presentacion: Array = []
 
 @export_group("Aspecto")
 @export var piel: Color = Color("f4c29a")
@@ -755,7 +757,12 @@ func dialogo_lines() -> Array:
 	var relacion := _registrar_charla_jugador()
 	# Misiones de contador ajenas: este vecino cuenta como contactado (ej: recibe una invitación).
 	var extra: Array = GameManager.registrar_contacto(npc_name)
-	return _lineas_de_mision(relacion) + extra
+	var presentacion: Array = []
+	var clave := "presentado_" + npc_name
+	if not dialog_presentacion.is_empty() and not GameManager.flags.get(clave, false):
+		GameManager.flags[clave] = true
+		presentacion = dialog_presentacion.duplicate()
+	return presentacion + _lineas_de_mision(relacion) + extra
 
 
 func _lineas_de_mision(relacion: int) -> Array:

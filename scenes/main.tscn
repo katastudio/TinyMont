@@ -210,6 +210,7 @@ camiseta = Color(0.988235, 0.988235, 0.988235, 1)
 [node name="Marcos" parent="." instance=ExtResource("npc_src")]
 position = Vector2(360, 56)
 npc_name = "Marcos"
+dialog_presentacion = ["¡Eh, vos! ¿Recién bajado del Roca? Bienvenido a Monte Grande.", "Soy Marcos. Vendo café a la salida de la estación desde 2001.", "Monte Grande es la Ciudad de los Árboles: plaza, estación y vecinos de oro.", "Por el barrio vas a cruzarte músicos, futbolistas, artistas... gente con historia.", "Pero ojo: acá no sos vecino hasta que el barrio te conoce.", "Ayudá a cada uno y te van a regalar un recuerdo. Juntalos en tu álbum."]
 rutina = 3
 dialog_lines = ["El mejor cafe de
 Monte Grande,

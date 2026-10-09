@@ -289,7 +289,6 @@ func descargo() -> String:
 func _start() -> void:
 	set_process_input(false)
 	GameManager.cargar_al_iniciar = _hay_partida
-	GameManager.pedir_intro = not _hay_partida
 	get_tree().change_scene_to_file("res://scenes/main.tscn")
 
 

@@ -20,25 +20,19 @@ func _ready() -> void:
 	WorldClock.set_process(false)
 	_reset()
 
-	# Sin pedido de introducción (ej: cargar el mapa directo) no hay diálogo.
+	# Inicio libre: una partida nueva no arranca con ningún diálogo.
 	var m = _mundo()
 	await get_tree().process_frame
-	_check(not GameManager.is_dialog_active, "sin partida nueva no hay introducción")
-	_liberar(m)
+	_check(not GameManager.is_dialog_active, "partida nueva: el inicio es libre, sin diálogos")
+	_check(GameManager.get_estado_mision("marcos_vasitos") == "no_iniciada", "partida nueva: ninguna misión arranca sola")
 
-	# Partida nueva desde el título: Marcos recibe a Monti y encarga la primera misión.
-	_reset()
-	GameManager.pedir_intro = true
-	m = _mundo()
-	await get_tree().process_frame
-	_check(GameManager.is_dialog_active, "partida nueva: arranca la introducción")
-	var caja = GameManager.dialog_box
-	_check(caja.name_label.text == "Marcos", "habla Marcos (%s)" % caja.name_label.text)
-	_check(caja.current_lines.size() >= 4, "Marcos cuenta la historia antes del encargo")
-	_check(GameManager.get_estado_mision("marcos_vasitos") == "en_curso", "la primera misión queda encargada")
-	_check(GameManager.flags.get("intro_vista", false), "la introducción queda registrada")
-	_check(not GameManager.pedir_intro, "el pedido de introducción se consume")
-	GameManager.end_dialog()
+	# La historia de Marcos llega cuando el jugador le habla por primera vez.
+	var marcos = m.get_node("Marcos")
+	var primera: Array = marcos.dialogo_lines()
+	_check(primera.size() >= 6 and "Monte Grande" in " ".join(primera), "la primera charla con Marcos cuenta la historia")
+	_check(GameManager.get_estado_mision("marcos_vasitos") == "en_curso", "y le encarga la primera misión")
+	var segunda: Array = marcos.dialogo_lines()
+	_check(segunda.size() < primera.size() and not (primera[0] in segunda), "la presentación no se repite")
 	_liberar(m)
 
 	# Descargo en el título.

@@ -119,7 +119,7 @@ func _al_llegar_a_celda() -> void:
 
 ## Monti camina sólo si no hay diálogo, encuentro ni álbum abierto.
 func puede_moverse() -> bool:
-	return not (GameManager.is_dialog_active or GameManager.is_encounter_active or GameManager.album_abierto)
+	return not (GameManager.is_dialog_active or GameManager.is_encounter_active or GameManager.album_abierto or GameManager.en_transicion)
 
 
 func _physics_process(delta):

@@ -322,16 +322,18 @@ func _iniciar_guardado() -> void:
 	GameManager.mundo_activo = self
 	if GameManager.cargar_al_iniciar:
 		GameManager.cargar_al_iniciar = false
+		# Mientras se restaura no se autoguarda: pisaría la partida con un mundo a medio cargar.
+		GameManager.restaurando = true
 		var datos := GameManager.leer_partida()
 		if not datos.is_empty():
 			restaurar(datos.get("mundo", {}))
-	if GameManager.pedir_intro:
-		GameManager.pedir_intro = false
-		_intro()
+		GameManager.restaurando = false
 	if not GameManager.victoria_lograda.is_connected(_fiesta_en_la_plaza):
 		GameManager.victoria_lograda.connect(_fiesta_en_la_plaza)
 	if not GameManager.final_cerrado.is_connected(_terminar_fiesta):
 		GameManager.final_cerrado.connect(_terminar_fiesta)
+	if not GameManager.mision_cambiada.is_connected(_on_mision_autoguardado):
+		GameManager.mision_cambiada.connect(_on_mision_autoguardado)
 
 
 # ==================== HISTORIA (spec 0008) ====================
@@ -339,27 +341,6 @@ func _iniciar_guardado() -> void:
 const CELDA_FUENTE := Vector2i(22, 33)     # fuente de la Plaza Mitre
 const RADIO_LLEGADA := 4
 var _en_fiesta := false
-
-const INTRO := [
-	"¡Eh, vos! ¿Recién bajado del Roca? Bienvenido a Monte Grande.",
-	"Soy Marcos. Vendo café a la salida de la estación desde 2001.",
-	"Monte Grande es la Ciudad de los Árboles: plaza, estación y vecinos de oro.",
-	"Por el barrio vas a cruzarte músicos, futbolistas, artistas... gente con historia.",
-	"Pero ojo: acá no sos vecino hasta que el barrio te conoce.",
-	"Ayudá a cada uno y te van a regalar un recuerdo. Juntalos en tu álbum.",
-]
-
-
-## Partida nueva: Marcos recibe a Monti a la salida de la estación y le encarga la primera misión.
-func _intro() -> void:
-	GameManager.flags["intro_vista"] = true
-	var marcos = get_node_or_null("Marcos")
-	if marcos == null:
-		return
-	var lineas: Array = INTRO.duplicate()
-	lineas.append_array(marcos.dialogo_lines())
-	GameManager.start_dialog(marcos.npc_name, lineas, marcos.camiseta, marcos.retrato())
-
 
 ## Álbum completo: todo el barrio va a la Plaza Mitre a recibir a Monti.
 func _fiesta_en_la_plaza() -> void:
@@ -386,19 +367,11 @@ func _terminar_fiesta() -> void:
 	for n in _vecinos:
 		if is_instance_valid(n):
 			n.liberar_convocatoria()
-	if not WorldClock.hora_cambiada.is_connected(_on_hora_autoguardado):
-		WorldClock.hora_cambiada.connect(_on_hora_autoguardado)
-	if not GameManager.mision_cambiada.is_connected(_on_mision_autoguardado):
-		GameManager.mision_cambiada.connect(_on_mision_autoguardado)
 
 
 func _exit_tree() -> void:
 	if GameManager.mundo_activo == self:
 		GameManager.mundo_activo = null
-
-
-func _on_hora_autoguardado(_hora: int) -> void:
-	GameManager.autoguardar()
 
 
 func _on_mision_autoguardado(_a = null, _b = null) -> void:

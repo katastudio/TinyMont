@@ -11,12 +11,13 @@ var dialog_box = null
 
 var album_abierto: bool = false        # el álbum del barrio frena al player
 var flags: Dictionary = {}              # progreso de la historia (ej: intro_vista), se guarda
-var pedir_intro: bool = false           # el título pide la introducción de Marcos (partida nueva)
 var final: CanvasLayer = null           # pantalla final (spec 0008 R5)
 var mapa_secundario: Node = null        # interior o barrio cargado encima del mapa principal
 var transicion_inmediata: bool = false  # tests: sin fundido
+var forzar_fundido: bool = false        # tests: fundido real aunque sea headless
 var _vereda_retorno := Vector2i.ZERO    # celda del barrio donde reaparece Monti al volver
 var _fundido: CanvasLayer = null
+var en_transicion: bool = false         # una sola transición de mapa a la vez
 signal victoria_lograda
 signal logro_desbloqueado(id: String)
 
@@ -63,6 +64,10 @@ var _touch: CanvasLayer = null
 
 func _ready():
 	WorldClock.hora_cambiada.connect(_on_hora_logros)
+	WorldClock.tick.connect(_on_tick_autoguardado)
+	inventario_cambiado.connect(autoguardar)
+	logro_desbloqueado.connect(func(_id): autoguardar())
+	_escuchar_pagina_web()
 	_setup_input()
 	_adaptar_pantalla()
 	_add_hud()
@@ -194,9 +199,13 @@ func tiene_item(item: String) -> bool:
 # El mapa principal nunca se destruye: se oculta y sigue simulando (el barrio sigue vivo).
 
 func ir_a_mapa(escena: String, vereda: Vector2i) -> void:
-	if mapa_secundario != null or mundo_activo == null:
+	# Con la flecha apretada contra la puerta, esto se llama en cada frame del fundido:
+	# sólo la primera llamada transiciona (antes se cargaban varios interiores).
+	if en_transicion or mapa_secundario != null or mundo_activo == null:
 		return
+	en_transicion = true
 	_vereda_retorno = vereda
+	autoguardar()
 	await _fundir(true)
 	var jugador = mundo_activo.get_node_or_null("Player")
 	if jugador:
@@ -207,11 +216,15 @@ func ir_a_mapa(escena: String, vereda: Vector2i) -> void:
 	mapa_secundario = load(escena).instantiate()
 	mundo_activo.get_parent().add_child(mapa_secundario)
 	await _fundir(false)
+	en_transicion = false
 
 
 func volver_al_barrio() -> void:
-	if mapa_secundario == null:
+	# Mismo cuidado al salir: antes la segunda llamada encontraba el mapa ya liberado,
+	# fallaba a mitad de camino y la pantalla quedaba en negro.
+	if en_transicion or mapa_secundario == null:
 		return
+	en_transicion = true
 	await _fundir(true)
 	mapa_secundario.get_parent().remove_child(mapa_secundario)
 	mapa_secundario.queue_free()
@@ -227,11 +240,17 @@ func volver_al_barrio() -> void:
 			cam.enabled = true
 			cam.make_current()
 	await _fundir(false)
+	en_transicion = false
+	autoguardar()
+
+
+func opacidad_fundido() -> float:
+	return _fundido.get_child(0).color.a if _fundido else 0.0
 
 
 ## Fundido a negro entre mapas (en tests, inmediato).
 func _fundir(a_negro: bool) -> void:
-	if transicion_inmediata or DisplayServer.get_name() == "headless":
+	if transicion_inmediata or (DisplayServer.get_name() == "headless" and not forzar_fundido):
 		return
 	if _fundido == null:
 		_fundido = CanvasLayer.new()
@@ -572,10 +591,45 @@ func borrar_partida() -> void:
 
 
 ## Autoguardado: sólo en juego real (no en tests headless) y con un mundo activo.
+## Autoguardado: sólo con un mundo activo y fuera de los tests headless (salvo que el test lo pida).
+var autoguardado_habilitado: bool = DisplayServer.get_name() != "headless"
+var restaurando: bool = false           # cargando una partida: no autoguardar
+const MINUTOS_ENTRE_GUARDADOS := 10      # minutos de juego (unos 10 segundos reales)
+var _minutos_sin_guardar: int = 0
+var _js_callbacks: Array = []           # referencias vivas a los callbacks de la web
+
+
 func autoguardar() -> void:
-	if DisplayServer.get_name() == "headless":
+	if not autoguardado_habilitado or en_transicion or restaurando:
 		return
-	save_game()
+	if save_game():
+		_minutos_sin_guardar = 0
+
+
+func _on_tick_autoguardado(minutos: int) -> void:
+	_minutos_sin_guardar += minutos
+	if _minutos_sin_guardar >= MINUTOS_ENTRE_GUARDADOS:
+		autoguardar()
+
+
+## Web: guardar cuando la pestaña se oculta o se cierra (el navegador no avisa al cerrar).
+func _escuchar_pagina_web() -> void:
+	if not OS.has_feature("web"):
+		return
+	var cb := JavaScriptBridge.create_callback(_on_pagina_oculta)
+	_js_callbacks.append(cb)
+	var documento = JavaScriptBridge.get_interface("document")
+	var ventana = JavaScriptBridge.get_interface("window")
+	documento.addEventListener("visibilitychange", cb)
+	ventana.addEventListener("pagehide", cb)
+
+
+func _on_pagina_oculta(_args = null) -> void:
+	if OS.has_feature("web"):
+		var estado = JavaScriptBridge.eval("document.visibilityState", true)
+		if str(estado) == "visible":
+			return
+	autoguardar()
 
 
 func _notification(what: int) -> void:
